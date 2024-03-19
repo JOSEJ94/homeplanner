@@ -1,4 +1,4 @@
-package com.homeplanner
+package com.jrojas.homeplanner
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
