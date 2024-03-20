@@ -2,11 +2,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import LoginScreen from './src/modules/authentication/LoginScreen';
 import {Routes} from './src/shared/constants/Routes';
 import {lightTheme} from './src/shared/themes/Theme';
 
 const Stack = createNativeStackNavigator();
+GoogleSignin.configure();
 
 function App(): React.JSX.Element {
   const [initializing, setInitializing] = useState(true);

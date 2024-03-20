@@ -2,6 +2,11 @@ import {View, Text, StyleSheet, Alert} from 'react-native';
 import React, {useMemo, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import {
+  GoogleSignin,
+  statusCodes,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 import TextInput from '../../shared/components/TextInput';
 import {AppTheme} from '../../shared/themes/Theme';
 import Button, {ButtonVariant} from '../../shared/components/Button';
@@ -28,6 +33,31 @@ const LoginScreen = () => {
       Alert.alert('Error', error.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      const {idToken} = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const user = auth().signInWithCredential(googleCredential);
+      console.log('userInfo', user);
+    } catch (error: any) {
+      // TODO: Improve error handling here.
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        Alert.alert('Error', error.message);
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        Alert.alert('Error', error.message);
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        Alert.alert('Error', error.message);
+      } else {
+        // some other error happened
+        Alert.alert('Error', error.message);
+      }
     }
   };
 
@@ -85,7 +115,10 @@ const LoginScreen = () => {
           social media
         </Text>
         <View style={styles.ssoLoginContainer}>
-          <Button title="Google" />
+          <GoogleSigninButton
+            onPress={loginWithGoogle}
+            size={GoogleSigninButton.Size.Icon}
+          />
           <Button title="Facebook" />
           <Button title="Apple" />
         </View>
