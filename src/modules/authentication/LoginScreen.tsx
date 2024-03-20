@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet, Alert, Platform} from 'react-native';
 import React, {useMemo, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -120,7 +120,7 @@ const LoginScreen = () => {
             size={GoogleSigninButton.Size.Icon}
           />
           <Button title="Facebook" />
-          <Button title="Apple" />
+          {Platform.OS === 'ios' && <Button title="Apple" />}
         </View>
       </View>
     </View>
