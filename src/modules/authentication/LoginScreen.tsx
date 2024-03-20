@@ -1,6 +1,7 @@
-import {View, Text, StyleSheet} from 'react-native';
-import React, {useMemo} from 'react';
+import {View, Text, StyleSheet, Alert} from 'react-native';
+import React, {useMemo, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 import TextInput from '../../shared/components/TextInput';
 import {AppTheme} from '../../shared/themes/Theme';
 import Button, {ButtonVariant} from '../../shared/components/Button';
@@ -10,11 +11,34 @@ const LoginScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const onLoginPress = async () => {
+    try {
+      setSubmitting(true);
+      const user = await auth().signInWithEmailAndPassword(email, password);
+      if (!user) {
+        Alert.alert('No user');
+      } else {
+        Alert.alert('Welcome', user?.user?.email ?? '');
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text>Home Planner</Text>
       <View style={styles.informationContainer}>
         <TextInput
+          testID="email-input"
+          value={email}
+          onChangeText={setEmail}
           containerStyle={styles.loginInput}
           placeholder="Email Address"
           keyboardType="email-address"
@@ -29,6 +53,9 @@ const LoginScreen = () => {
           }
         />
         <TextInput
+          testID="password-input"
+          value={password}
+          onChangeText={setPassword}
           containerStyle={styles.loginInput}
           placeholder="Password"
           textContentType="password"
@@ -42,11 +69,17 @@ const LoginScreen = () => {
           }
         />
         <Button
+          disabled={submitting}
           style={styles.forgotPasswordBtn}
           title="Forgot Password?"
           variant={ButtonVariant.TERTIARY}
         />
-        <Button style={styles.loginBtn} title="LOGIN" />
+        <Button
+          loading={submitting}
+          onPress={onLoginPress}
+          style={styles.loginBtn}
+          title="LOGIN"
+        />
         <Text style={styles.ssoAlternativeTxt}>
           Or <Text style={styles.ssoAlternativeHighlightTxt}>Login</Text> using
           social media

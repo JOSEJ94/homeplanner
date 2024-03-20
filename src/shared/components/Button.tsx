@@ -6,6 +6,7 @@ import {
   ColorValue,
   StyleProp,
   ViewStyle,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useMemo} from 'react';
 import {AppTheme} from '../themes/Theme';
@@ -21,6 +22,7 @@ interface CustomButtonProps extends ButtonProps {
   variant?: ButtonVariant;
   style?: StyleProp<ViewStyle>;
   fullWidth?: boolean;
+  loading?: boolean;
 }
 
 const Button = ({
@@ -28,6 +30,8 @@ const Button = ({
   title,
   onPress,
   style,
+  loading,
+  disabled,
   fullWidth = false,
   ...rest
 }: CustomButtonProps) => {
@@ -38,8 +42,16 @@ const Button = ({
   );
 
   return (
-    <Pressable {...rest} style={[styles.container, style]} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+    <Pressable
+      {...rest}
+      disabled={loading || disabled}
+      style={[styles.container, style]}
+      onPress={onPress}>
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      ) : (
+        <Text style={styles.text}>{title}</Text>
+      )}
     </Pressable>
   );
 };
