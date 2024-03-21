@@ -1,6 +1,10 @@
 import {View, Text, StyleSheet, Alert, Platform} from 'react-native';
 import React, {useMemo, useState} from 'react';
-import {useTheme} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {
   GoogleSignin,
@@ -11,8 +15,13 @@ import TextInput from '../../shared/components/TextInput';
 import {AppTheme} from '../../shared/themes/Theme';
 import Button, {ButtonVariant} from '../../shared/components/Button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import {AppScreensParamList} from '../../routes/RoutesParams';
+import {Routes} from '../../shared/constants/Routes';
+
+const INPUT_ICON_SIZE = 20;
 
 const LoginScreen = () => {
+  const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -35,6 +44,10 @@ const LoginScreen = () => {
       setSubmitting(false);
     }
   };
+
+  const goToSignUp = () => navigation.navigate(Routes.SIGN_UP);
+
+  const goToForgotPassword = () => navigation.navigate(Routes.FORGOT_PASSW0RD);
 
   const loginWithGoogle = async () => {
     try {
@@ -77,7 +90,7 @@ const LoginScreen = () => {
             <AntDesignIcon
               name="user"
               style={styles.icon}
-              size={20}
+              size={INPUT_ICON_SIZE}
               color={theme.colors.primary}
             />
           }
@@ -93,7 +106,7 @@ const LoginScreen = () => {
             <AntDesignIcon
               name="lock1"
               style={styles.icon}
-              size={20}
+              size={INPUT_ICON_SIZE}
               color={theme.colors.primary}
             />
           }
@@ -102,6 +115,7 @@ const LoginScreen = () => {
           disabled={submitting}
           style={styles.forgotPasswordBtn}
           title="Forgot Password?"
+          onPress={goToForgotPassword}
           variant={ButtonVariant.TERTIARY}
         />
         <Button
@@ -109,6 +123,13 @@ const LoginScreen = () => {
           onPress={onLoginPress}
           style={styles.loginBtn}
           title="LOGIN"
+        />
+        <Button
+          loading={submitting}
+          onPress={goToSignUp}
+          title="SIGN UP"
+          style={styles.loginBtn}
+          variant={ButtonVariant.SECONDARY}
         />
         <Text style={styles.ssoAlternativeTxt}>
           Or <Text style={styles.ssoAlternativeHighlightTxt}>Login</Text> using
@@ -147,6 +168,7 @@ const createStyles = (theme: AppTheme) =>
     loginBtn: {
       alignSelf: 'center',
       minWidth: 150,
+      marginBottom: theme.spacing,
     },
     forgotPasswordBtn: {
       marginVertical: theme.spacing * 4,
