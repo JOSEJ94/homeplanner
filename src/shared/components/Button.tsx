@@ -31,14 +31,14 @@ const Button = ({
   onPress,
   style,
   loading,
-  disabled,
+  disabled = false,
   fullWidth = false,
   ...rest
 }: CustomButtonProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(
-    () => createStyles(theme, variant, fullWidth),
-    [theme, variant, fullWidth],
+    () => createStyles(theme, variant, fullWidth, disabled),
+    [theme, variant, fullWidth, disabled],
   );
 
   return (
@@ -48,7 +48,7 @@ const Button = ({
       style={[styles.container, style]}
       onPress={onPress}>
       {loading ? (
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator size="small" color={theme.colors.primary} />
       ) : (
         <Text style={styles.text}>{title}</Text>
       )}
@@ -62,6 +62,7 @@ const createStyles = (
   theme: AppTheme,
   variant: ButtonVariant,
   fullWidth: boolean,
+  disabled: boolean,
 ) =>
   StyleSheet.create({
     container: {
@@ -73,21 +74,25 @@ const createStyles = (
       borderColor: 'transparent',
       ...(variant === ButtonVariant.PRIMARY && {
         minWidth: 100,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: disabled
+          ? (theme.disabled as ColorValue)
+          : theme.colors.primary,
         paddingVertical: theme.spacing,
         paddingHorizontal: theme.spacing * 2,
         justifyContent: 'center',
         alignItems: 'center',
       }),
       ...(variant === ButtonVariant.SECONDARY && {
-        borderColor: theme.colors.primary,
+        borderColor: disabled
+          ? (theme.disabled as ColorValue)
+          : theme.colors.primary,
         paddingVertical: theme.spacing,
         paddingHorizontal: theme.spacing * 2,
         justifyContent: 'center',
         alignItems: 'center',
       }),
       ...(variant === ButtonVariant.TERTIARY && {
-        color: theme.colors.primary,
+        color: disabled ? (theme.disabled as ColorValue) : theme.colors.primary,
       }),
     },
     text: {
@@ -95,10 +100,10 @@ const createStyles = (
         color: theme.white as ColorValue,
       }),
       ...(variant === ButtonVariant.SECONDARY && {
-        color: theme.colors.primary as ColorValue,
+        color: disabled ? (theme.disabled as ColorValue) : theme.colors.primary,
       }),
       ...(variant === ButtonVariant.TERTIARY && {
-        color: theme.colors.primary as ColorValue,
+        color: disabled ? (theme.disabled as ColorValue) : theme.colors.primary,
       }),
     },
   });

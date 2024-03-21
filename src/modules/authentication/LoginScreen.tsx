@@ -17,6 +17,7 @@ import Button, {ButtonVariant} from '../../shared/components/Button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {AppScreensParamList} from '../../routes/RoutesParams';
 import {Routes} from '../../shared/constants/Routes';
+import Typography from '../../shared/components/Typography';
 
 const INPUT_ICON_SIZE = 20;
 
@@ -101,6 +102,7 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           containerStyle={styles.loginInput}
           placeholder="Password"
+          secureTextEntry
           textContentType="password"
           icon={
             <AntDesignIcon
@@ -131,10 +133,13 @@ const LoginScreen = () => {
           style={styles.loginBtn}
           variant={ButtonVariant.SECONDARY}
         />
-        <Text style={styles.ssoAlternativeTxt}>
-          Or <Text style={styles.ssoAlternativeHighlightTxt}>Login</Text> using
-          social media
-        </Text>
+        <Typography style={styles.ssoAlternativeTxt}>
+          Or{' '}
+          <Typography style={styles.ssoAlternativeHighlightTxt}>
+            Login
+          </Typography>{' '}
+          using social media
+        </Typography>
         <View style={styles.ssoLoginContainer}>
           <GoogleSigninButton
             onPress={loginWithGoogle}

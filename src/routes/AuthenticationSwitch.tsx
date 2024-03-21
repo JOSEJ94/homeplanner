@@ -39,7 +39,11 @@ const AuthenticationSwitch = () => {
       ) : (
         <Stack.Navigator>
           <Stack.Screen name={Routes.LOGIN} component={LoginScreen} />
-          <Stack.Screen name={Routes.SIGN_UP} component={SignUpScreen} />
+          <Stack.Screen
+            name={Routes.SIGN_UP}
+            component={SignUpScreen}
+            options={{headerTitle: '', headerShadowVisible: false}}
+          />
           <Stack.Screen
             name={Routes.FORGOT_PASSW0RD}
             component={ForgotPassword}

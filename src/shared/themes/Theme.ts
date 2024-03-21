@@ -78,4 +78,5 @@ export const lightTheme: AppTheme = {
   borderLight: PALETTE.subtle,
   warningStrong: PALETTE.purple,
   warningLight: PALETTE.lightPurple,
+  disabled: PALETTE.subtle,
 };
