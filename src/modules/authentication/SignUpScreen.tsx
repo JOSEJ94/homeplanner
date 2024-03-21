@@ -2,11 +2,7 @@ import {View, StyleSheet, ScrollView} from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import React, {useMemo, useState} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
-import {
-  NavigationProp,
-  useNavigation,
-  useTheme,
-} from '@react-navigation/native';
+import {useNavigation, useTheme} from '@react-navigation/native';
 import {AppScreensParamList} from '../../routes/RoutesParams';
 import TextInput from '../../shared/components/TextInput';
 import Typography, {
@@ -15,11 +11,12 @@ import Typography, {
 import Button from '../../shared/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
-
-const INPUT_ICON_SIZE = 20;
+import {INPUT_ICON_SIZE} from '../../shared/constants/Constants';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const SignUpScreen = () => {
-  const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [email, setEmail] = useState('');

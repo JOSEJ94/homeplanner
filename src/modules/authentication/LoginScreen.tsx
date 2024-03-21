@@ -1,10 +1,6 @@
 import {View, Text, StyleSheet, Alert, Platform} from 'react-native';
 import React, {useMemo, useState} from 'react';
-import {
-  NavigationProp,
-  useNavigation,
-  useTheme,
-} from '@react-navigation/native';
+import {useNavigation, useTheme} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {
   GoogleSignin,
@@ -15,14 +11,15 @@ import TextInput from '../../shared/components/TextInput';
 import {AppTheme} from '../../shared/themes/Theme';
 import Button, {ButtonVariant} from '../../shared/components/Button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import {AppScreensParamList} from '../../routes/RoutesParams';
-import {Routes} from '../../shared/constants/Routes';
+import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Typography from '../../shared/components/Typography';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const INPUT_ICON_SIZE = 20;
 
 const LoginScreen = () => {
-  const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -48,7 +45,7 @@ const LoginScreen = () => {
 
   const goToSignUp = () => navigation.navigate(Routes.SIGN_UP);
 
-  const goToForgotPassword = () => navigation.navigate(Routes.FORGOT_PASSW0RD);
+  const goToForgotPassword = () => navigation.navigate(Routes.FORGOT_PASSWORD);
 
   const loginWithGoogle = async () => {
     try {

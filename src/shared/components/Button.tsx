@@ -43,6 +43,7 @@ const Button = ({
 
   return (
     <Pressable
+      hitSlop={theme.hitSlop}
       {...rest}
       disabled={loading || disabled}
       style={[styles.container, style]}
@@ -72,6 +73,7 @@ const createStyles = (
       borderRadius: 25,
       borderWidth: 1,
       borderColor: 'transparent',
+      alignItems: 'center',
       ...(variant === ButtonVariant.PRIMARY && {
         minWidth: 100,
         backgroundColor: disabled
@@ -80,7 +82,6 @@ const createStyles = (
         paddingVertical: theme.spacing,
         paddingHorizontal: theme.spacing * 2,
         justifyContent: 'center',
-        alignItems: 'center',
       }),
       ...(variant === ButtonVariant.SECONDARY && {
         borderColor: disabled
@@ -89,7 +90,6 @@ const createStyles = (
         paddingVertical: theme.spacing,
         paddingHorizontal: theme.spacing * 2,
         justifyContent: 'center',
-        alignItems: 'center',
       }),
       ...(variant === ButtonVariant.TERTIARY && {
         color: disabled ? (theme.disabled as ColorValue) : theme.colors.primary,

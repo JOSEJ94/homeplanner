@@ -2,14 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {lightTheme} from '../shared/themes/Theme';
-import LoginScreen from '../modules/authentication/LoginScreen';
-import {Routes} from '../shared/constants/Routes';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import DashboardScreen from '../modules/dashboard/DashboardScreen';
-import SignUpScreen from '../modules/authentication/SignUpScreen';
-import {AppScreensParamList} from './RoutesParams';
-import ForgotPassword from '../modules/authentication/ForgotPassword';
-
+import {AppScreensParamList, Routes} from './RoutesParams';
+import {
+  ForgotPasswordScreen,
+  LoginScreen,
+  PasswordResetConfirmationScreen,
+  ResetPasswordScreen,
+  SignUpScreen,
+} from '../modules/authentication';
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 
 const AuthenticationSwitch = () => {
@@ -37,16 +39,25 @@ const AuthenticationSwitch = () => {
           <Stack.Screen name={Routes.DASHBOARD} component={DashboardScreen} />
         </Stack.Navigator>
       ) : (
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerTitle: '',
+            headerBackTitle: 'Back',
+            headerShadowVisible: false,
+          }}>
           <Stack.Screen name={Routes.LOGIN} component={LoginScreen} />
+          <Stack.Screen name={Routes.SIGN_UP} component={SignUpScreen} />
           <Stack.Screen
-            name={Routes.SIGN_UP}
-            component={SignUpScreen}
-            options={{headerTitle: '', headerShadowVisible: false}}
+            name={Routes.FORGOT_PASSWORD}
+            component={ForgotPasswordScreen}
           />
           <Stack.Screen
-            name={Routes.FORGOT_PASSW0RD}
-            component={ForgotPassword}
+            name={Routes.PASSWORD_RESET_CONFIRMATION}
+            component={PasswordResetConfirmationScreen}
+          />
+          <Stack.Screen
+            name={Routes.RESET_PASSWORD_WITH_CODE}
+            component={ResetPasswordScreen}
           />
         </Stack.Navigator>
       )}
