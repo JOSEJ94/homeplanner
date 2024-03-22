@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
-import {lightTheme} from '../shared/themes/Theme';
+import {NavigationContainer, useTheme} from '@react-navigation/native';
+import {AppTheme, lightTheme} from '../shared/themes/Theme';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import DashboardScreen from '../modules/dashboard/DashboardScreen';
 import {AppScreensParamList, Routes} from './RoutesParams';
@@ -12,12 +12,25 @@ import {
   ResetPasswordScreen,
   SignUpScreen,
 } from '../modules/authentication';
+import {
+  BottomTabNavigationOptions,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import AccountScreen from '../modules/account/AccountScreen';
+import {renderTabBarIcon} from '../shared/utils/TabBarIcons';
 const Stack = createNativeStackNavigator<AppScreensParamList>();
+const Tab = createBottomTabNavigator();
 
 const AuthenticationSwitch = () => {
+  const theme = useTheme() as AppTheme;
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+
+  const screenDefaultOptions: BottomTabNavigationOptions = {
+    headerShown: false,
+    headerTintColor: theme.colors.primary,
+  };
 
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     setUser(user);
@@ -35,9 +48,48 @@ const AuthenticationSwitch = () => {
   return (
     <NavigationContainer theme={lightTheme}>
       {isSignedIn ? (
-        <Stack.Navigator>
-          <Stack.Screen name={Routes.DASHBOARD} component={DashboardScreen} />
-        </Stack.Navigator>
+        <Tab.Navigator screenOptions={screenDefaultOptions}>
+          <Tab.Screen
+            options={{
+              tabBarLabel: 'Today',
+              tabBarIcon: renderTabBarIcon('calendar'),
+            }}
+            name={Routes.DASHBOARD}
+            component={DashboardScreen}
+          />
+          <Tab.Screen
+            options={{
+              tabBarLabel: 'Chores',
+              tabBarIcon: renderTabBarIcon('list'),
+            }}
+            name={Routes.CHORES_LIST}
+            component={DashboardScreen}
+          />
+          <Tab.Screen
+            name={Routes.CHAT_LIST}
+            options={{
+              tabBarLabel: 'Chats',
+              tabBarIcon: renderTabBarIcon('commenting'),
+            }}
+            component={DashboardScreen}
+          />
+          <Tab.Screen
+            options={{
+              tabBarLabel: 'Family',
+              tabBarIcon: renderTabBarIcon('users'),
+            }}
+            name={Routes.FAMILY}
+            component={DashboardScreen}
+          />
+          <Tab.Screen
+            options={{
+              tabBarLabel: 'Account',
+              tabBarIcon: renderTabBarIcon('user'),
+            }}
+            name={Routes.ACCOUNT}
+            component={AccountScreen}
+          />
+        </Tab.Navigator>
       ) : (
         <Stack.Navigator
           screenOptions={{
