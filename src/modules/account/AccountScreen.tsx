@@ -7,10 +7,14 @@ import Typography, {
 } from '../../shared/components/Typography';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Ionicon from 'react-native-vector-icons/Ionicons';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {AppScreensParamList} from '../../routes/RoutesParams';
 import {AppTheme} from '../../shared/themes/Theme';
 import {getReadableVersion} from 'react-native-device-info';
 import RoundedImage from '../../shared/components/RoundedImage';
+import MenuButton from './components/MenuButton';
 
 const AccountScreen = () => {
   const navigation =
@@ -32,16 +36,44 @@ const AccountScreen = () => {
       <ScrollView
         contentContainerStyle={styles.scrollviewContainer}
         showsVerticalScrollIndicator={false}>
-        {/* TODO: List of actions to include here */}
-        <Typography>Help</Typography>
-        <Typography>Communications</Typography>
-        <Typography>Language</Typography>
-        <Typography>Appearance</Typography>
-        <Typography>Legal</Typography>
-        <Typography>Privacy</Typography>
-        <Typography>About me</Typography>
-        <Typography>Found a bug?</Typography>
-        <Typography>Sign out</Typography>
+        <View>
+          <MenuButton
+            title="Help"
+            icon={<Ionicon size={20} name="help-buoy" />}
+          />
+          <MenuButton
+            title="Communications"
+            icon={<Ionicon size={20} name="help-buoy" />}
+          />
+          <MenuButton
+            title="Language"
+            icon={<AntDesignIcon size={20} name="earth" />}
+          />
+          <MenuButton
+            title="Appearance"
+            icon={<Ionicon size={20} name="help-buoy" />}
+          />
+          <MenuButton
+            title="Legal"
+            icon={<FontAwesomeIcon size={20} name="legal" />}
+          />
+          <MenuButton
+            title="Privacy"
+            icon={<AntDesignIcon size={20} name="eye" />}
+          />
+          <MenuButton
+            title="About me"
+            icon={<AntDesignIcon size={20} name="info" />}
+          />
+          <MenuButton
+            title="Found a bug?"
+            icon={<FontAwesomeIcon size={20} name="bug" />}
+          />
+          <MenuButton
+            title="Sign Out"
+            icon={<Ionicon size={20} name="help-buoy" />}
+          />
+        </View>
         <Typography style={styles.versionTxt}>v{version}</Typography>
       </ScrollView>
     </SafeAreaView>
@@ -67,9 +99,12 @@ const createStyles = (theme: AppTheme) =>
       width: 60,
     },
     scrollviewContainer: {
+      justifyContent: 'space-between',
+      flex: 1,
       paddingHorizontal: theme.spacing * 2,
     },
     versionTxt: {
       color: theme.disabled as ColorValue,
+      marginBottom: theme.spacing * 3,
     },
   });
