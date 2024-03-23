@@ -6,19 +6,17 @@ import {
   ViewStyle,
   PressableProps,
   TextStyle,
-  ColorValue,
 } from 'react-native';
 import React, {ReactNode, useMemo} from 'react';
 import {AppTheme} from '../../../shared/themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import Typography from '../../../shared/components/Typography';
-import {Icon} from 'react-native-vector-icons/Icon';
 
 interface MenuButtonProps extends PressableProps {
   title: string;
-  titleStyle?: StyleProp<ViewStyle>;
+  titleStyle?: StyleProp<TextStyle>;
   hint?: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   style?: StyleProp<ViewStyle>;
   hintStyle?: StyleProp<TextStyle>;
 }
@@ -37,10 +35,12 @@ const MenuButton = ({
 
   return (
     <Pressable style={[styles.container, style]} {...rest}>
-      {icon}
+      <View style={styles.icon}>{icon}</View>
       <View style={styles.informationContainer}>
-        <Typography style={titleStyle}>{title}</Typography>
-        {Boolean(hint) && <Typography style={hintStyle}>{hint}</Typography>}
+        <Typography style={[styles.titleTxt, titleStyle]}>{title}</Typography>
+        {Boolean(hint) && (
+          <Typography style={[styles.hintTxt, hintStyle]}>{hint}</Typography>
+        )}
       </View>
     </Pressable>
   );
@@ -52,10 +52,18 @@ const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
+      alignItems: 'center',
       paddingVertical: theme.spacing * 2,
     },
+    titleTxt: {
+      fontWeight: '500',
+    },
     hintTxt: {
-      color: theme.text.subtle as ColorValue,
+      fontSize: 14,
+      fontWeight: '200',
+    },
+    icon: {
+      minWidth: 20,
     },
     informationContainer: {
       marginHorizontal: theme.spacing * 2,
