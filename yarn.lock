@@ -1926,6 +1926,11 @@
   resolved "https://registry.npmjs.org/@react-native/js-polyfills/-/js-polyfills-0.73.1.tgz"
   integrity sha512-ewMwGcumrilnF87H4jjrnvGZEaPFCAC4ebraEK+CurDDmwST/bIicI4hrOAv+0Z0F7DEK4O4H7r8q9vH7IbN4g==
 
+"@react-native/js-polyfills@0.74.75":
+  version "0.74.75"
+  resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.74.75.tgz#87edbb37d1d6f72d6767d59a53b6f49b61982550"
+  integrity sha512-PxoeNwqxeIMPOK1od0y3ZkvL/xq1WBjJeyqar/jkJRKYcK9SWtpXEA1pc4RdIhqbd0QZOg+8X0eGSxetLF8F4w==
+
 "@react-native/metro-babel-transformer@0.73.15":
   version "0.73.15"
   resolved "https://registry.npmjs.org/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.73.15.tgz"
@@ -1936,13 +1941,23 @@
     hermes-parser "0.15.0"
     nullthrows "^1.1.1"
 
-"@react-native/metro-config@0.73.5":
-  version "0.73.5"
-  resolved "https://registry.npmjs.org/@react-native/metro-config/-/metro-config-0.73.5.tgz"
-  integrity sha512-3bNWoHzOzP/+qoLJtRhOVXrnxKmSY3i4y5PXyMQlIvvOI/GQbXulPpEZxK/yUrf1MmeXHLLFufFbQWlfDEDoxA==
+"@react-native/metro-babel-transformer@0.74.75":
+  version "0.74.75"
+  resolved "https://registry.yarnpkg.com/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.74.75.tgz#34d34f50039103efc1830d3b0b935b7a1b9ef1c3"
+  integrity sha512-4P4gvSd5I+Pl9cHKbAbo9W1VPqe1ZE4jbuhzBmks6ZibuXB2C5crNQGhLOuos8cExsobCJ3nEiNogfzBKPSahQ==
   dependencies:
-    "@react-native/js-polyfills" "0.73.1"
-    "@react-native/metro-babel-transformer" "0.73.15"
+    "@babel/core" "^7.20.0"
+    "@react-native/babel-preset" "0.74.75"
+    hermes-parser "0.19.1"
+    nullthrows "^1.1.1"
+
+"@react-native/metro-config@0.74.75":
+  version "0.74.75"
+  resolved "https://registry.yarnpkg.com/@react-native/metro-config/-/metro-config-0.74.75.tgz#7cc2fe66450a6ba1e9dfeb7c1fe1b28140c321f0"
+  integrity sha512-BT0F4HZ6WUUGk/6HLOpiBOihpowsmDE+efAB1ZlsANVEmQy8WJCZzXzDOlZuFXEVZeSGmY6OM0optIxgs40QzA==
+  dependencies:
+    "@react-native/js-polyfills" "0.74.75"
+    "@react-native/metro-babel-transformer" "0.74.75"
     metro-config "^0.80.3"
     metro-runtime "^0.80.3"
 
