@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "bump-major": "npm version major --no-git-tag-version && (cd android && bundle exec fastlane bump) && (cd ios && bundle exec fastlane bump)",
+    "bump-minor": "npm version minor --no-git-tag-version && (cd android && bundle exec fastlane bump) && (cd ios && bundle exec fastlane bump)",
+    "bump-patch": "npm version patch --no-git-tag-version && (cd android && bundle exec fastlane bump) && (cd ios && bundle exec fastlane bump)",
     "ios": "react-native run-ios",
     "ipods": "cd ios && bundle exec pod install",
     "lint": "eslint .",
