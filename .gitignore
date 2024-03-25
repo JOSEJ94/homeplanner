@@ -68,3 +68,6 @@ yarn-error.log
 #Firebase configs
 **/google-services.json
 **/GoogleService-Info.plist
+
+#Fastlane secrets
+**/fastlane/secrets/*
