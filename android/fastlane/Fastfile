@@ -28,6 +28,22 @@ platform :android do
     )
   end
 
+  desc "Send build to Firebase App Distribution for testing"
+  lane :distribute_internal do
+      build_android_app(
+        task: "bundle",
+        build_type: 'Release'
+      )
+      json_data = load_json(json_path: './app/google-services.json')
+      mobilesdk_app_id = json_data["client"][0]["client_info"]["mobilesdk_app_id"]
+      release = firebase_app_distribution(
+          app: mobilesdk_app_id,
+          groups: "testers",
+          android_artifact_type: "AAB",
+          service_credentials_file: "../fastlane/secrets/firebase_app_distribution_service_account.json"
+      )
+  end
+
   # desc "Runs all the tests"
   # lane :test do
   #   gradle(task: "test")

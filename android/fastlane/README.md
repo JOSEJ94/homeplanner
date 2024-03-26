@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Bump build number and set the version to match the package.json version.
 
+### android distribute_internal
+
+```sh
+[bundle exec] fastlane android distribute_internal
+```
+
+Send build to Firebase App Distribution for testing
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
