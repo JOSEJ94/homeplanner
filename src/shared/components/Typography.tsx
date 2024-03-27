@@ -5,8 +5,9 @@ import {useTheme} from '@react-navigation/native';
 
 export enum TypographyVariant {
   BODY = 'Body',
-  HEADING = 'Heading',
   CAPTION = 'Caption',
+  HEADING = 'Heading',
+  SUB_HEADING = 'Sub Heading',
 }
 
 interface TypographyProps extends TextProps {
@@ -36,6 +37,10 @@ const createStyles = (theme: AppTheme, variant: TypographyVariant) =>
     text: {
       ...(variant === TypographyVariant.HEADING && {
         fontSize: 34,
+        fontWeight: 'bold',
+      }),
+      ...(variant === TypographyVariant.SUB_HEADING && {
+        fontSize: 30,
         fontWeight: 'bold',
       }),
       ...(variant === TypographyVariant.CAPTION && {
