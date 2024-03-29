@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
+import Typography from './Typography';
 
 interface CustomTextInputProps extends TextInputProps {
   title?: string;
@@ -36,7 +37,7 @@ const TextInput = ({
 
   return (
     <View style={containerStyle}>
-      {Boolean(title) && <Text>{title}</Text>}
+      {Boolean(title) && <Typography>{title}</Typography>}
       <View
         style={[
           styles.inputContainer,

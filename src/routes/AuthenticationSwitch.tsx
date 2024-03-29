@@ -19,6 +19,10 @@ import {
 import AccountScreen from '../modules/account/AccountScreen';
 import {renderTabBarIcon} from '../shared/utils/TabBarIcons';
 import CommunicationSettingsScreen from '../modules/account/CommunicationSettingsScreen';
+import HomeScreen from '../modules/home/HomeScreen';
+import RoomEditor from '../modules/home/RoomEditor';
+import ColorPicker from '../shared/modules/ColorPicker';
+import IconPicker from '../shared/modules/IconPicker';
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
 
@@ -26,7 +30,6 @@ const AuthenticationSwitch = () => {
   const theme = useTheme() as AppTheme;
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   const screenDefaultOptions: BottomTabNavigationOptions = {
     headerShown: false,
@@ -34,7 +37,6 @@ const AuthenticationSwitch = () => {
   };
 
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user);
     setIsSignedIn(Boolean(user));
     if (initializing) setInitializing(false);
   };
@@ -74,11 +76,11 @@ const AuthenticationSwitch = () => {
       />
       <Tab.Screen
         options={{
-          tabBarLabel: 'Family',
-          tabBarIcon: renderTabBarIcon('users'),
+          tabBarLabel: 'Home',
+          tabBarIcon: renderTabBarIcon('home'),
         }}
         name={Routes.FAMILY}
-        component={DashboardScreen}
+        component={HomeScreen}
       />
       <Tab.Screen
         options={{
@@ -95,22 +97,36 @@ const AuthenticationSwitch = () => {
     <NavigationContainer theme={lightTheme}>
       <Stack.Navigator>
         {isSignedIn ? (
-          <Stack.Group
-            screenOptions={{
-              headerTitle: '',
-              headerBackTitle: 'Back',
-              headerShadowVisible: false,
-            }}>
-            <Stack.Screen
-              name={Routes.TAB_BAR}
-              options={{headerShown: false}}
-              component={RenderTabBar}
-            />
-            <Stack.Screen
-              name={Routes.COMMUNICATION_SETTINGS}
-              component={CommunicationSettingsScreen}
-            />
-          </Stack.Group>
+          <>
+            <Stack.Group
+              screenOptions={{
+                headerTitle: '',
+                headerBackTitle: 'Back',
+                headerShadowVisible: false,
+              }}>
+              <Stack.Screen
+                name={Routes.TAB_BAR}
+                options={{headerShown: false}}
+                component={RenderTabBar}
+              />
+              <Stack.Screen
+                name={Routes.COMMUNICATION_SETTINGS}
+                component={CommunicationSettingsScreen}
+              />
+              <Stack.Screen name={Routes.ROOM_EDITOR} component={RoomEditor} />
+            </Stack.Group>
+            <Stack.Group
+              screenOptions={{
+                animation: 'slide_from_bottom',
+                presentation: 'containedModal',
+              }}>
+              <Stack.Screen
+                name={Routes.COLOR_PICKER}
+                component={ColorPicker}
+              />
+              <Stack.Screen name={Routes.ICON_PICKER} component={IconPicker} />
+            </Stack.Group>
+          </>
         ) : (
           <Stack.Group
             screenOptions={{

@@ -12,6 +12,8 @@ export const PALETTE = {
   blue: '#4169e1',
   purple: '#42196e',
   lightPurple: '#e2cafc',
+  lightGray1: '#878787',
+  green: '#1a821c',
 };
 
 export const DEFAULT_SPACING = 8;
@@ -79,4 +81,6 @@ export const lightTheme: AppTheme = {
   warningStrong: PALETTE.purple,
   warningLight: PALETTE.lightPurple,
   disabled: PALETTE.subtle,
+  faded: PALETTE.lightGray1,
+  success: PALETTE.green,
 };

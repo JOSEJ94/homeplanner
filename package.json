@@ -21,11 +21,17 @@
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "colorsys": "^1.0.22",
     "react": "18.2.0",
     "react-native": "0.73.6",
+    "react-native-calendars": "^1.1304.1",
     "react-native-device-info": "^10.13.1",
+    "react-native-light-color-picker": "^1.0.0-rc.8",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-safe-area-context": "^4.9.0",
     "react-native-screens": "^3.29.0",
+    "react-native-svg": "^15.1.0",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-vector-icons": "^10.0.3"
   },
   "devDependencies": {
