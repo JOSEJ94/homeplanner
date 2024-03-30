@@ -23,6 +23,7 @@ import HomeScreen from '../modules/home/HomeScreen';
 import RoomEditor from '../modules/home/RoomEditor';
 import ColorPicker from '../shared/modules/ColorPicker';
 import IconPicker from '../shared/modules/IconPicker';
+import InviteFamilyMember from '../modules/home/InviteFamilyMember';
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
 
@@ -114,6 +115,10 @@ const AuthenticationSwitch = () => {
                 component={CommunicationSettingsScreen}
               />
               <Stack.Screen name={Routes.ROOM_EDITOR} component={RoomEditor} />
+              <Stack.Screen
+                name={Routes.INVITE_FAMILY_MEMBER}
+                component={InviteFamilyMember}
+              />
             </Stack.Group>
             <Stack.Group
               screenOptions={{

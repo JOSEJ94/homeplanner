@@ -24,9 +24,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {RoomDto} from '../../shared/models/RoomDto';
 import {IconType} from '../../shared/modules/IconPicker';
+import FamilyMemberCard from './components/FamilyMemberCard';
+import {FamilyMemberDto} from '../../shared/models/FamilyMemberDto';
 
 interface Section {
-  list: RoomDto[];
+  list: RoomDto[] | FamilyMemberDto[];
 }
 
 const HomeScreen = () => {
@@ -38,13 +40,25 @@ const HomeScreen = () => {
     <RoomCard room={info.item} />
   );
 
-  const renderSection = (info: SectionListRenderItemInfo<Section>) => {
+  const renderFamilyMember = (info: ListRenderItemInfo<FamilyMemberDto>) => (
+    <FamilyMemberCard familyMember={info.item} />
+  );
+
+  const renderRoomSection = (info: SectionListRenderItemInfo<Section>) => {
     return (
       <FlatList
-        data={info.item.list}
+        data={info.item.list as RoomDto[]}
         numColumns={2}
         renderItem={renderRoom}
-        // keyExtractor={this.keyExtractor}
+      />
+    );
+  };
+
+  const renderFamilySection = (info: SectionListRenderItemInfo<Section>) => {
+    return (
+      <FlatList
+        data={info.item.list as FamilyMemberDto[]}
+        renderItem={renderFamilyMember}
       />
     );
   };
@@ -73,6 +87,15 @@ const HomeScreen = () => {
     },
   ];
 
+  const familyMember: FamilyMemberDto[] = [
+    {
+      id: '1',
+      name: 'John Doe',
+      photo:
+        'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg',
+    },
+  ];
+
   const sections: SectionListData<Section>[] = [
     {
       title: 'Rooms',
@@ -82,23 +105,32 @@ const HomeScreen = () => {
           list: rooms,
         },
       ],
-      renderItem: renderSection,
+      renderItem: renderRoomSection,
     },
-    // {
-    //   title: 'Family',
-    //   key: 'Family',
-    //   data: [],
-    // },
+    {
+      title: 'Family',
+      key: 'Family',
+      data: [
+        {
+          list: familyMember,
+        },
+      ],
+      renderItem: renderFamilySection,
+    },
   ];
   const renderSectionHeader = (info: {section: SectionListData<Section>}) => {
     const navigateToEditor = () => navigation.navigate(Routes.ROOM_EDITOR);
+    const navigateToInviteMember = () =>
+      navigation.navigate(Routes.INVITE_FAMILY_MEMBER);
+    const navigate =
+      info.section.key === 'Rooms' ? navigateToEditor : navigateToInviteMember;
 
     return (
       <View style={styles.roomsHeaderContainer}>
         <Typography variant={TypographyVariant.SUB_HEADING}>
           {info.section.title}
         </Typography>
-        <Pressable onPress={navigateToEditor} style={styles.addBtn}>
+        <Pressable onPress={navigate} style={styles.addBtn}>
           <Icon
             name="add-circle-outline"
             size={25}
@@ -110,15 +142,14 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       <SectionList
-        style={{flex: 1}}
+        style={styles.container}
         ListHeaderComponent={
           <Typography variant={TypographyVariant.HEADING}>Your home</Typography>
         }
         sections={sections}
         renderSectionHeader={renderSectionHeader}
-        renderItem={() => <View />}
       />
     </SafeAreaView>
   );
@@ -128,7 +159,9 @@ export default HomeScreen;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
-    container: {},
+    container: {
+      flex: 1,
+    },
     roomsHeaderContainer: {
       flexDirection: 'row',
       alignContent: 'center',

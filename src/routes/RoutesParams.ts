@@ -11,6 +11,7 @@ export enum Routes {
   FORGOT_PASSWORD = 'Forgot Password',
   HOME = 'Home',
   ICON_PICKER = 'Icon Picker',
+  INVITE_FAMILY_MEMBER = 'Invite Family Member',
   LOGIN = 'Login',
   PASSWORD_RESET_CONFIRMATION = 'Password Reset Confirmation',
   RESET_PASSWORD_WITH_CODE = 'Reset Password With Code',
@@ -36,6 +37,7 @@ export type AppScreensParamList = {
     currentIcon?: Icon;
     onIconSelected: (icon: Icon) => void;
   };
+  [Routes.INVITE_FAMILY_MEMBER]: {email: string} | undefined;
   [Routes.LOGIN]: undefined;
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};
   [Routes.RESET_PASSWORD_WITH_CODE]: {code: string} | undefined;
