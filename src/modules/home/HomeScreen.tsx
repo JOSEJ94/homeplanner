@@ -7,6 +7,7 @@ import {
   SectionListRenderItemInfo,
   FlatList,
   ListRenderItemInfo,
+  ColorValue,
 } from 'react-native';
 import React, {useMemo} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
@@ -146,7 +147,9 @@ const HomeScreen = () => {
       <SectionList
         style={styles.container}
         ListHeaderComponent={
-          <Typography variant={TypographyVariant.HEADING}>Your home</Typography>
+          <Typography style={styles.header} variant={TypographyVariant.HEADING}>
+            Your home
+          </Typography>
         }
         sections={sections}
         renderSectionHeader={renderSectionHeader}
@@ -165,6 +168,8 @@ const createStyles = (theme: AppTheme) =>
     roomsHeaderContainer: {
       flexDirection: 'row',
       alignContent: 'center',
+      paddingHorizontal: theme.spacing,
+      backgroundColor: theme.white as ColorValue,
     },
     roomsAddBtn: {
       alignSelf: 'flex-end',
@@ -174,5 +179,9 @@ const createStyles = (theme: AppTheme) =>
       alignSelf: 'flex-end',
       marginBottom: theme.spacing / 2,
       marginLeft: theme.spacing,
+    },
+    header: {
+      paddingTop: theme.spacing,
+      paddingHorizontal: theme.spacing,
     },
   });
