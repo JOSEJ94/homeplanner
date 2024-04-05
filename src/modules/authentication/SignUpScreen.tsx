@@ -13,6 +13,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import {INPUT_ICON_SIZE} from '../../shared/constants/Constants';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useMutation} from '@apollo/client';
+import {CreateUserDocument} from '../../graphql/generated';
 
 const SignUpScreen = () => {
   const navigation =
@@ -23,10 +25,21 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const [createUser] = useMutation(CreateUserDocument);
+
   const onSignUpPress = async () => {
     try {
       setSubmitting(true);
-      await auth().createUserWithEmailAndPassword(email, password);
+      const credentials = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+      await createUser({
+        variables: {
+          email: email,
+          id: credentials.user.uid,
+        },
+      });
     } catch (error: any) {
     } finally {
       setSubmitting(false);
