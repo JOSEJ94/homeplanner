@@ -14,8 +14,8 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Typography from '../../shared/components/Typography';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useMutation} from '@apollo/client';
-import {CreateUserDocument} from '../../graphql/generated';
+import {useLazyQuery, useMutation} from '@apollo/client';
+import {CreateUserDocument, GetMyUserDocument} from '../../graphql/generated';
 
 const INPUT_ICON_SIZE = 20;
 
@@ -28,6 +28,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [getMyUser] = useLazyQuery(GetMyUserDocument);
   const [createUser] = useMutation(CreateUserDocument);
 
   const onLoginPress = async () => {
@@ -54,14 +55,16 @@ const LoginScreen = () => {
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const credentials = await auth().signInWithCredential(googleCredential);
-      await createUser({
-        variables: {
-          email: credentials.user.email || '',
-          name: credentials.user.displayName,
-          id: credentials.user.uid,
-        },
-      });
-      console.log('userInfo', credentials);
+      const user = await getMyUser();
+      if (!user) {
+        await createUser({
+          variables: {
+            email: credentials.user.email || '',
+            name: credentials.user.displayName,
+            id: credentials.user.uid,
+          },
+        });
+      }
     } catch (error: any) {
       // TODO: Improve error handling here.
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

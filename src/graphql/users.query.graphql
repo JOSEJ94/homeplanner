@@ -8,6 +8,16 @@ query GetUsers {
   }
 }
 
+query getMyUser {
+  getMyUser {
+    createdAt
+    email
+    id
+    name
+    updatedAt
+  }
+}
+
 mutation createUser($id: String!, $email: String!, $name: String) {
   createUser(email: $email, id: $id, name: $name) {
     createdAt
