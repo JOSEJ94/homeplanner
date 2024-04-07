@@ -88,6 +88,7 @@ const RoomEditor = () => {
           }}
         />
         <TextInput
+          maxLength={25}
           value={selectedRoomName}
           containerStyle={styles.roomNameInput}
           title="Room name"
