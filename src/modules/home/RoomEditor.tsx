@@ -1,5 +1,5 @@
 import {Dimensions, ScrollView, StyleSheet, View} from 'react-native';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
 import {
   RouteProp,
@@ -13,7 +13,14 @@ import TextInput from '../../shared/components/TextInput';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Button, {ButtonVariant} from '../../shared/components/Button';
 import RoomCard from './components/RoomCard';
-import {Icon, IconType} from '../../shared/modules/IconPicker';
+import {Icon} from '../../shared/modules/IconPicker';
+import {GetRoomDetailsDocument, IconType} from '../../graphql/generated';
+import {useQuery} from '@apollo/client';
+
+const DEFAULT_ICON: Icon = {
+  name: 'home',
+  type: IconType.Fontawesome,
+};
 
 const RoomEditor = () => {
   const theme = useTheme() as AppTheme;
@@ -22,20 +29,35 @@ const RoomEditor = () => {
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const route = useRoute<RouteProp<AppScreensParamList>>();
   const params = route.params as AppScreensParamList[Routes.ROOM_EDITOR];
+  const id = params?.id || '';
+  const {data, loading, error} = useQuery(GetRoomDetailsDocument, {
+    variables: {id},
+    skip: !id,
+  });
+  const existingRoomDetails = data?.getRoomDetails;
   const [saving, setSaving] = useState(false);
   const [selectedRoomName, setSelectedRoomName] = useState('');
-  const [selectedRoomIcon, setSelectedRoomIcon] = useState<Icon>({
-    name: 'home',
-    type: IconType.FontAwesome,
-  });
+  const [selectedRoomIcon, setSelectedRoomIcon] = useState<Icon>(DEFAULT_ICON);
   const [selectedRoomColor, setSelectedRoomColor] = useState('#FF0000');
+
+  useEffect(() => {
+    if (existingRoomDetails) {
+      setSelectedRoomName(existingRoomDetails.name);
+      setSelectedRoomIcon({
+        name: existingRoomDetails.iconName,
+        type: existingRoomDetails.iconType,
+      });
+      setSelectedRoomName(existingRoomDetails.name);
+      setSelectedRoomColor(existingRoomDetails.color);
+    }
+  }, [existingRoomDetails]);
 
   useMemo(
     () =>
       navigation.setOptions({
-        headerTitle: params?.id ? 'Edit Room' : 'New Room',
+        headerTitle: id ? 'Edit Room' : 'New Room',
       }),
-    [params?.id],
+    [id],
   );
 
   const pickAColor = () =>
@@ -63,7 +85,7 @@ const RoomEditor = () => {
             color: selectedRoomColor,
             iconName: selectedRoomIcon?.name,
             iconType: selectedRoomIcon?.type,
-            id: params?.id ?? '',
+            id,
           }}
         />
         <TextInput

@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, Pressable, StyleSheet} from 'react-native';
+import {View, ScrollView, Pressable, StyleSheet} from 'react-native';
 import React, {useMemo, useState} from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
@@ -11,11 +11,7 @@ import {AppTheme} from '../themes/Theme';
 import Button from '../components/Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
-
-export enum IconType {
-  FontAwesome,
-  AntDesign,
-}
+import {IconType} from '../../graphql/generated';
 
 export interface Icon {
   name: string;
@@ -23,28 +19,28 @@ export interface Icon {
 }
 
 const icons: Icon[] = [
-  {name: 'glass', type: IconType.FontAwesome},
-  {name: 'suitcase', type: IconType.FontAwesome},
-  {name: 'heart', type: IconType.FontAwesome},
-  {name: 'music', type: IconType.FontAwesome},
-  {name: 'star', type: IconType.FontAwesome},
-  {name: 'home', type: IconType.FontAwesome},
-  {name: 'gear', type: IconType.FontAwesome},
-  {name: 'leaf', type: IconType.FontAwesome},
-  {name: 'shopping-cart', type: IconType.FontAwesome},
-  {name: 'folder', type: IconType.FontAwesome},
-  {name: 'coffee', type: IconType.FontAwesome},
-  {name: 'cutlery', type: IconType.FontAwesome},
-  {name: 'bank', type: IconType.FontAwesome},
-  {name: 'automobile', type: IconType.FontAwesome},
-  {name: 'motorcycle', type: IconType.FontAwesome},
-  {name: 'bed', type: IconType.FontAwesome},
-  {name: 'bath', type: IconType.FontAwesome},
+  {name: 'glass', type: IconType.Fontawesome},
+  {name: 'suitcase', type: IconType.Fontawesome},
+  {name: 'heart', type: IconType.Fontawesome},
+  {name: 'music', type: IconType.Fontawesome},
+  {name: 'star', type: IconType.Fontawesome},
+  {name: 'home', type: IconType.Fontawesome},
+  {name: 'gear', type: IconType.Fontawesome},
+  {name: 'leaf', type: IconType.Fontawesome},
+  {name: 'shopping-cart', type: IconType.Fontawesome},
+  {name: 'folder', type: IconType.Fontawesome},
+  {name: 'coffee', type: IconType.Fontawesome},
+  {name: 'cutlery', type: IconType.Fontawesome},
+  {name: 'bank', type: IconType.Fontawesome},
+  {name: 'automobile', type: IconType.Fontawesome},
+  {name: 'motorcycle', type: IconType.Fontawesome},
+  {name: 'bed', type: IconType.Fontawesome},
+  {name: 'bath', type: IconType.Fontawesome},
 ];
 
 const getIcon = (icon: IconType) => {
   switch (icon) {
-    case IconType.FontAwesome:
+    case IconType.Fontawesome:
       return FontAwesomeIcon;
     default:
       return FontAwesomeIcon;

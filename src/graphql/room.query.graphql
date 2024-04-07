@@ -1,0 +1,9 @@
+query getRoomDetails($id: ID!) {
+  getRoomDetails(id: $id) {
+    color
+    iconName
+    iconType
+    id
+    name
+  }
+}

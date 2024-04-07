@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 import {RoomDto} from '../../../shared/models/RoomDto';
 
-const ICON_SIZE = 45;
+const ICON_SIZE = 35;
 
 interface RoomCardProps {
   room: RoomDto;

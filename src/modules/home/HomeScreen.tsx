@@ -24,9 +24,10 @@ import RoomCard from './components/RoomCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {RoomDto} from '../../shared/models/RoomDto';
-import {IconType} from '../../shared/modules/IconPicker';
 import FamilyMemberCard from './components/FamilyMemberCard';
 import {FamilyMemberDto} from '../../shared/models/FamilyMemberDto';
+import {useQuery} from '@apollo/client';
+import {GetHomeDocument} from '../../graphql/generated';
 
 interface Section {
   list: RoomDto[] | FamilyMemberDto[];
@@ -36,6 +37,9 @@ const HomeScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
+  const {data: homeData, loading, error} = useQuery(GetHomeDocument);
+  const home = homeData?.getMyHome;
+  const rooms = home?.rooms ?? [];
 
   const renderRoom = (info: ListRenderItemInfo<RoomDto>) => (
     <RoomCard room={info.item} />
@@ -63,30 +67,6 @@ const HomeScreen = () => {
       />
     );
   };
-
-  const rooms: RoomDto[] = [
-    {
-      color: 'red',
-      iconName: 'home',
-      iconType: IconType.AntDesign,
-      id: '1',
-      name: 'Bedroom',
-    },
-    {
-      color: 'green',
-      iconName: 'user',
-      iconType: IconType.AntDesign,
-      id: '2',
-      name: 'Bathroom',
-    },
-    {
-      color: 'brown',
-      iconName: 'user',
-      iconType: IconType.AntDesign,
-      id: '2',
-      name: 'Kitchen',
-    },
-  ];
 
   const familyMember: FamilyMemberDto[] = [
     {
@@ -148,7 +128,7 @@ const HomeScreen = () => {
         style={styles.container}
         ListHeaderComponent={
           <Typography style={styles.header} variant={TypographyVariant.HEADING}>
-            Your home
+            {home?.name}
           </Typography>
         }
         sections={sections}

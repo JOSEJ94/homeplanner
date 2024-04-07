@@ -55,8 +55,8 @@ const LoginScreen = () => {
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const credentials = await auth().signInWithCredential(googleCredential);
-      const user = await getMyUser();
-      if (!user) {
+      const response = await getMyUser();
+      if (!response.data?.getMyUser) {
         await createUser({
           variables: {
             email: credentials.user.email || '',
