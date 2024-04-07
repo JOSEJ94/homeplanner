@@ -14,8 +14,14 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Button, {ButtonVariant} from '../../shared/components/Button';
 import RoomCard from './components/RoomCard';
 import {Icon} from '../../shared/modules/IconPicker';
-import {GetRoomDetailsDocument, IconType} from '../../graphql/generated';
-import {useQuery} from '@apollo/client';
+import {
+  CreateRoomDocument,
+  GetHomeDocument,
+  GetRoomDetailsDocument,
+  IconType,
+  UpdateRoomDocument,
+} from '../../graphql/generated';
+import {useMutation, useQuery} from '@apollo/client';
 
 const DEFAULT_ICON: Icon = {
   name: 'home',
@@ -34,8 +40,11 @@ const RoomEditor = () => {
     variables: {id},
     skip: !id,
   });
+  const [createRoom, {loading: submittingRoomCreation}] =
+    useMutation(CreateRoomDocument);
+  const [updateRoom, {loading: submittingRoomUpdate}] =
+    useMutation(UpdateRoomDocument);
   const existingRoomDetails = data?.getRoomDetails;
-  const [saving, setSaving] = useState(false);
   const [selectedRoomName, setSelectedRoomName] = useState('');
   const [selectedRoomIcon, setSelectedRoomIcon] = useState<Icon>(DEFAULT_ICON);
   const [selectedRoomColor, setSelectedRoomColor] = useState('#FF0000');
@@ -70,6 +79,36 @@ const RoomEditor = () => {
       currentIcon: selectedRoomIcon,
       onIconSelected: setSelectedRoomIcon,
     });
+
+  const onSavePress = async () => {
+    try {
+      if (id) {
+        await updateRoom({
+          variables: {
+            id,
+            color: selectedRoomColor,
+            iconName: selectedRoomIcon.name,
+            iconType: selectedRoomIcon.type,
+            name: selectedRoomName,
+          },
+          refetchQueries: [GetHomeDocument],
+        });
+      } else {
+        await createRoom({
+          variables: {
+            color: selectedRoomColor,
+            iconName: selectedRoomIcon.name,
+            iconType: selectedRoomIcon.type,
+            name: selectedRoomName,
+          },
+          refetchQueries: [GetHomeDocument],
+        });
+      }
+      navigation.goBack();
+    } catch (error: any) {
+      console.error('Error', error.message);
+    }
+  };
 
   const isSavingButtonDisabled =
     !selectedRoomName || !selectedRoomColor || !selectedRoomIcon;
@@ -109,9 +148,9 @@ const RoomEditor = () => {
         </View>
       </View>
       <Button
-        loading={saving}
+        loading={submittingRoomCreation || submittingRoomUpdate}
         disabled={isSavingButtonDisabled}
-        onPress={navigation.goBack}
+        onPress={onSavePress}
         title="Save"
         fullWidth
       />

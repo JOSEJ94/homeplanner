@@ -9,7 +9,7 @@ import {
   ListRenderItemInfo,
   ColorValue,
 } from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
 import {
   NavigationProp,
@@ -37,12 +37,20 @@ const HomeScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
+  const [selectedRoom, setSelectedRoom] = useState<string>('');
   const {data: homeData, loading, error} = useQuery(GetHomeDocument);
   const home = homeData?.getMyHome;
   const rooms = home?.rooms ?? [];
 
   const renderRoom = (info: ListRenderItemInfo<RoomDto>) => (
-    <RoomCard room={info.item} />
+    <RoomCard
+      key={info.item.id}
+      room={info.item}
+      shake={selectedRoom === info.item.id}
+      onLongPress={() =>
+        setSelectedRoom(selectedRoom === info.item.id ? '' : info.item.id)
+      }
+    />
   );
 
   const renderFamilyMember = (info: ListRenderItemInfo<FamilyMemberDto>) => (
@@ -52,6 +60,7 @@ const HomeScreen = () => {
   const renderRoomSection = (info: SectionListRenderItemInfo<Section>) => {
     return (
       <FlatList
+        style={styles.roomsContainer}
         data={info.item.list as RoomDto[]}
         numColumns={2}
         renderItem={renderRoom}
@@ -163,5 +172,8 @@ const createStyles = (theme: AppTheme) =>
     header: {
       paddingTop: theme.spacing,
       paddingHorizontal: theme.spacing,
+    },
+    roomsContainer: {
+      marginVertical: theme.spacing,
     },
   });

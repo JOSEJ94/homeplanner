@@ -7,3 +7,59 @@ query getRoomDetails($id: ID!) {
     name
   }
 }
+
+mutation createRoom(
+  $color: String!
+  $iconName: String!
+  $iconType: IconType!
+  $name: String!
+  $home: ID
+) {
+  createRoom(
+    color: $color
+    iconName: $iconName
+    iconType: $iconType
+    name: $name
+    home: $home
+  ) {
+    color
+    iconName
+    iconType
+    id
+    name
+    tasks {
+      id
+    }
+  }
+}
+
+mutation updateRoom(
+  $color: String!
+  $iconName: String!
+  $iconType: IconType!
+  $name: String!
+  $id: ID!
+) {
+  updateRoom(
+    color: $color
+    iconName: $iconName
+    iconType: $iconType
+    name: $name
+    id: $id
+  ) {
+    color
+    iconName
+    iconType
+    id
+    name
+    tasks {
+      id
+    }
+  }
+}
+
+mutation deleteRoom($id: ID!) {
+  deleteRoom(id: $id) {
+    id
+  }
+}
