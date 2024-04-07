@@ -47,7 +47,6 @@ const RoomEditor = () => {
         name: existingRoomDetails.iconName,
         type: existingRoomDetails.iconType,
       });
-      setSelectedRoomName(existingRoomDetails.name);
       setSelectedRoomColor(existingRoomDetails.color);
     }
   }, [existingRoomDetails]);
