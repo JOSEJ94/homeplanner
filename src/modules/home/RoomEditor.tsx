@@ -88,6 +88,7 @@ const RoomEditor = () => {
           }}
         />
         <TextInput
+          value={selectedRoomName}
           containerStyle={styles.roomNameInput}
           title="Room name"
           placeholder="Enter a name"
