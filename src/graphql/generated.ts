@@ -16,6 +16,20 @@ export type Scalars = {
   Date: { input: any; output: any; }
 };
 
+export type Home = {
+  __typename?: 'Home';
+  createdAt: Scalars['Date']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  owner: User;
+  rooms: Array<Room>;
+  updatedAt: Scalars['Date']['output'];
+};
+
+export enum IconType {
+  Fontawesome = 'FONTAWESOME'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
@@ -30,9 +44,57 @@ export type MutationCreateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getMyHome: Home;
   getMyUser?: Maybe<User>;
   users: Array<User>;
 };
+
+export type Room = {
+  __typename?: 'Room';
+  color: Scalars['String']['output'];
+  createdAt: Scalars['Date']['output'];
+  home: Home;
+  iconName: Scalars['String']['output'];
+  iconType: IconType;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  tasks: Array<Task>;
+  updatedAt: Scalars['Date']['output'];
+};
+
+export type SubTask = {
+  __typename?: 'SubTask';
+  completed: Scalars['Boolean']['output'];
+  createdAt: Scalars['Date']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  task: Task;
+  updatedAt: Scalars['Date']['output'];
+};
+
+export type Task = {
+  __typename?: 'Task';
+  assignedTo: Array<User>;
+  completionDate?: Maybe<Scalars['Date']['output']>;
+  createdAt: Scalars['Date']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  randomlyAssigned: Scalars['Boolean']['output'];
+  room: Room;
+  scheduleDay?: Maybe<Scalars['Date']['output']>;
+  scheduleInterval?: Maybe<Scalars['Int']['output']>;
+  scheduleType: TaskSchedule;
+  subTasks: Array<SubTask>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+};
+
+export enum TaskSchedule {
+  Daily = 'DAILY',
+  Monthly = 'MONTHLY',
+  Once = 'ONCE',
+  Weekly = 'WEEKLY'
+}
 
 export type User = {
   __typename?: 'User';
@@ -42,6 +104,11 @@ export type User = {
   name?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
 };
+
+export type GetHomeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetHomeQuery = { __typename?: 'Query', getMyHome: { __typename?: 'Home', name: string, id: string, owner: { __typename?: 'User', id: string }, rooms: Array<{ __typename?: 'Room', name: string, id: string, iconName: string, iconType: IconType, color: string }> } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -63,6 +130,7 @@ export type CreateUserMutationVariables = Exact<{
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', createdAt: any, email: string, id: string, name?: string | null, updatedAt: any } };
 
 
+export const GetHomeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getHome"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMyHome"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"iconName"}},{"kind":"Field","name":{"kind":"Name","value":"iconType"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}}]}}]} as unknown as DocumentNode<GetHomeQuery, GetHomeQueryVariables>;
 export const GetUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetUsersQuery, GetUsersQueryVariables>;
 export const GetMyUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getMyUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMyUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetMyUserQuery, GetMyUserQueryVariables>;
 export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
