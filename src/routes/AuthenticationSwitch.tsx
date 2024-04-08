@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer, useTheme} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+  useTheme,
+} from '@react-navigation/native';
 import {AppTheme, lightTheme} from '../shared/themes/Theme';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import DashboardScreen from '../modules/dashboard/DashboardScreen';
@@ -24,11 +28,16 @@ import RoomEditor from '../modules/home/RoomEditor';
 import ColorPicker from '../shared/modules/ColorPicker';
 import IconPicker from '../shared/modules/IconPicker';
 import InviteFamilyMember from '../modules/home/InviteFamilyMember';
+import {firebase} from '@react-native-firebase/analytics';
+
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
 
 const AuthenticationSwitch = () => {
   const theme = useTheme() as AppTheme;
+  const routeNameRef = React.useRef<string>(null);
+  const navigationRef =
+    React.useRef<NavigationContainerRef<AppScreensParamList>>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [initializing, setInitializing] = useState(true);
 
@@ -95,7 +104,26 @@ const AuthenticationSwitch = () => {
   );
 
   return (
-    <NavigationContainer theme={lightTheme}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        // @ts-expect-error "Cannot" assigned "read-only" property
+        routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+
+        if (previousRouteName !== currentRouteName) {
+          await firebase.analytics().logScreenView({
+            screen_name: currentRouteName,
+            screen_class: currentRouteName,
+          });
+        }
+        // @ts-expect-error "Cannot" assigned "read-only" property
+        routeNameRef.current = currentRouteName;
+      }}
+      theme={lightTheme}>
       <Stack.Navigator>
         {isSignedIn ? (
           <>

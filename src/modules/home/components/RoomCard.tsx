@@ -84,25 +84,26 @@ const RoomCard = ({room, style, onLongPress, shake = false}: RoomCardProps) => {
           )}
         </Pressable>
       )}
-      <ShakeView style={[styles.container, style]} isActive={shake}>
-        <Pressable
-          onPress={onCardPress}
-          onLongPress={onLongPress}
-          style={styles.pressableContainer}
-          hitSlop={theme.hitSlop}>
-          <Icon
-            style={styles.icon}
-            name={room.iconName}
-            color={theme.white as ColorValue}
-            size={ICON_SIZE}
-          />
-          <Typography
-            style={styles.roomNameTxt}
-            variant={TypographyVariant.CAPTION}>
-            {room?.name}
-          </Typography>
-        </Pressable>
-      </ShakeView>
+      <Pressable
+        onPress={onCardPress}
+        onLongPress={onLongPress}
+        hitSlop={theme.hitSlop}>
+        <ShakeView style={[styles.container, style]} isActive={shake}>
+          <View style={styles.pressableContainer}>
+            <Icon
+              style={styles.icon}
+              name={room.iconName}
+              color={theme.white as ColorValue}
+              size={ICON_SIZE}
+            />
+            <Typography
+              style={styles.roomNameTxt}
+              variant={TypographyVariant.CAPTION}>
+              {room?.name}
+            </Typography>
+          </View>
+        </ShakeView>
+      </Pressable>
     </View>
   );
 };
@@ -112,7 +113,7 @@ export default RoomCard;
 const createStyles = (theme: AppTheme, backgroundColor: string) =>
   StyleSheet.create({
     mainContainer: {
-      flex: 1,
+      minHeight: 110,
     },
     pressableContainer: {
       alignItems: 'center',
@@ -127,7 +128,7 @@ const createStyles = (theme: AppTheme, backgroundColor: string) =>
       marginHorizontal: theme.spacing,
       marginVertical: theme.spacing,
       minHeight: 100,
-      maxWidth: Dimensions.get('screen').width / 2 - theme.spacing * 2,
+      width: Dimensions.get('screen').width / 2 - theme.spacing * 2,
     },
     icon: {},
     roomNameTxt: {
