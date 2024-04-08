@@ -16,6 +16,7 @@ import Typography from '../../shared/components/Typography';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {CreateUserDocument, GetMyUserDocument} from '../../graphql/generated';
+import {firebase} from '@react-native-firebase/analytics';
 
 const INPUT_ICON_SIZE = 20;
 
@@ -36,8 +37,13 @@ const LoginScreen = () => {
       setSubmitting(true);
       const user = await auth().signInWithEmailAndPassword(email, password);
       if (!user) {
-        Alert.alert('No user');
+        throw new Error('No user');
       }
+      const response = await getMyUser();
+      if (!response.data?.getMyUser) {
+        throw new Error('No user');
+      }
+      firebase.analytics().logLogin({method: 'email/password'});
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -57,6 +63,7 @@ const LoginScreen = () => {
       const credentials = await auth().signInWithCredential(googleCredential);
       const response = await getMyUser();
       if (!response.data?.getMyUser) {
+        firebase.analytics().logSignUp({method: 'google'});
         await createUser({
           variables: {
             email: credentials.user.email || '',
@@ -65,6 +72,7 @@ const LoginScreen = () => {
           },
         });
       }
+      firebase.analytics().logLogin({method: 'google'});
     } catch (error: any) {
       // TODO: Improve error handling here.
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

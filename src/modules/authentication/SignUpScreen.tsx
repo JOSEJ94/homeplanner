@@ -15,6 +15,7 @@ import {INPUT_ICON_SIZE} from '../../shared/constants/Constants';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useMutation} from '@apollo/client';
 import {CreateUserDocument} from '../../graphql/generated';
+import {firebase} from '@react-native-firebase/analytics';
 
 const SignUpScreen = () => {
   const navigation =
@@ -40,6 +41,8 @@ const SignUpScreen = () => {
           id: credentials.user.uid,
         },
       });
+      firebase.analytics().logSignUp({method: 'email/password'});
+      firebase.analytics().logLogin({method: 'email/password'});
     } catch (error: any) {
     } finally {
       setSubmitting(false);
