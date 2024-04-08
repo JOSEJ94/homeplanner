@@ -31,11 +31,7 @@ const ColorPicker = () => {
 
   return (
     <View style={styles.container}>
-      <RGBPicker
-        value={selectedColor}
-        onChangeComplete={console.log}
-        onChange={setSelectedColor}
-      />
+      <RGBPicker value={selectedColor} onChange={setSelectedColor} />
       <Button
         style={styles.saveBtn}
         onPress={pickAColor}
