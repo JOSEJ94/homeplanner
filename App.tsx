@@ -9,8 +9,11 @@ import {setContext} from '@apollo/client/link/context';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {firebase} from '@react-native-firebase/auth';
 import AuthenticationSwitch from './src/routes/AuthenticationSwitch';
+import Config from 'react-native-config';
 
-GoogleSignin.configure();
+GoogleSignin.configure({
+  webClientId: Config.RN_GOOGLE_CLIENT_ID,
+});
 
 const authLink = setContext(async (_, {headers}) => {
   const authToken = await firebase.auth().currentUser?.getIdToken();
@@ -23,7 +26,7 @@ const authLink = setContext(async (_, {headers}) => {
 });
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: Config.RN_API_URL,
 });
 
 const client = new ApolloClient({

@@ -41,8 +41,10 @@ const SignUpScreen = () => {
           id: credentials.user.uid,
         },
       });
-      firebase.analytics().logSignUp({method: 'email/password'});
-      firebase.analytics().logLogin({method: 'email/password'});
+      await Promise.all([
+        firebase.analytics().logSignUp({method: 'email/password'}),
+        firebase.analytics().logLogin({method: 'email/password'}),
+      ]);
     } catch (error: any) {
     } finally {
       setSubmitting(false);

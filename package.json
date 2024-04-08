@@ -29,6 +29,7 @@
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-calendars": "^1.1304.1",
+    "react-native-config": "^1.5.1",
     "react-native-device-info": "^10.13.1",
     "react-native-light-color-picker": "^1.0.0-rc.8",
     "react-native-linear-gradient": "^2.8.3",

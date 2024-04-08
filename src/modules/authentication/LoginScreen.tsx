@@ -43,7 +43,7 @@ const LoginScreen = () => {
       if (!response.data?.getMyUser) {
         throw new Error('No user');
       }
-      firebase.analytics().logLogin({method: 'email/password'});
+      await firebase.analytics().logLogin({method: 'email/password'});
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -57,13 +57,15 @@ const LoginScreen = () => {
 
   const loginWithGoogle = async () => {
     try {
+      console.log('called');
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const {idToken} = await GoogleSignin.signIn();
+      console.log('idToken', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      console.log('googleCredential', googleCredential);
       const credentials = await auth().signInWithCredential(googleCredential);
       const response = await getMyUser();
       if (!response.data?.getMyUser) {
-        firebase.analytics().logSignUp({method: 'google'});
         await createUser({
           variables: {
             email: credentials.user.email || '',
@@ -72,7 +74,10 @@ const LoginScreen = () => {
           },
         });
       }
-      firebase.analytics().logLogin({method: 'google'});
+      await Promise.all([
+        firebase.analytics().logSignUp({method: 'google'}),
+        firebase.analytics().logLogin({method: 'google'}),
+      ]);
     } catch (error: any) {
       // TODO: Improve error handling here.
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -87,6 +92,7 @@ const LoginScreen = () => {
       } else {
         // some other error happened
         Alert.alert('Error', error.message);
+        console.error(error);
       }
     }
   };

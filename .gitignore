@@ -71,3 +71,6 @@ yarn-error.log
 
 #Fastlane secrets
 **/fastlane/secrets/*
+
+#Mobile app secrets
+.env
