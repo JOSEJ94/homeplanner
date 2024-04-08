@@ -1,12 +1,20 @@
 import {StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {RGBPicker} from 'react-native-light-color-picker';
 import Button from '../components/Button';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {
+  RouteProp,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from '@react-navigation/native';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AppTheme} from '../themes/Theme';
 
 const ColorPicker = () => {
+  const theme = useTheme() as AppTheme;
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const route = useRoute<RouteProp<AppScreensParamList>>();
@@ -22,17 +30,33 @@ const ColorPicker = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <RGBPicker
         value={selectedColor}
         onChangeComplete={console.log}
         onChange={setSelectedColor}
       />
-      <Button onPress={pickAColor} title="Pick color" fullWidth />
+      <Button
+        style={styles.saveBtn}
+        onPress={pickAColor}
+        title="Pick color"
+        fullWidth
+      />
     </View>
   );
 };
 
 export default ColorPicker;
 
-const styles = StyleSheet.create({});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing,
+    },
+    saveBtn: {
+      marginHorizontal: theme.spacing * 2,
+      marginBottom: theme.spacing,
+    },
+  });
