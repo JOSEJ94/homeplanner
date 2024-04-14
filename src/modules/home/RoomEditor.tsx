@@ -16,7 +16,7 @@ import RoomCard from './components/RoomCard';
 import {Icon} from '../../shared/modules/IconPicker';
 import {
   CreateRoomDocument,
-  GetHomeDocument,
+  GetGroupsDocument,
   GetRoomDetailsDocument,
   IconType,
   UpdateRoomDocument,
@@ -36,6 +36,7 @@ const RoomEditor = () => {
   const route = useRoute<RouteProp<AppScreensParamList>>();
   const params = route.params as AppScreensParamList[Routes.ROOM_EDITOR];
   const id = params?.id || '';
+  const groupId = params?.groupId;
   const {data, loading, error} = useQuery(GetRoomDetailsDocument, {
     variables: {id},
     skip: !id,
@@ -91,7 +92,7 @@ const RoomEditor = () => {
             iconType: selectedRoomIcon.type,
             name: selectedRoomName,
           },
-          refetchQueries: [GetHomeDocument],
+          refetchQueries: [GetGroupsDocument],
         });
       } else {
         await createRoom({
@@ -100,8 +101,9 @@ const RoomEditor = () => {
             iconName: selectedRoomIcon.name,
             iconType: selectedRoomIcon.type,
             name: selectedRoomName,
+            groupId: groupId!,
           },
-          refetchQueries: [GetHomeDocument],
+          refetchQueries: [GetGroupsDocument],
         });
       }
       navigation.goBack();
@@ -119,6 +121,7 @@ const RoomEditor = () => {
         <RoomCard
           style={styles.roomPreviewCard}
           room={{
+            groupId: '',
             name: selectedRoomName || 'Enter name',
             color: selectedRoomColor,
             iconName: selectedRoomIcon?.name,

@@ -1,6 +1,7 @@
-import {IconType} from '../modules/IconPicker';
+import {IconType} from '../../graphql/generated';
 
 export interface RoomDto {
+  groupId: string;
   name: string;
   color: string;
   iconName: string;

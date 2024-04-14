@@ -27,7 +27,7 @@ import {RoomDto} from '../../shared/models/RoomDto';
 import FamilyMemberCard from './components/FamilyMemberCard';
 import {FamilyMemberDto} from '../../shared/models/FamilyMemberDto';
 import {useQuery} from '@apollo/client';
-import {GetHomeDocument} from '../../graphql/generated';
+import {GetGroupsDocument} from '../../graphql/generated';
 
 interface Section {
   list: RoomDto[] | FamilyMemberDto[];
@@ -38,9 +38,11 @@ const HomeScreen = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation<NavigationProp<AppScreensParamList>>();
   const [selectedRoom, setSelectedRoom] = useState<string>('');
-  const {data: homeData, loading, error} = useQuery(GetHomeDocument);
-  const home = homeData?.getMyHome;
-  const rooms = home?.rooms ?? [];
+  const {data: homeData, loading, error} = useQuery(GetGroupsDocument);
+
+  const groups = homeData?.getGroups || [];
+  const firstGroup = groups?.length ? groups[0] : undefined;
+  const rooms = firstGroup?.rooms || [];
 
   const renderRoom = (info: ListRenderItemInfo<RoomDto>) => (
     <RoomCard
@@ -109,7 +111,8 @@ const HomeScreen = () => {
     },
   ];
   const renderSectionHeader = (info: {section: SectionListData<Section>}) => {
-    const navigateToEditor = () => navigation.navigate(Routes.ROOM_EDITOR);
+    const navigateToEditor = () =>
+      navigation.navigate(Routes.ROOM_EDITOR, {groupId: firstGroup?.id!});
     const navigateToInviteMember = () =>
       navigation.navigate(Routes.INVITE_FAMILY_MEMBER);
     const navigate =
@@ -137,7 +140,7 @@ const HomeScreen = () => {
         style={styles.container}
         ListHeaderComponent={
           <Typography style={styles.header} variant={TypographyVariant.HEADING}>
-            {home?.name}
+            {firstGroup?.name}
           </Typography>
         }
         sections={sections}

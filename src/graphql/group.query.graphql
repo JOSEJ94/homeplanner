@@ -1,0 +1,13 @@
+query getGroups {
+  getGroups {
+    id
+    name
+    rooms {
+      color
+      iconName
+      iconType
+      id
+      name
+    }
+  }
+}

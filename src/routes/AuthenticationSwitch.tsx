@@ -46,8 +46,9 @@ const AuthenticationSwitch = () => {
     headerTintColor: theme.colors.primary,
   };
 
-  const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
+  const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsSignedIn(Boolean(user));
+    console.log('Access token', await user?.getIdToken());
     if (initializing) setInitializing(false);
   };
 

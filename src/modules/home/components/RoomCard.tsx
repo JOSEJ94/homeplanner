@@ -23,7 +23,10 @@ import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 import {RoomDto} from '../../../shared/models/RoomDto';
 import ShakeView from '../../../shared/components/ShakeView';
 import {useMutation} from '@apollo/client';
-import {DeleteRoomDocument, GetHomeDocument} from '../../../graphql/generated';
+import {
+  DeleteRoomDocument,
+  GetGroupsDocument,
+} from '../../../graphql/generated';
 
 const ICON_SIZE = 35;
 
@@ -44,13 +47,16 @@ const RoomCard = ({room, style, onLongPress, shake = false}: RoomCardProps) => {
   const [deleteRoom, {loading: removingRoom}] = useMutation(DeleteRoomDocument);
 
   const onCardPress = () =>
-    navigation.navigate(Routes.ROOM_EDITOR, {id: room.id});
+    navigation.navigate(Routes.ROOM_EDITOR, {
+      id: room.id,
+      groupId: room.groupId,
+    });
 
   const onDeletePress = async () => {
     try {
       await deleteRoom({
         variables: {id: room.id},
-        refetchQueries: [GetHomeDocument],
+        refetchQueries: [GetGroupsDocument],
       });
     } catch (error: any) {
       console.error('Error', error.message);

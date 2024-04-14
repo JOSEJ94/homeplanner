@@ -60,9 +60,7 @@ const LoginScreen = () => {
       console.log('called');
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const {idToken} = await GoogleSignin.signIn();
-      console.log('idToken', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      console.log('googleCredential', googleCredential);
       const credentials = await auth().signInWithCredential(googleCredential);
       const response = await getMyUser();
       if (!response.data?.getMyUser) {

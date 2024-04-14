@@ -9,27 +9,24 @@ query getRoomDetails($id: ID!) {
 }
 
 mutation createRoom(
+  $groupId: ID!
   $color: String!
   $iconName: String!
   $iconType: IconType!
   $name: String!
-  $home: ID
 ) {
   createRoom(
     color: $color
     iconName: $iconName
     iconType: $iconType
     name: $name
-    home: $home
+    groupId: $groupId
   ) {
     color
     iconName
     iconType
     id
     name
-    tasks {
-      id
-    }
   }
 }
 
