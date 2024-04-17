@@ -1,0 +1,73 @@
+mutation createTask(
+  $assignedTo: [ID!]!
+  $room: ID!
+  $scheduleDay: Date!
+  $scheduleType: TaskSchedule!
+  $title: String!
+  $description: String
+  $randomlyAssign: Boolean
+  $scheduleInterval: Int!
+) {
+  createTask(
+    assignedTo: $assignedTo
+    room: $room
+    scheduleDay: $scheduleDay
+    scheduleType: $scheduleType
+    title: $title
+    description: $description
+    randomlyAssign: $randomlyAssign
+    scheduleInterval: $scheduleInterval
+  ) {
+    assignedTo {
+      email
+      id
+      name
+    }
+    completionDate
+    createdAt
+    description
+    id
+    randomlyAssigned
+    room {
+      id
+      name
+    }
+    scheduleDay
+    scheduleInterval
+    scheduleType
+    title
+    updatedAt
+  }
+}
+
+query getTasks {
+  getTasks {
+    assignedTo {
+      email
+      id
+      name
+    }
+    completionDate
+    createdAt
+    description
+    id
+    randomlyAssigned
+    room {
+      id
+      name
+      color
+      iconName
+      iconType
+    }
+    scheduleDay
+    scheduleInterval
+    scheduleType
+    title
+    subTasks {
+      completed
+      createdAt
+      description
+      id
+    }
+  }
+}

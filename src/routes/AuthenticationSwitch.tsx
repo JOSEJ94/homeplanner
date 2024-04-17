@@ -29,6 +29,7 @@ import ColorPicker from '../shared/modules/ColorPicker';
 import IconPicker from '../shared/modules/IconPicker';
 import InviteFamilyMember from '../modules/home/InviteFamilyMember';
 import {firebase} from '@react-native-firebase/analytics';
+import TaskListScreen from '../modules/tasks/TaskListScreen';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -73,9 +74,11 @@ const AuthenticationSwitch = () => {
         options={{
           tabBarLabel: 'Chores',
           tabBarIcon: renderTabBarIcon('list'),
+          headerShown: true,
+          headerTitle: 'Chores',
         }}
         name={Routes.CHORES_LIST}
-        component={DashboardScreen}
+        component={TaskListScreen}
       />
       <Tab.Screen
         name={Routes.CHAT_LIST}

@@ -8,6 +8,13 @@ query getRoomDetails($id: ID!) {
   }
 }
 
+query getRooms {
+  getRooms {
+    id
+    name
+  }
+}
+
 mutation createRoom(
   $groupId: ID!
   $color: String!
