@@ -18,6 +18,7 @@ export enum Routes {
   ROOM_EDITOR = 'Room Editor',
   SIGN_UP = 'Sign Up',
   TAB_BAR = 'Tab Bar',
+  TASK_EDITOR = 'Task Editor',
 }
 
 export type AppScreensParamList = {
@@ -41,7 +42,8 @@ export type AppScreensParamList = {
   [Routes.LOGIN]: undefined;
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};
   [Routes.RESET_PASSWORD_WITH_CODE]: {code: string} | undefined;
-  [Routes.ROOM_EDITOR]: {groupId: string; id?: string} | undefined;
+  [Routes.ROOM_EDITOR]: {groupId: string; id?: string};
   [Routes.SIGN_UP]: undefined;
   [Routes.TAB_BAR]: undefined;
+  [Routes.TASK_EDITOR]: {id?: string} | undefined;
 };

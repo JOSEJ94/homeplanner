@@ -71,3 +71,86 @@ query getTasks {
     }
   }
 }
+
+query getTaskDetails($id: ID!) {
+  getTaskDetails(id: $id) {
+    id
+    randomlyAssigned
+    description
+    title
+    scheduleDay
+    scheduleInterval
+    scheduleType
+    subTasks {
+      description
+      id
+      completed
+    }
+    completionDate
+    assignedTo {
+      id
+      name
+    }
+    room {
+      id
+      name
+      iconType
+      iconName
+      color
+    }
+  }
+}
+
+mutation deleteTask($id: ID!) {
+  deleteTask(id: $id) {
+    id
+  }
+}
+mutation updateTask(
+  $id: ID!
+  $room: ID!
+  $title: String!
+  $randomlyAssign: Boolean
+  $description: String
+  $assignedTo: [ID!]!
+  $scheduleDay: Date!
+  $scheduleType: TaskSchedule!
+  $scheduleInterval: Int!
+) {
+  updateTask(
+    assignedTo: $assignedTo
+    id: $id
+    room: $room
+    scheduleDay: $scheduleDay
+    scheduleType: $scheduleType
+    title: $title
+    description: $description
+    randomlyAssign: $randomlyAssign
+    scheduleInterval: $scheduleInterval
+  ) {
+    id
+    randomlyAssigned
+    description
+    title
+    scheduleDay
+    scheduleInterval
+    scheduleType
+    subTasks {
+      description
+      id
+      completed
+    }
+    completionDate
+    assignedTo {
+      id
+      name
+    }
+    room {
+      id
+      name
+      iconType
+      iconName
+      color
+    }
+  }
+}

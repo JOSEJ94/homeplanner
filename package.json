@@ -31,6 +31,7 @@
     "react-native-calendars": "^1.1304.1",
     "react-native-config": "^1.5.1",
     "react-native-device-info": "^10.13.1",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-light-color-picker": "^1.0.0-rc.8",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-safe-area-context": "^4.9.0",

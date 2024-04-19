@@ -1,12 +1,14 @@
-import {View, StyleSheet, ColorValue} from 'react-native';
+import {View, StyleSheet, ColorValue, Pressable} from 'react-native';
 import React, {useMemo} from 'react';
 import Typography, {
   TypographyVariant,
 } from '../../../shared/components/Typography';
 import {AppTheme} from '../../../shared/themes/Theme';
-import {useTheme} from '@react-navigation/native';
+import {useNavigation, useTheme} from '@react-navigation/native';
 import {Task} from '../../../graphql/generated';
 import RoomIcon from '../../../shared/components/RoomIcon';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 
 interface TaskItemProps {
   task: Task;
@@ -15,9 +17,16 @@ interface TaskItemProps {
 const TaskItem = ({task}: TaskItemProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
+
+  const seeDetails = () =>
+    navigation.navigate(Routes.TASK_EDITOR, {
+      id: task.id,
+    });
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={seeDetails}>
       <RoomIcon room={task.room} />
       <View style={styles.informationContainer}>
         <Typography variant={TypographyVariant.CAPTION} style={styles.titleTxt}>
@@ -33,7 +42,7 @@ const TaskItem = ({task}: TaskItemProps) => {
           </Typography>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

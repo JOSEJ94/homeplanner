@@ -16,13 +16,21 @@ GoogleSignin.configure({
 });
 
 const authLink = setContext(async (_, {headers}) => {
-  const authToken = await firebase.auth().currentUser?.getIdToken();
-  return {
-    headers: {
+  try {
+    const authToken = await firebase.auth().currentUser?.getIdToken();
+    return {
+      headers: {
+        ...headers,
+        authorization: authToken ? `Bearer ${authToken}` : '',
+      },
+    };
+  } catch (error) {
+    console.error('Error', error);
+
+    return {
       ...headers,
-      authorization: authToken ? `Bearer ${authToken}` : '',
-    },
-  };
+    };
+  }
 });
 
 const httpLink = createHttpLink({

@@ -30,6 +30,7 @@ import IconPicker from '../shared/modules/IconPicker';
 import InviteFamilyMember from '../modules/home/InviteFamilyMember';
 import {firebase} from '@react-native-firebase/analytics';
 import TaskListScreen from '../modules/tasks/TaskListScreen';
+import TaskEditorScreen from '../modules/tasks/TaskEditorScreen';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -49,7 +50,11 @@ const AuthenticationSwitch = () => {
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsSignedIn(Boolean(user));
-    console.log('Access token', await user?.getIdToken());
+    try {
+      console.log('Access token', await user?.getIdToken());
+    } catch (error) {
+      console.error('Error', error);
+    }
     if (initializing) setInitializing(false);
   };
 
@@ -147,6 +152,10 @@ const AuthenticationSwitch = () => {
                 component={CommunicationSettingsScreen}
               />
               <Stack.Screen name={Routes.ROOM_EDITOR} component={RoomEditor} />
+              <Stack.Screen
+                name={Routes.TASK_EDITOR}
+                component={TaskEditorScreen}
+              />
               <Stack.Screen
                 name={Routes.INVITE_FAMILY_MEMBER}
                 component={InviteFamilyMember}
