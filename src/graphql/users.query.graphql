@@ -14,6 +14,7 @@ query getMyUser {
     email
     id
     name
+    profilePhoto
     updatedAt
   }
 }
@@ -24,6 +25,7 @@ mutation createUser($id: String!, $email: String!, $name: String) {
     email
     id
     name
+    profilePhoto
     updatedAt
   }
 }

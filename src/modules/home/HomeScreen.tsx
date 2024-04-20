@@ -23,14 +23,16 @@ import Typography, {
 import RoomCard from './components/RoomCard';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
-import {RoomDto} from '../../shared/models/RoomDto';
 import FamilyMemberCard from './components/FamilyMemberCard';
-import {FamilyMemberDto} from '../../shared/models/FamilyMemberDto';
 import {useQuery} from '@apollo/client';
-import {GetGroupsDocument} from '../../graphql/generated';
+import {
+  GetGroupsDocument,
+  GroupMemberFragment,
+  RoomFragment,
+} from '../../graphql/generated';
 
 interface Section {
-  list: RoomDto[] | FamilyMemberDto[];
+  list: RoomFragment[] | GroupMemberFragment[];
 }
 
 const HomeScreen = () => {
@@ -42,9 +44,10 @@ const HomeScreen = () => {
 
   const groups = homeData?.getGroups || [];
   const firstGroup = groups?.length ? groups[0] : undefined;
-  const rooms = firstGroup?.rooms || [];
+  const rooms: RoomFragment[] = firstGroup?.rooms || [];
+  const members: GroupMemberFragment[] = firstGroup?.members || [];
 
-  const renderRoom = (info: ListRenderItemInfo<RoomDto>) => (
+  const renderRoom = (info: ListRenderItemInfo<RoomFragment>) => (
     <RoomCard
       key={info.item.id}
       room={info.item}
@@ -55,15 +58,15 @@ const HomeScreen = () => {
     />
   );
 
-  const renderFamilyMember = (info: ListRenderItemInfo<FamilyMemberDto>) => (
-    <FamilyMemberCard familyMember={info.item} />
-  );
+  const renderFamilyMember = (
+    info: ListRenderItemInfo<GroupMemberFragment>,
+  ) => <FamilyMemberCard member={info.item} />;
 
   const renderRoomSection = (info: SectionListRenderItemInfo<Section>) => {
     return (
       <FlatList
         style={styles.roomsContainer}
-        data={info.item.list as RoomDto[]}
+        data={info.item.list as RoomFragment[]}
         numColumns={2}
         renderItem={renderRoom}
       />
@@ -73,20 +76,11 @@ const HomeScreen = () => {
   const renderFamilySection = (info: SectionListRenderItemInfo<Section>) => {
     return (
       <FlatList
-        data={info.item.list as FamilyMemberDto[]}
+        data={info.item.list as GroupMemberFragment[]}
         renderItem={renderFamilyMember}
       />
     );
   };
-
-  const familyMember: FamilyMemberDto[] = [
-    {
-      id: '1',
-      name: 'John Doe',
-      photo:
-        'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352010-stock-illustration-default-placeholder-man-and-woman.jpg',
-    },
-  ];
 
   const sections: SectionListData<Section>[] = [
     {
@@ -104,7 +98,7 @@ const HomeScreen = () => {
       key: 'Family',
       data: [
         {
-          list: familyMember,
+          list: members,
         },
       ],
       renderItem: renderFamilySection,

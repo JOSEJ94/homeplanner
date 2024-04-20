@@ -3,11 +3,28 @@ query getGroups {
     id
     name
     rooms {
-      color
-      iconName
-      iconType
-      id
-      name
+      ...room
+    }
+    members {
+      ...groupMember
     }
   }
+}
+
+fragment room on Room {
+  color
+  iconName
+  iconType
+  id
+  name
+}
+
+fragment groupMember on GroupMember {
+  user {
+    email
+    name
+    id
+    profilePhoto
+  }
+  role
 }

@@ -1,10 +1,6 @@
 query getRoomDetails($id: ID!) {
   getRoomDetails(id: $id) {
-    color
-    iconName
-    iconType
-    id
-    name
+    ...room
   }
 }
 
@@ -29,11 +25,7 @@ mutation createRoom(
     name: $name
     groupId: $groupId
   ) {
-    color
-    iconName
-    iconType
-    id
-    name
+    ...room
   }
 }
 
@@ -51,11 +43,7 @@ mutation updateRoom(
     name: $name
     id: $id
   ) {
-    color
-    iconName
-    iconType
-    id
-    name
+    ...room
     tasks {
       id
     }

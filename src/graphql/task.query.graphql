@@ -53,11 +53,7 @@ query getTasks {
     id
     randomlyAssigned
     room {
-      id
-      name
-      color
-      iconName
-      iconType
+      ...room
     }
     scheduleDay
     scheduleInterval
@@ -92,11 +88,7 @@ query getTaskDetails($id: ID!) {
       name
     }
     room {
-      id
-      name
-      iconType
-      iconName
-      color
+      ...room
     }
   }
 }
@@ -146,11 +138,7 @@ mutation updateTask(
       name
     }
     room {
-      id
-      name
-      iconType
-      iconName
-      color
+      ...room
     }
   }
 }

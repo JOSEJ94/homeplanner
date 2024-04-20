@@ -10,29 +10,32 @@ import RoundedImage from '../../../shared/components/RoundedImage';
 import Typography from '../../../shared/components/Typography';
 import {AppTheme} from '../../../shared/themes/Theme';
 import {useTheme} from '@react-navigation/native';
-import {FamilyMemberDto} from '../../../shared/models/FamilyMemberDto';
+import {GroupMemberFragment} from '../../../graphql/generated';
+import {firebase} from '@react-native-firebase/auth';
+import {getStaticImageName} from '../../../shared/utils/Image.utils';
 
 interface FamilyMemberCardProps extends PressableProps {
-  familyMember: FamilyMemberDto;
+  member: GroupMemberFragment;
   style?: StyleProp<ViewStyle>;
 }
 
-const FamilyMemberCard = ({
-  familyMember,
-  style,
-  ...rest
-}: FamilyMemberCardProps) => {
+const FamilyMemberCard = ({member, style, ...rest}: FamilyMemberCardProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const currentUser = firebase.auth().currentUser?.uid === member.user.id;
+  const imageSource =
+    member.user.profilePhoto || getStaticImageName('default-user.png');
 
   return (
     <Pressable {...rest} style={[styles.container, style]}>
       <RoundedImage
         source={{
-          uri: familyMember.photo,
+          uri: imageSource,
         }}
       />
-      <Typography>{familyMember.name}</Typography>
+      <Typography>
+        {member.user.name} {currentUser && '(You)'}
+      </Typography>
     </Pressable>
   );
 };
