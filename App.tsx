@@ -1,15 +1,11 @@
 import React from 'react';
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
-} from '@apollo/client';
+import {ApolloClient, ApolloProvider, createHttpLink} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {firebase} from '@react-native-firebase/auth';
 import AuthenticationSwitch from './src/routes/AuthenticationSwitch';
 import Config from 'react-native-config';
+import {cache} from './src/shared/apollo/cache/cache';
 
 GoogleSignin.configure({
   webClientId: Config.RN_GOOGLE_CLIENT_ID,
@@ -39,7 +35,7 @@ const httpLink = createHttpLink({
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 function App(): React.JSX.Element {

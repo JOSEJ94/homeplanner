@@ -40,8 +40,8 @@ mutation createTask(
   }
 }
 
-query getTasks {
-  getTasks {
+query getTasks($fromRooms: [ID!]) {
+  getTasks(fromRooms: $fromRooms) {
     assignedTo {
       email
       id

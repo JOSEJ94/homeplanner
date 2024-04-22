@@ -25,6 +25,12 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
+import {GET_TASK_FILTER} from '../../graphql/local/taskFilter';
+import {TaskFilter} from '../../shared/models/TaskFilter';
+import {
+  DEFAULT_TASK_FILTER,
+  taskFilterVar,
+} from '../../shared/apollo/cache/cache';
 
 const TaskListScreen = () => {
   const navigation =
@@ -58,16 +64,24 @@ const TaskListScreen = () => {
 
   const [deleteTask, {loading: submittingTaskDelete}] =
     useMutation(DeleteTaskDocument);
+  const {data: taskFilterData} = useQuery<{
+    taskFilter: TaskFilter<RoomFilterDto>;
+  }>(GET_TASK_FILTER);
+  const roomFilter = taskFilterData?.taskFilter;
+  const roomsSelectedIds = roomFilter!.selectedOptions
+    .filter(so => so.id !== ALL_ROOMS_OPTION.id)
+    .map(so => so.id);
   const {
     data: tasksData,
     loading: loadingTasks,
     error: errorTasks,
-  } = useQuery(GetTasksDocument);
+  } = useQuery(GetTasksDocument, {variables: {fromRooms: roomsSelectedIds}});
   const {
     data: roomsData,
     loading: loadingRooms,
     error: errorRooms,
   } = useQuery(GetRoomsDocument);
+
   const tasks = tasksData?.getTasks || [];
   const rooms: RoomFilterDto[] = [ALL_ROOMS_OPTION].concat(
     roomsData?.getRooms || [],
@@ -78,9 +92,46 @@ const TaskListScreen = () => {
     <TaskItem task={info.item} />
   );
 
-  const renderRoomFilter = (info: ListRenderItemInfo<RoomFilterDto>) => (
-    <Pill title={info.item.name} style={styles.pill} />
-  );
+  const renderRoomFilter = (info: ListRenderItemInfo<RoomFilterDto>) => {
+    const selectedItem = roomFilter?.selectedOptions.find(
+      so => so.id === info.item.id,
+    );
+    const selected = Boolean(selectedItem);
+    const onRoomFilterPress = () => {
+      if (selectedItem) {
+        if (roomFilter!.selectedOptions.length === 1) {
+          taskFilterVar(DEFAULT_TASK_FILTER);
+        } else {
+          const newSelectedOptions = roomFilter!.selectedOptions.filter(
+            so => so.id != selectedItem.id,
+          );
+          taskFilterVar({
+            selectedOptions: newSelectedOptions,
+          });
+        }
+      } else {
+        if (info.item.id === ALL_ROOMS_OPTION.id) {
+          taskFilterVar(DEFAULT_TASK_FILTER);
+        } else {
+          const newSelectedOptions = roomFilter!.selectedOptions
+            .filter(so => so.id !== ALL_ROOMS_OPTION.id)
+            .concat(info.item);
+          taskFilterVar({
+            selectedOptions: newSelectedOptions,
+          });
+        }
+      }
+    };
+
+    return (
+      <Pill
+        title={info.item.name}
+        style={styles.pill}
+        selected={selected}
+        onPress={onRoomFilterPress}
+      />
+    );
+  };
 
   const renderDeleteButton = (info: ListRenderItemInfo<Task>) => {
     const onDeleteTaskPressed = async () => {
