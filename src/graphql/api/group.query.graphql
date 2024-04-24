@@ -11,6 +11,12 @@ query getGroups {
   }
 }
 
+mutation addMember($userEmail: String!, $groupId: ID!) {
+  addMember(userEmail: $userEmail, groupId: $groupId) {
+    ...groupMember
+  }
+}
+
 fragment room on Room {
   color
   iconName

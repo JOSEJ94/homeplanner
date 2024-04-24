@@ -14,6 +14,9 @@ import {AppTheme} from '../../shared/themes/Theme';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Button from '../../shared/components/Button';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useMutation} from '@apollo/client';
+import {AddMemberDocument} from '../../graphql/generated';
 
 const InviteFamilyMember = () => {
   const theme = useTheme() as AppTheme;
@@ -23,38 +26,48 @@ const InviteFamilyMember = () => {
   const route = useRoute<RouteProp<AppScreensParamList>>();
   const params =
     route.params as AppScreensParamList[Routes.INVITE_FAMILY_MEMBER];
-  const [email, setEmail] = useState(params?.email);
-  const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState('');
+  const [addMember, {loading: submitting}] = useMutation(AddMemberDocument);
 
-  const onInviteMemberPress = () => {
+  const onInviteMemberPress = async () => {
     try {
-      setSubmitting(true);
+      const invitedMember = await addMember({
+        variables: {userEmail: email, groupId: params.groupId},
+      });
+      console.log('invitedMember', invitedMember);
+
       navigation.goBack();
-    } catch (error) {
-    } finally {
-      setSubmitting(false);
+    } catch (error: any) {
+      console.error(`Error`, error);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <Typography variant={TypographyVariant.HEADING}>
-          Invite family
-        </Typography>
-        <Typography style={styles.descriptionTxt}>
-          Enter your family member email below to send an invitation
-        </Typography>
-        <TextInput value={email} onChangeText={setEmail} placeholder="Email" />
-      </View>
-      <Button
-        loading={submitting}
-        disabled={!email}
-        onPress={onInviteMemberPress}
-        title="Send Invite"
-        fullWidth
-      />
-    </ScrollView>
+    <SafeAreaView edges={['bottom']} style={styles.mainContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View>
+          <Typography variant={TypographyVariant.HEADING}>
+            Invite family
+          </Typography>
+          <Typography style={styles.descriptionTxt}>
+            Enter your family member email below to send an invitation
+          </Typography>
+          <TextInput
+            value={email}
+            autoCapitalize="none"
+            onChangeText={setEmail}
+            placeholder="Email"
+          />
+        </View>
+        <Button
+          loading={submitting}
+          disabled={!email}
+          onPress={onInviteMemberPress}
+          title="Send Invite"
+          fullWidth
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -62,6 +75,9 @@ export default InviteFamilyMember;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
+    mainContainer: {
+      flex: 1,
+    },
     container: {
       paddingHorizontal: theme.spacing * 2,
       paddingBottom: theme.spacing,

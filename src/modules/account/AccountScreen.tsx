@@ -15,6 +15,7 @@ import {AppTheme} from '../../shared/themes/Theme';
 import {getReadableVersion} from 'react-native-device-info';
 import RoundedImage from '../../shared/components/RoundedImage';
 import MenuButton from './components/MenuButton';
+import {useApolloClient} from '@apollo/client';
 
 interface Menu_Button {
   display: string;
@@ -23,55 +24,56 @@ interface Menu_Button {
   route: Routes;
   icon: React.ReactNode;
 }
+const ICON_SIZE = 20;
 const MENU_BUTTONS: Menu_Button[] = [
   {
     key: 'help',
     display: 'Help',
-    icon: <Ionicon size={20} name="help-buoy" />,
+    icon: <Ionicon size={ICON_SIZE} name="help-buoy" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'communications',
     display: 'Communications',
     hint: 'Manage your notification settings',
-    icon: <AntDesignIcon size={20} name="notification" />,
+    icon: <AntDesignIcon size={ICON_SIZE} name="notification" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'language',
     display: 'Language',
     hint: 'Change the way you see things on the app',
-    icon: <AntDesignIcon size={20} name="earth" />,
+    icon: <AntDesignIcon size={ICON_SIZE} name="earth" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'appearance',
     display: 'Appearance',
-    icon: <Ionicon size={20} name="help-buoy" />,
+    icon: <Ionicon size={ICON_SIZE} name="help-buoy" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'legal',
     display: 'Legal',
-    icon: <FontAwesomeIcon size={20} name="legal" />,
+    icon: <FontAwesomeIcon size={ICON_SIZE} name="legal" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'privacy',
     display: 'Privacy',
-    icon: <AntDesignIcon size={20} name="eye" />,
+    icon: <AntDesignIcon size={ICON_SIZE} name="eye" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'about me',
     display: 'About me',
-    icon: <AntDesignIcon size={20} name="info" />,
+    icon: <AntDesignIcon size={ICON_SIZE} name="info" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
   {
     key: 'bug report',
     display: 'Found a bug?',
-    icon: <FontAwesomeIcon size={20} name="bug" />,
+    icon: <FontAwesomeIcon size={ICON_SIZE} name="bug" />,
     route: Routes.COMMUNICATION_SETTINGS,
   },
 ];
@@ -81,11 +83,13 @@ const AccountScreen = () => {
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const client = useApolloClient();
   const user = auth().currentUser;
   const userPhoto = user?.photoURL ?? '';
   const version = getReadableVersion();
 
-  const onSignOutPressed = async () => await auth().signOut();
+  const onSignOutPressed = async () =>
+    await Promise.all([auth().signOut(), client.cache.reset()]);
 
   const renderMenuButton = (menuButton: Menu_Button) => {
     // @ts-expect-error Cannot validate dynamic route type yet.

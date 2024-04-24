@@ -38,7 +38,7 @@ export type AppScreensParamList = {
     currentIcon?: Icon;
     onIconSelected: (icon: Icon) => void;
   };
-  [Routes.INVITE_FAMILY_MEMBER]: {email: string} | undefined;
+  [Routes.INVITE_FAMILY_MEMBER]: {groupId: string};
   [Routes.LOGIN]: undefined;
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};
   [Routes.RESET_PASSWORD_WITH_CODE]: {code: string} | undefined;

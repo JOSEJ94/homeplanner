@@ -65,6 +65,7 @@ const SignUpScreen = () => {
           <TextInput
             testID="email-input"
             value={email}
+            autoCapitalize="none"
             onChangeText={setEmail}
             containerStyle={styles.loginInput}
             placeholder="Email Address"

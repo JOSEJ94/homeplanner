@@ -108,7 +108,9 @@ const HomeScreen = () => {
     const navigateToEditor = () =>
       navigation.navigate(Routes.ROOM_EDITOR, {groupId: firstGroup?.id!});
     const navigateToInviteMember = () =>
-      navigation.navigate(Routes.INVITE_FAMILY_MEMBER);
+      navigation.navigate(Routes.INVITE_FAMILY_MEMBER, {
+        groupId: firstGroup?.id!,
+      });
     const navigate =
       info.section.key === 'Rooms' ? navigateToEditor : navigateToInviteMember;
 

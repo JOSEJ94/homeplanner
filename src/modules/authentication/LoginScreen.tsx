@@ -103,6 +103,7 @@ const LoginScreen = () => {
           value={email}
           onChangeText={setEmail}
           containerStyle={styles.loginInput}
+          autoCapitalize="none"
           placeholder="Email Address"
           keyboardType="email-address"
           textContentType="emailAddress"
