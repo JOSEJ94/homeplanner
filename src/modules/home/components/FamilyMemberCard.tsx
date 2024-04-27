@@ -10,7 +10,7 @@ import RoundedImage from '../../../shared/components/RoundedImage';
 import Typography from '../../../shared/components/Typography';
 import {AppTheme} from '../../../shared/themes/Theme';
 import {useTheme} from '@react-navigation/native';
-import {GroupMemberFragment} from '../../../graphql/generated';
+import {GroupMemberFragment, GroupStatus} from '../../../graphql/generated';
 import {firebase} from '@react-native-firebase/auth';
 import {getStaticImageName} from '../../../shared/utils/Image.utils';
 
@@ -34,7 +34,8 @@ const FamilyMemberCard = ({member, style, ...rest}: FamilyMemberCardProps) => {
         }}
       />
       <Typography>
-        {member.user.name} {currentUser && '(You)'}
+        {member.user.name} {currentUser && '(You)'}{' '}
+        {member.status === GroupStatus.Invited && '(Invited)'}
       </Typography>
     </Pressable>
   );

@@ -11,6 +11,7 @@ export enum Routes {
   FORGOT_PASSWORD = 'Forgot Password',
   HOME = 'Home',
   ICON_PICKER = 'Icon Picker',
+  INVITATION_RECEIVED_MODAL = 'Invitation Received Modal',
   INVITE_FAMILY_MEMBER = 'Invite Family Member',
   LOGIN = 'Login',
   PASSWORD_RESET_CONFIRMATION = 'Password Reset Confirmation',
@@ -38,6 +39,7 @@ export type AppScreensParamList = {
     currentIcon?: Icon;
     onIconSelected: (icon: Icon) => void;
   };
+  [Routes.INVITATION_RECEIVED_MODAL]: undefined;
   [Routes.INVITE_FAMILY_MEMBER]: {groupId: string};
   [Routes.LOGIN]: undefined;
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};

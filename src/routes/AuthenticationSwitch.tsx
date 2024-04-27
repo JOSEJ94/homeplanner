@@ -31,6 +31,9 @@ import InviteFamilyMember from '../modules/home/InviteFamilyMember';
 import {firebase} from '@react-native-firebase/analytics';
 import TaskListScreen from '../modules/tasks/TaskListScreen';
 import TaskEditorScreen from '../modules/tasks/TaskEditorScreen';
+import InvitationModal from '../modules/modal/InvitationModal';
+import {useLazyQuery} from '@apollo/client';
+import {GetInvitationsDocument} from '../graphql/generated';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -42,6 +45,7 @@ const AuthenticationSwitch = () => {
     React.useRef<NavigationContainerRef<AppScreensParamList>>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [initializing, setInitializing] = useState(true);
+  const [getInvitations] = useLazyQuery(GetInvitationsDocument);
 
   const screenDefaultOptions: BottomTabNavigationOptions = {
     headerShown: false,
@@ -50,6 +54,10 @@ const AuthenticationSwitch = () => {
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsSignedIn(Boolean(user));
+    const {data: invitationsData} = await getInvitations();
+    // if (invitationsData?.getInvitations.length) {
+    navigationRef.current?.navigate(Routes.INVITATION_RECEIVED_MODAL);
+    // }
     try {
       console.log('Access token', await user?.getIdToken());
     } catch (error) {
@@ -171,6 +179,17 @@ const AuthenticationSwitch = () => {
                 component={ColorPicker}
               />
               <Stack.Screen name={Routes.ICON_PICKER} component={IconPicker} />
+            </Stack.Group>
+            <Stack.Group
+              screenOptions={{
+                animation: 'fade',
+                headerShown: false,
+                presentation: 'transparentModal',
+              }}>
+              <Stack.Screen
+                name={Routes.INVITATION_RECEIVED_MODAL}
+                component={InvitationModal}
+              />
             </Stack.Group>
           </>
         ) : (

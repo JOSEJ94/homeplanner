@@ -2,8 +2,7 @@ import {View, StyleSheet, ScrollView} from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import React, {useMemo, useState} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {AppScreensParamList} from '../../routes/RoutesParams';
+import {useTheme} from '@react-navigation/native';
 import TextInput from '../../shared/components/TextInput';
 import Typography, {
   TypographyVariant,
@@ -12,14 +11,11 @@ import Button from '../../shared/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import {INPUT_ICON_SIZE} from '../../shared/constants/Constants';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useMutation} from '@apollo/client';
 import {CreateUserDocument} from '../../graphql/generated';
 import {firebase} from '@react-native-firebase/analytics';
 
 const SignUpScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [email, setEmail] = useState('');
@@ -35,10 +31,13 @@ const SignUpScreen = () => {
         email,
         password,
       );
+      const [name] = email.split('@');
+      firebase.auth().currentUser?.updateProfile({displayName: name});
       await createUser({
         variables: {
           email: email,
           id: credentials.user.uid,
+          name: name,
         },
       });
       await Promise.all([

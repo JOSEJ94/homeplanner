@@ -1,0 +1,19 @@
+query getInvitations {
+  getInvitations {
+    ...groupMember
+  }
+}
+
+mutation updateInviteStatus(
+  $groupId: ID!
+  $newStatus: GroupStatus!
+  $userId: ID!
+) {
+  updateInviteStatus(
+    groupId: $groupId
+    newStatus: $newStatus
+    userId: $userId
+  ) {
+    ...groupMember
+  }
+}
