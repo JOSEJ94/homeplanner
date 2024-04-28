@@ -55,9 +55,9 @@ const AuthenticationSwitch = () => {
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsSignedIn(Boolean(user));
     const {data: invitationsData} = await getInvitations();
-    // if (invitationsData?.getInvitations.length) {
-    navigationRef.current?.navigate(Routes.INVITATION_RECEIVED_MODAL);
-    // }
+    if (invitationsData?.getInvitations.length) {
+      navigationRef.current?.navigate(Routes.INVITATION_RECEIVED_MODAL);
+    }
     try {
       console.log('Access token', await user?.getIdToken());
     } catch (error) {

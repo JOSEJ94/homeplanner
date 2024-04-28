@@ -1,5 +1,9 @@
 query getInvitations {
   getInvitations {
+    group {
+      id
+      name
+    }
     ...groupMember
   }
 }
@@ -7,7 +11,7 @@ query getInvitations {
 mutation updateInviteStatus(
   $groupId: ID!
   $newStatus: GroupStatus!
-  $userId: ID!
+  $userId: ID
 ) {
   updateInviteStatus(
     groupId: $groupId
