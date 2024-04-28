@@ -16,7 +16,7 @@ import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Button from '../../shared/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useMutation} from '@apollo/client';
-import {AddMemberDocument} from '../../graphql/generated';
+import {AddMemberDocument, GroupFragmentDoc} from '../../graphql/generated';
 
 const InviteFamilyMember = () => {
   const theme = useTheme() as AppTheme;
@@ -27,15 +27,31 @@ const InviteFamilyMember = () => {
   const params =
     route.params as AppScreensParamList[Routes.INVITE_FAMILY_MEMBER];
   const [email, setEmail] = useState('');
-  const [addMember, {loading: submitting}] = useMutation(AddMemberDocument);
+  const [addMember, {loading: submitting}] = useMutation(AddMemberDocument, {
+    update: (cache, {data: invitedMember}) => {
+      cache.modify({
+        broadcast: true,
+        fields: {
+          getGroups(existingGroups = []) {
+            const group = cache.readFragment({
+              id: existingGroups[0].__ref,
+              fragmentName: 'group',
+              fragment: GroupFragmentDoc,
+            });
+            const members = [...group!.members];
+            members.push(invitedMember!.addMember);
+            return [{...group, members}];
+          },
+        },
+      });
+    },
+  });
 
   const onInviteMemberPress = async () => {
     try {
       const invitedMember = await addMember({
         variables: {userEmail: email, groupId: params.groupId},
       });
-      console.log('invitedMember', invitedMember);
-
       navigation.goBack();
     } catch (error: any) {
       console.error(`Error`, error);

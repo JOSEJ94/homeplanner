@@ -1,18 +1,22 @@
 query getGroups {
   getGroups {
-    id
-    name
-    rooms {
-      ...room
-    }
-    members {
-      ...groupMember
-    }
+    ...group
   }
 }
 
 mutation addMember($userEmail: String!, $groupId: ID!) {
   addMember(userEmail: $userEmail, groupId: $groupId) {
+    ...groupMember
+  }
+}
+
+fragment group on Group {
+  id
+  name
+  rooms {
+    ...room
+  }
+  members {
     ...groupMember
   }
 }
@@ -26,6 +30,7 @@ fragment room on Room {
 }
 
 fragment groupMember on GroupMember {
+  groupId
   user {
     email
     name

@@ -6,10 +6,17 @@ import {firebase} from '@react-native-firebase/auth';
 import AuthenticationSwitch from './src/routes/AuthenticationSwitch';
 import Config from 'react-native-config';
 import {cache} from './src/shared/apollo/cache/cache';
+import {loadErrorMessages, loadDevMessages} from '@apollo/client/dev';
 
 GoogleSignin.configure({
   webClientId: Config.RN_GOOGLE_CLIENT_ID,
 });
+
+if (__DEV__) {
+  console.info('Apollo client debug mode enabled');
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 const authLink = setContext(async (_, {headers}) => {
   try {
