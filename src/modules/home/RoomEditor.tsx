@@ -16,8 +16,8 @@ import RoomCard from './components/RoomCard';
 import {Icon} from '../../shared/modules/IconPicker';
 import {
   CreateRoomDocument,
-  GetGroupsDocument,
   GetRoomDetailsDocument,
+  GroupFragmentDoc,
   IconType,
   UpdateRoomDocument,
 } from '../../graphql/generated';
@@ -41,8 +41,28 @@ const RoomEditor = () => {
     variables: {id},
     skip: !id,
   });
-  const [createRoom, {loading: submittingRoomCreation}] =
-    useMutation(CreateRoomDocument);
+  const [createRoom, {loading: submittingRoomCreation}] = useMutation(
+    CreateRoomDocument,
+    {
+      update: (cache, {data: createdRoomMutationResponse}) => {
+        cache.modify({
+          broadcast: true,
+          fields: {
+            getGroups(existingGroups = []) {
+              const group = cache.readFragment({
+                id: existingGroups[0].__ref,
+                fragmentName: 'group',
+                fragment: GroupFragmentDoc,
+              });
+              const rooms = [...group!.rooms];
+              rooms.push(createdRoomMutationResponse!.createRoom);
+              return [{...group, rooms}];
+            },
+          },
+        });
+      },
+    },
+  );
   const [updateRoom, {loading: submittingRoomUpdate}] =
     useMutation(UpdateRoomDocument);
   const existingRoomDetails = data?.getRoomDetails;
@@ -92,7 +112,6 @@ const RoomEditor = () => {
             iconType: selectedRoomIcon.type,
             name: selectedRoomName,
           },
-          refetchQueries: [GetGroupsDocument],
         });
       } else {
         await createRoom({
@@ -103,7 +122,6 @@ const RoomEditor = () => {
             name: selectedRoomName,
             groupId: groupId!,
           },
-          refetchQueries: [GetGroupsDocument],
         });
       }
       navigation.goBack();
