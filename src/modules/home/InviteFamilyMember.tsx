@@ -23,9 +23,9 @@ const InviteFamilyMember = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const route = useRoute<RouteProp<AppScreensParamList>>();
-  const params =
-    route.params as AppScreensParamList[Routes.INVITE_FAMILY_MEMBER];
+  const route =
+    useRoute<RouteProp<AppScreensParamList, Routes.INVITE_FAMILY_MEMBER>>();
+  const params = route.params;
   const [email, setEmail] = useState('');
   const [addMember, {loading: submitting}] = useMutation(AddMemberDocument, {
     update: (cache, {data: invitedMember}) => {

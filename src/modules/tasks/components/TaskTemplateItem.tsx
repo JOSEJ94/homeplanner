@@ -5,16 +5,16 @@ import Typography, {
 } from '../../../shared/components/Typography';
 import {AppTheme} from '../../../shared/themes/Theme';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {Task} from '../../../graphql/generated';
+import {TaskTemplate} from '../../../graphql/generated';
 import RoomIcon from '../../../shared/components/RoomIcon';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 
-interface TaskItemProps {
-  task: Task;
+interface TaskTemplateItemProps {
+  taskTemplate: TaskTemplate;
 }
 
-const TaskItem = ({task}: TaskItemProps) => {
+const TaskTemplateItem = ({taskTemplate}: TaskTemplateItemProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
@@ -22,23 +22,25 @@ const TaskItem = ({task}: TaskItemProps) => {
 
   const seeDetails = () =>
     navigation.navigate(Routes.TASK_EDITOR, {
-      id: task.id,
+      id: taskTemplate.id,
     });
 
   return (
     <Pressable style={styles.container} onPress={seeDetails}>
-      <RoomIcon room={task.room} />
+      <RoomIcon room={taskTemplate.room} />
       <View style={styles.informationContainer}>
         <Typography variant={TypographyVariant.CAPTION} style={styles.titleTxt}>
-          {task.title}
+          {taskTemplate.title}
         </Typography>
         <Typography numberOfLines={1} variant={TypographyVariant.BODY}>
-          {task.description}
+          {taskTemplate.description}
         </Typography>
         <View style={styles.subInformationContainer}>
-          <Typography style={styles.categoryTxt}>{task.room.name}</Typography>
+          <Typography style={styles.categoryTxt}>
+            {taskTemplate.room.name}
+          </Typography>
           <Typography style={styles.scheduleTypeTxt}>
-            {task.scheduleType}
+            {taskTemplate.scheduleType}
           </Typography>
         </View>
       </View>
@@ -46,7 +48,7 @@ const TaskItem = ({task}: TaskItemProps) => {
   );
 };
 
-export default TaskItem;
+export default TaskTemplateItem;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({

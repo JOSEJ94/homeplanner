@@ -33,8 +33,8 @@ const RoomEditor = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const route = useRoute<RouteProp<AppScreensParamList>>();
-  const params = route.params as AppScreensParamList[Routes.ROOM_EDITOR];
+  const route = useRoute<RouteProp<AppScreensParamList, Routes.ROOM_EDITOR>>();
+  const params = route.params;
   const id = params?.id || '';
   const groupId = params?.groupId;
   const {data, loading, error} = useQuery(GetRoomDetailsDocument, {

@@ -20,8 +20,10 @@ const PasswordResetConfirmationScreen = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const {email} = useRoute<RouteProp<AppScreensParamList>>()
-    .params as AppScreensParamList[Routes.PASSWORD_RESET_CONFIRMATION];
+  const {email} =
+    useRoute<
+      RouteProp<AppScreensParamList, Routes.PASSWORD_RESET_CONFIRMATION>
+    >().params;
 
   const goToLogin = () => navigation.popToTop();
 

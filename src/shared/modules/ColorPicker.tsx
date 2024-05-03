@@ -17,8 +17,8 @@ const ColorPicker = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const route = useRoute<RouteProp<AppScreensParamList>>();
-  const params = route.params as AppScreensParamList[Routes.COLOR_PICKER];
+  const route = useRoute<RouteProp<AppScreensParamList, Routes.COLOR_PICKER>>();
+  const params = route.params;
   const [selectedColor, setSelectedColor] = useState(
     params.currentColor ?? '#FF0000',
   );

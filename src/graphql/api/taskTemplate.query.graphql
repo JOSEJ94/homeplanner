@@ -1,0 +1,177 @@
+mutation createTaskTemplate(
+  $assignedTo: [ID!]!
+  $room: ID!
+  $startingDate: Date!
+  $endingDate: Date
+  $scheduleType: TaskSchedule!
+  $title: String!
+  $description: String
+  $randomlyAssign: Boolean
+  $scheduleInterval: Int!
+) {
+  createTaskTemplate(
+    assignedTo: $assignedTo
+    room: $room
+    scheduleType: $scheduleType
+    startingDate: $startingDate
+    endingDate: $endingDate
+    title: $title
+    description: $description
+    randomlyAssign: $randomlyAssign
+    scheduleInterval: $scheduleInterval
+  ) {
+    assignedTo {
+      email
+      id
+      name
+      profilePhoto
+    }
+    endingDate
+    id
+    randomlyAssigned
+    room {
+      ...room
+    }
+    scheduleInterval
+    scheduleType
+    startingDate
+    title
+    subTasks {
+      description
+      id
+    }
+    description
+  }
+}
+
+query getTaskTemplates($fromRooms: [ID!]) {
+  getTaskTemplates(fromRooms: $fromRooms) {
+    createdAt
+    description
+    endingDate
+    id
+    randomlyAssigned
+    scheduleInterval
+    scheduleType
+    startingDate
+    title
+    subTasks {
+      createdAt
+      description
+      id
+    }
+    assignedTo {
+      email
+      id
+      name
+      profilePhoto
+    }
+    room {
+      ...room
+    }
+  }
+}
+
+query getTaskTemplateDetails($id: ID!) {
+  getTaskTemplateDetails(id: $id) {
+    assignedTo {
+      email
+      id
+      name
+      profilePhoto
+    }
+    description
+    endingDate
+    id
+    randomlyAssigned
+    scheduleInterval
+    scheduleType
+    startingDate
+    title
+    room {
+      ...room
+    }
+  }
+}
+
+mutation deleteTaskTemplate($id: ID!) {
+  deleteTaskTemplate(id: $id) {
+    id
+  }
+}
+mutation updateTaskTemplate(
+  $id: ID!
+  $room: ID!
+  $title: String!
+  $randomlyAssign: Boolean
+  $description: String
+  $assignedTo: [ID!]!
+  $startingDate: Date!
+  $endingDate: Date!
+  $scheduleType: TaskSchedule!
+  $scheduleInterval: Int!
+) {
+  updateTaskTemplate(
+    assignedTo: $assignedTo
+    id: $id
+    room: $room
+    scheduleType: $scheduleType
+    startingDate: $endingDate
+    title: $title
+    description: $description
+    randomlyAssign: $randomlyAssign
+    scheduleInterval: $scheduleInterval
+  ) {
+    assignedTo {
+      id
+      name
+      email
+      profilePhoto
+    }
+    description
+    endingDate
+    id
+    randomlyAssigned
+    room {
+      ...room
+    }
+    scheduleInterval
+    scheduleType
+    startingDate
+    title
+    subTasks {
+      description
+      id
+    }
+  }
+}
+
+mutation createTasksFromTemplate($fromTemplate: ID!, $scheduleDates: [Date!]!) {
+  createTasksFromTemplate(
+    fromTemplate: $fromTemplate
+    scheduleDates: $scheduleDates
+  ) {
+    assignedTo {
+      email
+      id
+      name
+      profilePhoto
+    }
+    description
+    id
+    randomlyAssigned
+    room {
+      ...room
+    }
+    scheduleDay
+    scheduleInterval
+    scheduleType
+    subTasks {
+      completed
+      description
+      id
+    }
+    title
+    completionDate
+  }
+}

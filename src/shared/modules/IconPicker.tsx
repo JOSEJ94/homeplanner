@@ -50,8 +50,8 @@ const getIcon = (icon: IconType) => {
 const IconPicker = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const route = useRoute<RouteProp<AppScreensParamList>>();
-  const params = route.params as AppScreensParamList[Routes.ICON_PICKER];
+  const route = useRoute<RouteProp<AppScreensParamList, Routes.ICON_PICKER>>();
+  const params = route.params;
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [selectedIcon, setselectedIcon] = useState<Icon | undefined>(

@@ -11,21 +11,19 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import DropDownPicker, {ItemType} from 'react-native-dropdown-picker';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Typography from '../../shared/components/Typography';
 import TextInput from '../../shared/components/TextInput';
 import Button from '../../shared/components/Button';
-import {TaskDto} from '../../shared/models/TaskDto';
 import {useMutation, useQuery} from '@apollo/client';
 import {
-  CreateTaskDocument,
+  CreateTaskTemplateDocument,
   GetRoomsDocument,
-  GetTaskDetailsDocument,
-  GetTasksDocument,
+  GetTaskTemplateDetailsDocument,
+  GetTaskTemplatesDocument,
   TaskSchedule,
-  UpdateTaskDocument,
+  UpdateTaskTemplateDocument,
 } from '../../graphql/generated';
-import {RoomDto} from '../../shared/models/RoomDto';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
+import {firebase} from '@react-native-firebase/auth';
 
 const scheduleTypeOptions: ItemType<TaskSchedule>[] = [
   {
@@ -46,14 +44,16 @@ const scheduleTypeOptions: ItemType<TaskSchedule>[] = [
   },
 ];
 
-const TaskEditorScreen = () => {
+const TaskTemplateEditorScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const params = useRoute<RouteProp<AppScreensParamList>>()
-    .params as AppScreensParamList[Routes.TASK_EDITOR];
+  const params =
+    useRoute<RouteProp<AppScreensParamList, Routes.TASK_EDITOR>>().params;
   const id = params?.id;
+  // FIXME: It's only using local user for the moment
+  const userId = firebase.auth().currentUser?.uid;
   const {
     data: roomsData,
     loading: loadingRooms,
@@ -66,20 +66,22 @@ const TaskEditorScreen = () => {
   }));
 
   const {
-    data: existingTaskDetailsData,
+    data: existingTaskTemplateDetailsData,
     loading: loadingExistingTask,
     error: errorExistingTask,
-  } = useQuery(GetTaskDetailsDocument, {
+  } = useQuery(GetTaskTemplateDetailsDocument, {
     variables: {id: id as string},
     skip: !id || !roomsOptions.length,
   });
-  const [createTask, {loading: submittingTaskCreation}] =
-    useMutation(CreateTaskDocument);
-  const [updateTask, {loading: submittingTaskUpdate}] =
-    useMutation(UpdateTaskDocument);
+  const [createTask, {loading: submittingTaskTemplateCreation}] = useMutation(
+    CreateTaskTemplateDocument,
+  );
+  const [updateTask, {loading: submittingTaskTemplateUpdate}] = useMutation(
+    UpdateTaskTemplateDocument,
+  );
 
-  const existingTaskDetails: TaskDto | undefined =
-    existingTaskDetailsData?.getTaskDetails;
+  const existingTaskTemplateDetails =
+    existingTaskTemplateDetailsData?.getTaskTemplateDetails;
 
   const [openRoomSelector, setOpenRoomSelector] = useState(false);
   const [openScheduleTypeSelector, setOpenScheduleTypeSelector] =
@@ -92,17 +94,17 @@ const TaskEditorScreen = () => {
   const [roomSelected, setRoomSelected] = useState<string | null>(null);
 
   useEffect(() => {
-    if (existingTaskDetails) {
-      setTitle(existingTaskDetails.title);
-      if (existingTaskDetails.description)
-        setDescription(existingTaskDetails.description);
-      setRandomlyAssigned(existingTaskDetails.randomlyAssigned);
-      if (existingTaskDetails.assignedTo)
-        setAssignedTo(existingTaskDetails.assignedTo);
-      setScheduleType(existingTaskDetails.scheduleType);
-      setRoomSelected(existingTaskDetails.room.id);
+    if (existingTaskTemplateDetails) {
+      setTitle(existingTaskTemplateDetails.title);
+      if (existingTaskTemplateDetails.description)
+        setDescription(existingTaskTemplateDetails.description);
+      setRandomlyAssigned(existingTaskTemplateDetails.randomlyAssigned);
+      if (existingTaskTemplateDetails.assignedTo)
+        setAssignedTo(existingTaskTemplateDetails.assignedTo);
+      setScheduleType(existingTaskTemplateDetails.scheduleType);
+      setRoomSelected(existingTaskTemplateDetails.room.id);
     }
-  }, [existingTaskDetails]);
+  }, [existingTaskTemplateDetails]);
 
   useMemo(
     () =>
@@ -118,30 +120,31 @@ const TaskEditorScreen = () => {
         await updateTask({
           variables: {
             id,
-            assignedTo: ['qBfdOe5ho8VfZbBpwVeB0YSu1Ar1'],
+            assignedTo: [userId!],
             room: roomSelected!,
-            scheduleDay: '2024-05-01',
+            startingDate: '2024-05-01',
+            endingDate: '2024-05-01',
             scheduleInterval: 0,
             scheduleType: scheduleType!,
             title,
             description,
             randomlyAssign: randomlyAssigned,
           },
-          refetchQueries: [GetTasksDocument],
+          refetchQueries: [GetTaskTemplatesDocument],
         });
       } else {
         await createTask({
           variables: {
-            assignedTo: ['qBfdOe5ho8VfZbBpwVeB0YSu1Ar1'],
+            assignedTo: [userId!],
             room: roomSelected!,
-            scheduleDay: '2024-05-01',
+            startingDate: '2024-05-01',
             scheduleInterval: 0,
             scheduleType: scheduleType!,
             title,
             description,
             randomlyAssign: randomlyAssigned,
           },
-          refetchQueries: [GetTasksDocument],
+          refetchQueries: [GetTaskTemplatesDocument],
         });
       }
       navigation.goBack();
@@ -188,7 +191,7 @@ const TaskEditorScreen = () => {
           />
         </View>
         <Button
-          loading={submittingTaskCreation}
+          loading={submittingTaskTemplateCreation}
           disabled={isSavingButtonDisabled}
           onPress={saveTask}
           title="Save"
@@ -199,7 +202,7 @@ const TaskEditorScreen = () => {
   );
 };
 
-export default TaskEditorScreen;
+export default TaskTemplateEditorScreen;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({

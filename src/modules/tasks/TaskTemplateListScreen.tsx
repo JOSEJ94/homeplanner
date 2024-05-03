@@ -11,12 +11,13 @@ import React, {useEffect, useMemo} from 'react';
 import {useMutation, useQuery} from '@apollo/client';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
-  DeleteTaskDocument,
+  DeleteTaskTemplateDocument,
   GetRoomsDocument,
-  GetTasksDocument,
+  GetTaskTemplatesDocument,
   Task,
+  TaskTemplate,
 } from '../../graphql/generated';
-import TaskItem from './components/TaskItem';
+import TaskTemplateItem from './components/TaskTemplateItem';
 import Pill from './components/Pill';
 import {AppTheme} from '../../shared/themes/Theme';
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -32,7 +33,7 @@ import {
   taskFilterVar,
 } from '../../shared/apollo/cache/cache';
 
-const TaskListScreen = () => {
+const TaskTemplateListScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
   const theme = useTheme() as AppTheme;
@@ -46,14 +47,14 @@ const TaskListScreen = () => {
     () =>
       navigation.setOptions({
         headerRight: props => {
-          const navigateToTaskEditor = () =>
+          const navigateToTaskTemplateEditor = () =>
             navigation.navigate(Routes.TASK_EDITOR);
 
           return (
             <Pressable
               hitSlop={theme.hitSlop}
               style={styles.addButton}
-              onPress={navigateToTaskEditor}>
+              onPress={navigateToTaskTemplateEditor}>
               <Icon name="add" color={theme.colors.primary} size={30} />
             </Pressable>
           );
@@ -62,8 +63,8 @@ const TaskListScreen = () => {
     [],
   );
 
-  const [deleteTask, {loading: submittingTaskDelete}] =
-    useMutation(DeleteTaskDocument);
+  const [deleteTaskTemplate, {loading: submittingTaskTemplateDelete}] =
+    useMutation(DeleteTaskTemplateDocument);
   const {data: taskFilterData} = useQuery<{
     taskFilter: TaskFilter<RoomFilterDto>;
   }>(GET_TASK_FILTER);
@@ -72,24 +73,27 @@ const TaskListScreen = () => {
     .filter(so => so.id !== ALL_ROOMS_OPTION.id)
     .map(so => so.id);
   const {
-    data: tasksData,
-    loading: loadingTasks,
+    data: taskTemplatesData,
+    loading: loadingTaskTemplates,
     error: errorTasks,
-  } = useQuery(GetTasksDocument, {variables: {fromRooms: roomsSelectedIds}});
+  } = useQuery(GetTaskTemplatesDocument, {
+    variables: {fromRooms: roomsSelectedIds},
+  });
   const {
     data: roomsData,
     loading: loadingRooms,
     error: errorRooms,
   } = useQuery(GetRoomsDocument);
 
-  const tasks = tasksData?.getTasks || [];
+  const taskTemplates = taskTemplatesData?.getTaskTemplates || [];
   const rooms: RoomFilterDto[] = [ALL_ROOMS_OPTION].concat(
     roomsData?.getRooms || [],
   );
-  const isLoading = submittingTaskDelete || loadingRooms || loadingTasks;
+  const isLoading =
+    submittingTaskTemplateDelete || loadingRooms || loadingTaskTemplates;
 
-  const renderTask = (info: ListRenderItemInfo<Task>) => (
-    <TaskItem task={info.item} />
+  const renderTaskTemplate = (info: ListRenderItemInfo<TaskTemplate>) => (
+    <TaskTemplateItem taskTemplate={info.item} />
   );
 
   const renderRoomFilter = (info: ListRenderItemInfo<RoomFilterDto>) => {
@@ -133,13 +137,13 @@ const TaskListScreen = () => {
     );
   };
 
-  const renderDeleteButton = (info: ListRenderItemInfo<Task>) => {
-    const onDeleteTaskPressed = async () => {
+  const renderDeleteButton = (info: ListRenderItemInfo<TaskTemplate>) => {
+    const onDeleteTaskTemplatePressed = async () => {
       try {
         if (isLoading) return;
-        const deletedTask = await deleteTask({
+        const deletedTask = await deleteTaskTemplate({
           variables: {id: info.item.id},
-          refetchQueries: [GetTasksDocument],
+          refetchQueries: [GetTaskTemplatesDocument],
         });
       } catch (error) {
         console.error(error);
@@ -147,7 +151,7 @@ const TaskListScreen = () => {
     };
 
     return (
-      <Pressable style={styles.deleteBtn} onPress={onDeleteTaskPressed}>
+      <Pressable style={styles.deleteBtn} onPress={onDeleteTaskTemplatePressed}>
         {isLoading ? (
           <ActivityIndicator size="large" color={theme.white as ColorValue} />
         ) : (
@@ -172,8 +176,8 @@ const TaskListScreen = () => {
         showsHorizontalScrollIndicator={false}
       />
       <SwipeListView
-        data={tasks}
-        renderItem={renderTask}
+        data={taskTemplates}
+        renderItem={renderTaskTemplate}
         renderHiddenItem={renderDeleteButton}
         disableRightSwipe
         closeOnScroll
@@ -185,7 +189,7 @@ const TaskListScreen = () => {
   );
 };
 
-export default TaskListScreen;
+export default TaskTemplateListScreen;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
