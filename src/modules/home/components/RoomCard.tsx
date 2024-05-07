@@ -20,24 +20,27 @@ import Typography, {
 } from '../../../shared/components/Typography';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
-import {RoomDto} from '../../../shared/models/RoomDto';
 import ShakeView from '../../../shared/components/ShakeView';
 import {useMutation} from '@apollo/client';
-import {
-  DeleteRoomDocument,
-  GetGroupsDocument,
-} from '../../../graphql/generated';
+import {DeleteRoomDocument, RoomFragment} from '../../../graphql/generated';
 
 const ICON_SIZE = 35;
 
 interface RoomCardProps {
-  room: RoomDto;
+  room: RoomFragment;
+  groupId: string;
   shake?: boolean;
   style?: StyleProp<ViewStyle>;
   onLongPress?: (() => void) | null | undefined;
 }
 
-const RoomCard = ({room, style, onLongPress, shake = false}: RoomCardProps) => {
+const RoomCard = ({
+  room,
+  groupId,
+  style,
+  onLongPress,
+  shake = false,
+}: RoomCardProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(
     () => createStyles(theme, room.color),
@@ -49,14 +52,13 @@ const RoomCard = ({room, style, onLongPress, shake = false}: RoomCardProps) => {
   const onCardPress = () =>
     navigation.navigate(Routes.ROOM_EDITOR, {
       id: room.id,
-      groupId: room.groupId,
+      groupId,
     });
 
   const onDeletePress = async () => {
     try {
       await deleteRoom({
         variables: {id: room.id},
-        refetchQueries: [GetGroupsDocument],
       });
     } catch (error: any) {
       console.error('Error', error.message);

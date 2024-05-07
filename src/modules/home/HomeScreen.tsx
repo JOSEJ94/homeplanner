@@ -51,6 +51,7 @@ const HomeScreen = () => {
     <RoomCard
       key={info.item.id}
       room={info.item}
+      groupId={firstGroup?.id!}
       shake={selectedRoom === info.item.id}
       onLongPress={() =>
         setSelectedRoom(selectedRoom === info.item.id ? '' : info.item.id)

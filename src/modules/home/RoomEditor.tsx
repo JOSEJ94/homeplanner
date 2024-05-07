@@ -17,7 +17,6 @@ import {Icon} from '../../shared/modules/IconPicker';
 import {
   CreateRoomDocument,
   GetRoomDetailsDocument,
-  GroupFragmentDoc,
   IconType,
   UpdateRoomDocument,
 } from '../../graphql/generated';
@@ -41,28 +40,9 @@ const RoomEditor = () => {
     variables: {id},
     skip: !id,
   });
-  const [createRoom, {loading: submittingRoomCreation}] = useMutation(
-    CreateRoomDocument,
-    {
-      update: (cache, {data: createdRoomMutationResponse}) => {
-        cache.modify({
-          broadcast: true,
-          fields: {
-            getGroups(existingGroups = []) {
-              const group = cache.readFragment({
-                id: existingGroups[0].__ref,
-                fragmentName: 'group',
-                fragment: GroupFragmentDoc,
-              });
-              const rooms = [...group!.rooms];
-              rooms.push(createdRoomMutationResponse!.createRoom);
-              return [{...group, rooms}];
-            },
-          },
-        });
-      },
-    },
-  );
+
+  const [createRoom, {loading: submittingRoomCreation}] =
+    useMutation(CreateRoomDocument);
   const [updateRoom, {loading: submittingRoomUpdate}] =
     useMutation(UpdateRoomDocument);
   const existingRoomDetails = data?.getRoomDetails;
@@ -138,8 +118,8 @@ const RoomEditor = () => {
         <Typography>Preview</Typography>
         <RoomCard
           style={styles.roomPreviewCard}
+          groupId=""
           room={{
-            groupId: '',
             name: selectedRoomName || 'Enter name',
             color: selectedRoomColor,
             iconName: selectedRoomIcon?.name,
