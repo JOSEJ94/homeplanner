@@ -130,7 +130,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <Skeleton.Group show={loading}>
         <SectionList
           style={styles.container}
