@@ -1,4 +1,4 @@
-import {Dimensions, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
 import {
@@ -21,6 +21,8 @@ import {
   UpdateRoomDocument,
 } from '../../graphql/generated';
 import {useMutation, useQuery} from '@apollo/client';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Skeleton} from 'moti/skeleton';
 
 const DEFAULT_ICON: Icon = {
   name: 'home',
@@ -113,49 +115,54 @@ const RoomEditor = () => {
   const isSavingButtonDisabled =
     !selectedRoomName || !selectedRoomColor || !selectedRoomIcon;
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <Typography>Preview</Typography>
-        <RoomCard
-          style={styles.roomPreviewCard}
-          groupId=""
-          room={{
-            name: selectedRoomName || 'Enter name',
-            color: selectedRoomColor,
-            iconName: selectedRoomIcon?.name,
-            iconType: selectedRoomIcon?.type,
-            id,
-          }}
-        />
-        <TextInput
-          maxLength={25}
-          value={selectedRoomName}
-          containerStyle={styles.roomNameInput}
-          title="Room name"
-          placeholder="Enter a name"
-          onChangeText={setSelectedRoomName}
-        />
-        <View style={styles.buttonContainer}>
+    <SafeAreaView edges={['bottom']} style={styles.safeAreaContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Skeleton.Group show={loading}>
+          <View>
+            <Typography skeletonProps={{width: 60}}>Preview</Typography>
+            <RoomCard
+              style={styles.roomPreviewCard}
+              groupId=""
+              room={{
+                name: selectedRoomName || 'Enter name',
+                color: selectedRoomColor,
+                iconName: selectedRoomIcon?.name,
+                iconType: selectedRoomIcon?.type,
+                id,
+              }}
+            />
+            <TextInput
+              maxLength={25}
+              value={selectedRoomName}
+              containerStyle={styles.roomNameInput}
+              titleProps={{skeletonProps: {width: 90}}}
+              title="Room name"
+              placeholder="Enter a name"
+              onChangeText={setSelectedRoomName}
+            />
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={pickAColor}
+                title="Pick Color"
+                variant={ButtonVariant.SECONDARY}
+              />
+              <Button
+                onPress={pickAnIcon}
+                title="Pick Icon"
+                variant={ButtonVariant.SECONDARY}
+              />
+            </View>
+          </View>
           <Button
-            onPress={pickAColor}
-            title="Pick Color"
-            variant={ButtonVariant.SECONDARY}
+            loading={submittingRoomCreation || submittingRoomUpdate}
+            disabled={isSavingButtonDisabled}
+            onPress={onSavePress}
+            title="Save"
+            fullWidth
           />
-          <Button
-            onPress={pickAnIcon}
-            title="Pick Icon"
-            variant={ButtonVariant.SECONDARY}
-          />
-        </View>
-      </View>
-      <Button
-        loading={submittingRoomCreation || submittingRoomUpdate}
-        disabled={isSavingButtonDisabled}
-        onPress={onSavePress}
-        title="Save"
-        fullWidth
-      />
-    </ScrollView>
+        </Skeleton.Group>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -163,14 +170,16 @@ export default RoomEditor;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
+    safeAreaContainer: {
+      flex: 1,
+    },
     container: {
       padding: theme.spacing * 2,
-      flex: 1,
+      flexGrow: 1,
       justifyContent: 'space-between',
     },
     roomPreviewCard: {
       alignSelf: 'center',
-      width: Dimensions.get('screen').width / 2 - theme.spacing * 2,
     },
     roomNameInput: {
       marginBottom: theme.spacing * 3,

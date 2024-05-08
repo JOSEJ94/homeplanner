@@ -109,7 +109,7 @@ const TaskTemplateEditorScreen = () => {
   useMemo(
     () =>
       navigation.setOptions({
-        headerTitle: params?.id ? 'Edit Room' : 'New Room',
+        headerTitle: params?.id ? 'Edit Task Template' : 'New Task Template',
       }),
     [params?.id],
   );

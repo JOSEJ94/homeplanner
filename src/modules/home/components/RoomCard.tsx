@@ -23,6 +23,7 @@ import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 import ShakeView from '../../../shared/components/ShakeView';
 import {useMutation} from '@apollo/client';
 import {DeleteRoomDocument, RoomFragment} from '../../../graphql/generated';
+import {Skeleton} from 'moti/skeleton';
 
 const ICON_SIZE = 35;
 
@@ -97,19 +98,26 @@ const RoomCard = ({
         onLongPress={onLongPress}
         hitSlop={theme.hitSlop}>
         <ShakeView style={[styles.container, style]} isActive={shake}>
-          <View style={styles.pressableContainer}>
-            <Icon
-              style={styles.icon}
-              name={room.iconName}
-              color={theme.white as ColorValue}
-              size={ICON_SIZE}
-            />
-            <Typography
-              style={styles.roomNameTxt}
-              variant={TypographyVariant.CAPTION}>
-              {room?.name}
-            </Typography>
-          </View>
+          <Skeleton
+            width={styles.container.width}
+            height={styles.container.minHeight}
+            radius={styles.container.borderRadius}
+            colorMode="light">
+            <View style={styles.pressableContainer}>
+              <Icon
+                style={styles.icon}
+                name={room.iconName}
+                color={theme.white as ColorValue}
+                size={ICON_SIZE}
+              />
+              <Typography
+                style={styles.roomNameTxt}
+                skeletonProps={{width: 0}}
+                variant={TypographyVariant.CAPTION}>
+                {room?.name}
+              </Typography>
+            </View>
+          </Skeleton>
         </ShakeView>
       </Pressable>
     </View>
@@ -124,10 +132,12 @@ const createStyles = (theme: AppTheme, backgroundColor: string) =>
       minHeight: 110,
     },
     pressableContainer: {
+      alignSelf: 'center',
       alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
     },
     container: {
-      padding: theme.spacing,
       backgroundColor,
       borderRadius: 6,
       justifyContent: 'center',

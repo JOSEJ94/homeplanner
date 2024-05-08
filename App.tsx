@@ -1,3 +1,4 @@
+import 'react-native-reanimated';
 import React from 'react';
 import {ApolloClient, ApolloProvider, createHttpLink} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';

@@ -2,6 +2,8 @@ import {StyleSheet, Text, TextProps} from 'react-native';
 import React, {useMemo} from 'react';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
+import {Skeleton} from 'moti/skeleton';
+import {MotiSkeletonProps} from 'moti/build/skeleton/types';
 
 export enum TypographyVariant {
   BODY = 'Body',
@@ -10,23 +12,27 @@ export enum TypographyVariant {
   SUB_HEADING = 'Sub Heading',
 }
 
-interface TypographyProps extends TextProps {
+export interface TypographyProps extends TextProps {
   variant?: TypographyVariant;
+  skeletonProps?: Omit<MotiSkeletonProps, 'Gradient'>;
 }
 
 const Typography = ({
   children,
   variant = TypographyVariant.BODY,
   style,
+  skeletonProps,
   ...rest
 }: TypographyProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme, variant), [theme, variant]);
 
   return (
-    <Text {...rest} style={[styles.text, style]}>
-      {children}
-    </Text>
+    <Skeleton colorMode="light" {...skeletonProps}>
+      <Text {...rest} style={[styles.text, style]}>
+        {children}
+      </Text>
+    </Skeleton>
   );
 };
 
@@ -35,6 +41,7 @@ export default Typography;
 const createStyles = (theme: AppTheme, variant: TypographyVariant) =>
   StyleSheet.create({
     text: {
+      alignSelf: 'flex-start',
       ...(variant === TypographyVariant.HEADING && {
         fontSize: 34,
         fontWeight: 'bold',

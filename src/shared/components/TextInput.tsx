@@ -1,7 +1,6 @@
 import React, {useMemo} from 'react';
 import {
   View,
-  Text,
   TextInput as DefaultTextInput,
   StyleSheet,
   TextInputProps,
@@ -11,13 +10,17 @@ import {
 } from 'react-native';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
-import Typography from './Typography';
+import Typography, {TypographyProps} from './Typography';
+import {Skeleton} from 'moti/skeleton';
+import {MotiSkeletonProps} from 'moti/build/skeleton/types';
 
 interface CustomTextInputProps extends TextInputProps {
   title?: string;
   icon?: React.JSX.Element;
   containerStyle?: StyleProp<ViewStyle>;
   error?: boolean;
+  titleProps?: TypographyProps;
+  skeletonProps?: Omit<MotiSkeletonProps, 'Gradient'>;
 }
 
 const TextInput = ({
@@ -26,6 +29,8 @@ const TextInput = ({
   icon,
   containerStyle,
   error,
+  titleProps,
+  skeletonProps,
   ...rest
 }: CustomTextInputProps) => {
   const theme = useTheme() as AppTheme;
@@ -37,20 +42,31 @@ const TextInput = ({
 
   return (
     <View style={containerStyle}>
-      {Boolean(title) && <Typography>{title}</Typography>}
-      <View
-        style={[
-          styles.inputContainer,
-          Boolean(error) && styles.inputContainerError,
-          Boolean(icon) && styles.iconContainer,
-        ]}>
-        {icon}
-        <DefaultTextInput
-          style={styles.textInput}
-          placeholderTextColor={placeholderTextColorToUse}
-          {...rest}
-        />
-      </View>
+      {Boolean(title) && (
+        <>
+          <Typography {...titleProps}>{title}</Typography>
+          <View style={styles.spacer} />
+        </>
+      )}
+
+      <Skeleton
+        colorMode="light"
+        radius={styles.inputContainer.borderRadius}
+        {...skeletonProps}>
+        <View
+          style={[
+            styles.inputContainer,
+            Boolean(error) && styles.inputContainerError,
+            Boolean(icon) && styles.iconContainer,
+          ]}>
+          {icon}
+          <DefaultTextInput
+            style={styles.textInput}
+            placeholderTextColor={placeholderTextColorToUse}
+            {...rest}
+          />
+        </View>
+      </Skeleton>
     </View>
   );
 };
@@ -66,6 +82,9 @@ const createStyles = (theme: AppTheme) =>
       padding: theme.spacing * 1.5,
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    spacer: {
+      marginBottom: 8,
     },
     inputContainerError: {
       borderColor: theme.error as ColorValue,

@@ -11,6 +11,7 @@ import {
 import React, {useMemo} from 'react';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
+import {Skeleton} from 'moti/skeleton';
 
 export enum ButtonVariant {
   PRIMARY = 'Primary',
@@ -42,18 +43,20 @@ const Button = ({
   );
 
   return (
-    <Pressable
-      hitSlop={theme.hitSlop}
-      {...rest}
-      disabled={loading || disabled}
-      style={[styles.container, style]}
-      onPress={onPress}>
-      {loading ? (
-        <ActivityIndicator size="small" color={theme.colors.primary} />
-      ) : (
-        <Text style={styles.text}>{title}</Text>
-      )}
-    </Pressable>
+    <Skeleton colorMode="light" radius={styles.container.borderRadius}>
+      <Pressable
+        hitSlop={theme.hitSlop}
+        {...rest}
+        disabled={loading || disabled}
+        style={[styles.container, style]}
+        onPress={onPress}>
+        {loading ? (
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+        ) : (
+          <Text style={styles.text}>{title}</Text>
+        )}
+      </Pressable>
+    </Skeleton>
   );
 };
 
