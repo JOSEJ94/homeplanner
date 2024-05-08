@@ -87,10 +87,10 @@ const AuthenticationSwitch = () => {
       />
       <Tab.Screen
         options={{
-          tabBarLabel: 'Chores',
+          tabBarLabel: 'Templates',
           tabBarIcon: renderTabBarIcon('list'),
           headerShown: true,
-          headerTitle: 'Chores',
+          headerTitle: 'Task Templates',
         }}
         name={Routes.CHORES_LIST}
         component={TaskListScreen}
