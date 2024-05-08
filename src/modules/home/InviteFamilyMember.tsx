@@ -15,7 +15,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Button from '../../shared/components/Button';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useMutation} from '@apollo/client';
+import {ApolloError, useMutation} from '@apollo/client';
 import {AddMemberDocument} from '../../graphql/generated';
 
 const InviteFamilyMember = () => {
@@ -35,8 +35,17 @@ const InviteFamilyMember = () => {
         variables: {userEmail: email, groupId: params.groupId},
       });
       navigation.goBack();
-    } catch (error: any) {
-      console.error(`Error`, error);
+    } catch (error: unknown) {
+      console.error('Error', JSON.stringify(error));
+      if (error instanceof ApolloError) {
+        // @ts-ignore I still need to check this type since it seems it's not correct
+        if (error?.networkError?.statusCode == 404) {
+          navigation.navigate(Routes.ERROR_MODAL, {
+            title: `Oops! Can't Find Them!`,
+            message: `Looks like we couldn't find the user you're trying to invite. Double-check the email address and give it another shot!`,
+          });
+        }
+      }
     }
   };
 

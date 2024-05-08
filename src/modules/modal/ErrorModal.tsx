@@ -1,50 +1,37 @@
 import {Animated, Pressable, StyleSheet, View} from 'react-native';
 import React, {useEffect, useMemo} from 'react';
 import {AppTheme} from '../../shared/themes/Theme';
-import {useNavigation, useTheme} from '@react-navigation/native';
-import {ApolloError, useMutation, useQuery} from '@apollo/client';
 import {
-  GetInvitationsDocument,
-  GroupStatus,
-  UpdateInviteStatusDocument,
-} from '../../graphql/generated';
+  RouteProp,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from '@react-navigation/native';
 import Typography, {
   TypographyVariant,
 } from '../../shared/components/Typography';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AppScreensParamList} from '../../routes/RoutesParams';
+import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import Button, {ButtonVariant} from '../../shared/components/Button';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const InvitationModal = () => {
+const ErrorModal = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
-    useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
-  const {
-    data: invitationsData,
-    loading: loadingInvitations,
-    error: errorInvitations,
-  } = useQuery(GetInvitationsDocument);
-  const [updateInvitationStatus, {loading: loadingUpdateInvitation}] =
-    useMutation(UpdateInviteStatusDocument);
-  // FIXME: At this moment we're only working with 1st invitation received. Ideally, we should handle all
-  const invitation = invitationsData?.getInvitations[0]!;
+    useNavigation<
+      NativeStackNavigationProp<AppScreensParamList, Routes.ERROR_MODAL>
+    >();
+  const route = useRoute<RouteProp<AppScreensParamList, Routes.ERROR_MODAL>>();
+  const {message, title, onPress} = route.params;
 
-  const respondInvitation = (newStatus: GroupStatus) => async () => {
-    try {
-      await updateInvitationStatus({
-        variables: {groupId: invitation.group.id, newStatus},
-      });
-      navigation.goBack();
-    } catch (error: unknown) {
-      console.error('Error', error);
+  const localOnPress = () => {
+    navigation.goBack();
+    if (onPress) {
+      onPress();
     }
   };
-
-  const groupName = invitation.group.name;
-  const isLoading = loadingInvitations || loadingUpdateInvitation;
 
   const fadeAnimation = new Animated.Value(0);
   useEffect(() => {
@@ -68,23 +55,15 @@ const InvitationModal = () => {
         ]}
       />
       <View style={styles.windowContainer}>
-        <Typography variant={TypographyVariant.CAPTION}>
-          Invitation Received!
-        </Typography>
+        <Typography variant={TypographyVariant.CAPTION}>{title}</Typography>
         <Typography variant={TypographyVariant.BODY} style={styles.contentTxt}>
-          You've been invite to join {groupName} group
+          {message}
         </Typography>
         <View style={styles.buttonContainer}>
           <Button
-            loading={isLoading}
-            onPress={respondInvitation(GroupStatus.Rejected)}
-            title="Reject"
+            onPress={localOnPress}
+            title="Ok"
             variant={ButtonVariant.SECONDARY}
-          />
-          <Button
-            loading={isLoading}
-            onPress={respondInvitation(GroupStatus.Accepted)}
-            title={`Join ${groupName}`}
           />
         </View>
       </View>
@@ -92,7 +71,7 @@ const InvitationModal = () => {
   );
 };
 
-export default InvitationModal;
+export default ErrorModal;
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({

@@ -34,6 +34,7 @@ import TaskEditorScreen from '../modules/tasks/TaskTemplateEditorScreen';
 import InvitationModal from '../modules/modal/InvitationModal';
 import {useLazyQuery} from '@apollo/client';
 import {GetInvitationsDocument} from '../graphql/generated';
+import ErrorModal from '../modules/modal/ErrorModal';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -192,6 +193,7 @@ const AuthenticationSwitch = () => {
                 name={Routes.INVITATION_RECEIVED_MODAL}
                 component={InvitationModal}
               />
+              <Stack.Screen name={Routes.ERROR_MODAL} component={ErrorModal} />
             </Stack.Group>
           </>
         ) : (

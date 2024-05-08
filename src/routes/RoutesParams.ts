@@ -7,6 +7,7 @@ export enum Routes {
   COLOR_PICKER = 'Color Picker',
   COMMUNICATION_SETTINGS = 'Communication Settings',
   DASHBOARD = 'Dashboard',
+  ERROR_MODAL = 'Error Modal',
   FAMILY = 'Family',
   FORGOT_PASSWORD = 'Forgot Password',
   HOME = 'Home',
@@ -32,6 +33,7 @@ export type AppScreensParamList = {
   };
   [Routes.COMMUNICATION_SETTINGS]: undefined;
   [Routes.DASHBOARD]: undefined;
+  [Routes.ERROR_MODAL]: {title: string; message: string; onPress?: () => void};
   [Routes.FAMILY]: undefined;
   [Routes.FORGOT_PASSWORD]: undefined;
   [Routes.HOME]: undefined;
