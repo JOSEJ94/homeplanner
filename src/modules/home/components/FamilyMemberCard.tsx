@@ -15,6 +15,7 @@ import {GroupMemberFragment, GroupStatus} from '../../../graphql/generated';
 import {firebase} from '@react-native-firebase/auth';
 import {getStaticImageName} from '../../../shared/utils/Image.utils';
 import {GROUP_ROLE_LABELS} from '../../../shared/utils/GroupRole.utils';
+import Spacer from '../../../shared/components/Spacer';
 
 interface FamilyMemberCardProps extends PressableProps {
   member: GroupMemberFragment;
@@ -35,6 +36,7 @@ const FamilyMemberCard = ({member, style, ...rest}: FamilyMemberCardProps) => {
           uri: imageSource,
         }}
       />
+      <Spacer style={styles.horizontalSpacer} />
       <View>
         <Typography>
           {member.user.name}
@@ -45,6 +47,7 @@ const FamilyMemberCard = ({member, style, ...rest}: FamilyMemberCardProps) => {
             <Typography style={styles.invitedTxt}>(Invited)</Typography>
           )}
         </Typography>
+        <Spacer style={styles.spacer} />
         <Typography style={styles.roleTxt}>
           {GROUP_ROLE_LABELS[member.role]}
         </Typography>
@@ -61,6 +64,12 @@ const createStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       padding: theme.spacing,
       alignItems: 'center',
+    },
+    spacer: {
+      height: theme.spacing,
+    },
+    horizontalSpacer: {
+      width: theme.spacing,
     },
     invitedTxt: {
       color: theme.colors.primary,

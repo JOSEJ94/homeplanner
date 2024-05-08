@@ -30,6 +30,9 @@ import {
   GroupMemberFragment,
   RoomFragment,
 } from '../../graphql/generated';
+import {Skeleton} from 'moti/skeleton';
+import AddButton from './components/AddButton';
+import Spacer from '../../shared/components/Spacer';
 
 interface Section {
   list: RoomFragment[] | GroupMemberFragment[];
@@ -120,29 +123,30 @@ const HomeScreen = () => {
         <Typography variant={TypographyVariant.SUB_HEADING}>
           {info.section.title}
         </Typography>
-        <Pressable onPress={navigate} style={styles.addBtn}>
-          <Icon
-            name="add-circle-outline"
-            size={25}
-            color={theme.colors.primary}
-          />
-        </Pressable>
+        <Spacer style={styles.horizontalSpacer} />
+        <AddButton onPress={navigate} disabled={loading} />
       </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <SectionList
-        style={styles.container}
-        ListHeaderComponent={
-          <Typography style={styles.header} variant={TypographyVariant.HEADING}>
-            {firstGroup?.name}
-          </Typography>
-        }
-        sections={sections}
-        renderSectionHeader={renderSectionHeader}
-      />
+      <Skeleton.Group show={loading}>
+        <SectionList
+          style={styles.container}
+          ListHeaderComponent={
+            <View style={styles.header}>
+              <Typography
+                skeletonProps={{width: 120}}
+                variant={TypographyVariant.HEADING}>
+                {firstGroup?.name}
+              </Typography>
+            </View>
+          }
+          sections={sections}
+          renderSectionHeader={renderSectionHeader}
+        />
+      </Skeleton.Group>
     </SafeAreaView>
   );
 };
@@ -160,17 +164,11 @@ const createStyles = (theme: AppTheme) =>
       paddingHorizontal: theme.spacing,
       backgroundColor: theme.white as ColorValue,
     },
-    roomsAddBtn: {
-      alignSelf: 'flex-end',
-      marginLeft: theme.spacing,
-    },
-    addBtn: {
-      alignSelf: 'flex-end',
-      marginBottom: theme.spacing / 2,
-      marginLeft: theme.spacing,
+    horizontalSpacer: {
+      width: theme.spacing,
     },
     header: {
-      paddingTop: theme.spacing,
+      paddingVertical: theme.spacing,
       paddingHorizontal: theme.spacing,
     },
     roomsContainer: {

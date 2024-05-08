@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
+import {Skeleton} from 'moti/skeleton';
 
 interface RoundedImageProps {
   imageStyle?: StyleProp<ImageStyle>;
@@ -60,23 +61,28 @@ const RoundedImage = ({
   };
 
   return (
-    <Pressable onPress={onPress} style={[styles.container, style]}>
-      {placeholderSource && !loaded && (
-        <Image source={placeholderSource} style={[styles.image, imageStyle]} />
-      )}
-      <Animated.Image
-        source={source}
-        style={[
-          styles.image,
-          imageStyle,
-          {
-            opacity: opacity,
-          },
-        ]}
-        onLoad={fadeIn}
-        onLoadEnd={triggerAnimationWhenLoadFinished}
-      />
-    </Pressable>
+    <Skeleton colorMode="light" radius={styles.image.borderRadius}>
+      <Pressable onPress={onPress} style={[styles.container, style]}>
+        {placeholderSource && !loaded && (
+          <Image
+            source={placeholderSource}
+            style={[styles.image, imageStyle]}
+          />
+        )}
+        <Animated.Image
+          source={source}
+          style={[
+            styles.image,
+            imageStyle,
+            {
+              opacity: opacity,
+            },
+          ]}
+          onLoad={fadeIn}
+          onLoadEnd={triggerAnimationWhenLoadFinished}
+        />
+      </Pressable>
+    </Skeleton>
   );
 };
 
