@@ -1,95 +1,36 @@
-mutation createTask(
-  $assignedTo: [ID!]!
-  $room: ID!
-  $scheduleDay: Date!
-  $scheduleType: TaskSchedule!
-  $title: String!
-  $description: String
-  $randomlyAssign: Boolean
-  $scheduleInterval: Int!
-) {
-  createTask(
-    assignedTo: $assignedTo
-    room: $room
-    scheduleDay: $scheduleDay
-    scheduleType: $scheduleType
-    title: $title
-    description: $description
-    randomlyAssign: $randomlyAssign
-    scheduleInterval: $scheduleInterval
-  ) {
-    assignedTo {
-      email
-      id
-      name
-    }
-    completionDate
-    createdAt
-    description
-    id
-    randomlyAssigned
-    room {
-      id
-      name
-    }
-    scheduleDay
-    scheduleInterval
-    scheduleType
-    title
-    updatedAt
-  }
-}
+# mutation createTask(
+#   $assignedTo: [ID!]!
+#   $room: ID!
+#   $scheduleDay: DateTime!
+#   $scheduleType: TaskSchedule!
+#   $title: String!
+#   $description: String
+#   $randomlyAssign: Boolean
+#   $scheduleInterval: Int!
+# ) {
+#   createTask(
+#     assignedTo: $assignedTo
+#     room: $room
+#     scheduleDay: $scheduleDay
+#     scheduleType: $scheduleType
+#     title: $title
+#     description: $description
+#     randomlyAssign: $randomlyAssign
+#     scheduleInterval: $scheduleInterval
+#   ) {
+#     ...task
+#   }
+# }
 
 query getTasks($fromRooms: [ID!]) {
   getTasks(fromRooms: $fromRooms) {
-    assignedTo {
-      email
-      id
-      name
-    }
-    completionDate
-    createdAt
-    description
-    id
-    randomlyAssigned
-    room {
-      ...room
-    }
-    scheduleDay
-    scheduleInterval
-    scheduleType
-    title
-    subTasks {
-      completed
-      createdAt
-      description
-      id
-    }
+    ...task
   }
 }
 
 query getTaskDetails($id: ID!) {
   getTaskDetails(id: $id) {
-    id
-    randomlyAssigned
-    description
-    title
-    scheduleDay
-    scheduleInterval
-    scheduleType
-    subTasks {
-      description
-      id
-      completed
-    }
-    completionDate
-    assignedTo {
-      id
-      name
-    }
-    room {
-      ...room
-    }
+    ...task
   }
 }
 
@@ -98,47 +39,54 @@ mutation deleteTask($id: ID!) {
     id
   }
 }
-mutation updateTask(
-  $id: ID!
-  $room: ID!
-  $title: String!
-  $randomlyAssign: Boolean
-  $description: String
-  $assignedTo: [ID!]!
-  $scheduleDay: Date!
-  $scheduleType: TaskSchedule!
-  $scheduleInterval: Int!
-) {
-  updateTask(
-    assignedTo: $assignedTo
-    id: $id
-    room: $room
-    scheduleDay: $scheduleDay
-    scheduleType: $scheduleType
-    title: $title
-    description: $description
-    randomlyAssign: $randomlyAssign
-    scheduleInterval: $scheduleInterval
-  ) {
+# mutation updateTask(
+#   $id: ID!
+#   $room: ID!
+#   $title: String!
+#   $randomlyAssign: Boolean
+#   $description: String
+#   $assignedTo: [ID!]!
+#   $scheduleDay: DateTime!
+#   $scheduleType: TaskSchedule!
+#   $scheduleInterval: Int!
+# ) {
+#   updateTask(
+#     assignedTo: $assignedTo
+#     id: $id
+#     room: $room
+#     scheduleDay: $scheduleDay
+#     scheduleType: $scheduleType
+#     title: $title
+#     description: $description
+#     randomlyAssign: $randomlyAssign
+#     scheduleInterval: $scheduleInterval
+#   ) {
+#     ...task
+#   }
+# }
+
+fragment task on Task {
+  assignedTo {
+    email
     id
-    randomlyAssigned
+    name
+  }
+  completionDate
+  createdAt
+  description
+  id
+  randomlyAssigned
+  room {
+    ...room
+  }
+  scheduleDay
+  scheduleInterval
+  scheduleType
+  title
+  subTasks {
+    completed
+    createdAt
     description
-    title
-    scheduleDay
-    scheduleInterval
-    scheduleType
-    subTasks {
-      description
-      id
-      completed
-    }
-    completionDate
-    assignedTo {
-      id
-      name
-    }
-    room {
-      ...room
-    }
+    id
   }
 }

@@ -10,50 +10,21 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {TaskDto} from '../../shared/models/TaskDto';
 import TaskItem from './components/TaskItem';
 import {AppTheme} from '../../shared/themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import {RowMap, SwipeListView} from 'react-native-swipe-list-view';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-const tasks: TaskDto[] = [
-  {
-    id: '2',
-    category: 'Home',
-    categoryId: '1',
-    randomlyAssigned: false,
-    schedule: {
-      type: 'daily',
-    },
-    title: 'Clean the house and all its furniture',
-  },
-  {
-    id: '25',
-    category: 'Bedroom',
-    categoryId: '2',
-    randomlyAssigned: false,
-    schedule: {
-      type: 'monthly',
-    },
-    title: 'Take out the paper trashcan',
-  },
-  {
-    id: '23',
-    category: 'Home',
-    categoryId: '1',
-    randomlyAssigned: false,
-    schedule: {
-      type: 'weekly',
-    },
-    title:
-      'Extremely long text with no sense at all so I can see how text wrapping works',
-  },
-];
+import {useQuery} from '@apollo/client';
+import {GetTasksDocument, TaskFragment} from '../../graphql/generated';
 
 const DashboardScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {data, loading, error} = useQuery(GetTasksDocument, {
+    variables: {fromRooms: []},
+  });
+  const tasks: TaskFragment[] = data?.getTasks || [];
 
   const header = (
     <View style={styles.headerContainer}>
@@ -62,8 +33,8 @@ const DashboardScreen = () => {
   );
 
   const renderTaskItem = (
-    rowData: ListRenderItemInfo<TaskDto>,
-    rowMap: RowMap<TaskDto>,
+    rowData: ListRenderItemInfo<TaskFragment>,
+    rowMap: RowMap<TaskFragment>,
   ) => <TaskItem task={rowData.item} />;
 
   return (

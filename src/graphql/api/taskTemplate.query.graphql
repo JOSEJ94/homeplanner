@@ -1,8 +1,8 @@
 mutation createTaskTemplate(
   $assignedTo: [ID!]!
   $room: ID!
-  $startingDate: Date!
-  $endingDate: Date
+  $startingDate: DateTime!
+  $endingDate: DateTime
   $scheduleType: TaskSchedule!
   $title: String!
   $description: String
@@ -106,8 +106,8 @@ mutation updateTaskTemplate(
   $randomlyAssign: Boolean
   $description: String
   $assignedTo: [ID!]!
-  $startingDate: Date!
-  $endingDate: Date!
+  $startingDate: DateTime!
+  $endingDate: DateTime!
   $scheduleType: TaskSchedule!
   $scheduleInterval: Int!
 ) {
@@ -146,11 +146,8 @@ mutation updateTaskTemplate(
   }
 }
 
-mutation createTasksFromTemplate($fromTemplate: ID!, $scheduleDates: [Date!]!) {
-  createTasksFromTemplate(
-    fromTemplate: $fromTemplate
-    scheduleDates: $scheduleDates
-  ) {
+mutation createTasksFromTemplate($fromTemplate: ID!) {
+  createTasksFromTemplate(fromTemplate: $fromTemplate) {
     assignedTo {
       email
       id
