@@ -1,3 +1,7 @@
+import {
+  FilterOption,
+  FilterType,
+} from '../modules/templates/components/RoomPicker';
 import {Icon} from '../shared/modules/IconPicker';
 
 export enum Routes {
@@ -15,6 +19,7 @@ export enum Routes {
   INVITATION_RECEIVED_MODAL = 'Invitation Received Modal',
   INVITE_FAMILY_MEMBER = 'Invite Family Member',
   LOGIN = 'Login',
+  OPTION_PICKER = 'Option Picker',
   PASSWORD_RESET_CONFIRMATION = 'Password Reset Confirmation',
   RESET_PASSWORD_WITH_CODE = 'Reset Password With Code',
   ROOM_EDITOR = 'Room Editor',
@@ -44,6 +49,13 @@ export type AppScreensParamList = {
   [Routes.INVITATION_RECEIVED_MODAL]: undefined;
   [Routes.INVITE_FAMILY_MEMBER]: {groupId: string};
   [Routes.LOGIN]: undefined;
+  [Routes.OPTION_PICKER]: {
+    label: string;
+    type: FilterType;
+    options: FilterOption<unknown>[];
+    ctaLabel?: string;
+    onOptionSelected?: (selected: unknown) => void;
+  };
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};
   [Routes.RESET_PASSWORD_WITH_CODE]: {code: string} | undefined;
   [Routes.ROOM_EDITOR]: {groupId: string; id?: string};

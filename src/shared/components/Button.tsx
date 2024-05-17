@@ -12,6 +12,7 @@ import React, {useMemo} from 'react';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import {Skeleton} from 'moti/skeleton';
+import {convertHexToRGBA} from '../utils/Color.utils';
 
 export enum ButtonVariant {
   PRIMARY = 'Primary',
@@ -48,7 +49,16 @@ const Button = ({
         hitSlop={theme.hitSlop}
         {...rest}
         disabled={loading || disabled}
-        style={[styles.container, style]}
+        style={({pressed}) => [
+          styles.container,
+          pressed && {
+            backgroundColor: convertHexToRGBA(
+              styles.container.backgroundColor,
+              0.8,
+            ),
+          },
+          style,
+        ]}
         onPress={onPress}>
         {loading ? (
           <ActivityIndicator size="small" color={theme.colors.primary} />

@@ -24,6 +24,7 @@ import {
 } from '../../graphql/generated';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
 import {firebase} from '@react-native-firebase/auth';
+import {FilterOption, FilterType} from './components/RoomPicker';
 
 const scheduleTypeOptions: ItemType<TaskSchedule>[] = [
   {
@@ -60,7 +61,7 @@ const TaskTemplateEditorScreen = () => {
     error: errorRooms,
   } = useQuery(GetRoomsDocument);
   const rooms: RoomFilterDto[] = roomsData?.getRooms || [];
-  const roomsOptions: ItemType<string>[] = rooms.map(room => ({
+  const roomsOptions: FilterOption<string>[] = rooms.map(room => ({
     label: room.name,
     value: room.id,
   }));
@@ -73,9 +74,8 @@ const TaskTemplateEditorScreen = () => {
     variables: {id: id as string},
     skip: !id || !roomsOptions.length,
   });
-  const [createTask, {loading: submittingTaskTemplateCreation}] = useMutation(
-    CreateTaskTemplateDocument,
-  );
+  const [createTaskTemplate, {loading: submittingTaskTemplateCreation}] =
+    useMutation(CreateTaskTemplateDocument);
   const [updateTask, {loading: submittingTaskTemplateUpdate}] = useMutation(
     UpdateTaskTemplateDocument,
   );
@@ -133,7 +133,7 @@ const TaskTemplateEditorScreen = () => {
           refetchQueries: [GetTaskTemplatesDocument],
         });
       } else {
-        await createTask({
+        await createTaskTemplate({
           variables: {
             assignedTo: [userId!],
             room: roomSelected!,
@@ -163,22 +163,28 @@ const TaskTemplateEditorScreen = () => {
             title="Title"
             placeholder="Title"
             onChangeText={setTitle}
+            titleProps={{skeletonProps: {width: 100}}}
           />
           <TextInput
+            containerStyle={styles.inputContainer}
             value={description}
             title="Description"
             placeholder="Description"
             onChangeText={setDescription}
+            titleProps={{skeletonProps: {width: 100}}}
             multiline
           />
-          <DropDownPicker
-            open={openRoomSelector}
-            value={roomSelected}
-            items={roomsOptions}
-            setOpen={setOpenRoomSelector}
-            setValue={setRoomSelected}
-            itemKey="label"
-            placeholder="Choose a room"
+          <Button
+            onPress={() =>
+              navigation.navigate(Routes.OPTION_PICKER, {
+                label: 'Rooms',
+                type: FilterType.SingleOption,
+                options: roomsOptions,
+                ctaLabel: 'Select room',
+              })
+            }
+            title="Select room"
+            fullWidth
           />
           <DropDownPicker
             open={openScheduleTypeSelector}
@@ -213,5 +219,8 @@ const createStyles = (theme: AppTheme) =>
       padding: theme.spacing * 2,
       flex: 1,
       justifyContent: 'space-between',
+    },
+    inputContainer: {
+      marginVertical: theme.spacing,
     },
   });

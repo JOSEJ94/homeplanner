@@ -35,6 +35,7 @@ import InvitationModal from '../modules/modal/InvitationModal';
 import {useLazyQuery} from '@apollo/client';
 import {GetInvitationsDocument} from '../graphql/generated';
 import ErrorModal from '../modules/modal/ErrorModal';
+import RoomPicker from '../modules/templates/components/RoomPicker';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -185,10 +186,13 @@ const AuthenticationSwitch = () => {
             </Stack.Group>
             <Stack.Group
               screenOptions={{
-                animation: 'fade',
                 headerShown: false,
                 presentation: 'transparentModal',
               }}>
+              <Stack.Screen
+                name={Routes.OPTION_PICKER}
+                component={RoomPicker}
+              />
               <Stack.Screen
                 name={Routes.INVITATION_RECEIVED_MODAL}
                 component={InvitationModal}
