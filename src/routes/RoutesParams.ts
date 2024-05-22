@@ -54,6 +54,7 @@ export type AppScreensParamList = {
     type: FilterType;
     options: FilterOption<unknown>[];
     ctaLabel?: string;
+    selected?: unknown;
     onOptionSelected?: (selected: unknown) => void;
   };
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};

@@ -39,6 +39,7 @@ const RoomPicker = () => {
     options,
     type,
     onOptionSelected,
+    selected,
     ctaLabel = 'Save',
   } = route.params;
 
@@ -52,7 +53,9 @@ const RoomPicker = () => {
     }).start();
   }, []);
 
-  const [selectedOption, setSelectedOption] = useState<unknown | null>(null);
+  const [selectedOption, setSelectedOption] = useState<unknown | null>(
+    selected,
+  );
 
   const fadeOutEffect = () =>
     Animated.timing(fadeAnimation, {

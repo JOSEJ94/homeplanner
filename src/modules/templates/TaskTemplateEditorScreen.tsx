@@ -8,12 +8,11 @@ import {
 } from '@react-navigation/native';
 import {AppTheme} from '../../shared/themes/Theme';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import DropDownPicker, {ItemType} from 'react-native-dropdown-picker';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import TextInput from '../../shared/components/TextInput';
 import Button from '../../shared/components/Button';
-import {useMutation, useQuery} from '@apollo/client';
+import {ApolloError, useMutation, useQuery} from '@apollo/client';
 import {
   CreateTaskTemplateDocument,
   GetRoomsDocument,
@@ -26,7 +25,7 @@ import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
 import {firebase} from '@react-native-firebase/auth';
 import {FilterOption, FilterType} from './components/RoomPicker';
 
-const scheduleTypeOptions: ItemType<TaskSchedule>[] = [
+const scheduleTypeOptions: FilterOption<TaskSchedule>[] = [
   {
     label: 'Once',
     value: TaskSchedule.Once,
@@ -61,9 +60,9 @@ const TaskTemplateEditorScreen = () => {
     error: errorRooms,
   } = useQuery(GetRoomsDocument);
   const rooms: RoomFilterDto[] = roomsData?.getRooms || [];
-  const roomsOptions: FilterOption<string>[] = rooms.map(room => ({
+  const roomsOptions: FilterOption<RoomFilterDto>[] = rooms.map(room => ({
     label: room.name,
-    value: room.id,
+    value: room,
   }));
 
   const {
@@ -76,22 +75,18 @@ const TaskTemplateEditorScreen = () => {
   });
   const [createTaskTemplate, {loading: submittingTaskTemplateCreation}] =
     useMutation(CreateTaskTemplateDocument);
-  const [updateTask, {loading: submittingTaskTemplateUpdate}] = useMutation(
-    UpdateTaskTemplateDocument,
-  );
+  const [updateTaskTemplate, {loading: submittingTaskTemplateUpdate}] =
+    useMutation(UpdateTaskTemplateDocument);
 
   const existingTaskTemplateDetails =
     existingTaskTemplateDetailsData?.getTaskTemplateDetails;
 
-  const [openRoomSelector, setOpenRoomSelector] = useState(false);
-  const [openScheduleTypeSelector, setOpenScheduleTypeSelector] =
-    useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [randomlyAssigned, setRandomlyAssigned] = useState(false);
   const [assignedTo, setAssignedTo] = useState<any[]>([]);
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
-  const [roomSelected, setRoomSelected] = useState<string | null>(null);
+  const [roomSelected, setRoomSelected] = useState<RoomFilterDto | null>(null);
 
   useEffect(() => {
     if (existingTaskTemplateDetails) {
@@ -102,7 +97,7 @@ const TaskTemplateEditorScreen = () => {
       if (existingTaskTemplateDetails.assignedTo)
         setAssignedTo(existingTaskTemplateDetails.assignedTo);
       setScheduleType(existingTaskTemplateDetails.scheduleType);
-      setRoomSelected(existingTaskTemplateDetails.room.id);
+      setRoomSelected(existingTaskTemplateDetails.room);
     }
   }, [existingTaskTemplateDetails]);
 
@@ -117,14 +112,14 @@ const TaskTemplateEditorScreen = () => {
   const saveTask = async () => {
     try {
       if (id) {
-        await updateTask({
+        await updateTaskTemplate({
           variables: {
             id,
             assignedTo: [userId!],
-            room: roomSelected!,
-            startingDate: '2024-05-01',
-            endingDate: '2024-05-01',
-            scheduleInterval: 0,
+            room: roomSelected!.id,
+            startingDate: '2024-05-03T04:11:38.671Z',
+            // endingDate: '2024-06-03T04:11:38.671Z',
+            scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
             description,
@@ -136,9 +131,9 @@ const TaskTemplateEditorScreen = () => {
         await createTaskTemplate({
           variables: {
             assignedTo: [userId!],
-            room: roomSelected!,
-            startingDate: '2024-05-01',
-            scheduleInterval: 0,
+            room: roomSelected!.id,
+            startingDate: '2024-06-03T04:11:38.671Z',
+            scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
             description,
@@ -149,11 +144,45 @@ const TaskTemplateEditorScreen = () => {
       }
       navigation.goBack();
     } catch (error: any) {
-      console.error('Error', error.message);
+      console.error('Error', JSON.stringify(error));
+      if (error instanceof ApolloError) {
+        const message = JSON.stringify(error);
+        navigation.navigate(Routes.ERROR_MODAL, {
+          title: __DEV__
+            ? 'Development error'
+            : `Oops! You just experienced an error`,
+          message: __DEV__
+            ? message
+            : `We couldn't save this information, please try again!`,
+        });
+      }
     }
   };
 
+  const navigateToRoomFilter = () =>
+    navigation.navigate(Routes.OPTION_PICKER, {
+      label: 'Rooms',
+      type: FilterType.SingleOption,
+      options: roomsOptions,
+      ctaLabel: 'Select room',
+      selected: roomSelected,
+      onOptionSelected: selected => setRoomSelected(selected as RoomFilterDto),
+    });
+
+  const navigateToFrequencyFilter = () =>
+    navigation.navigate(Routes.OPTION_PICKER, {
+      label: 'How often should this take place',
+      type: FilterType.SingleOption,
+      options: scheduleTypeOptions,
+      ctaLabel: 'Use this selection',
+      selected: scheduleType,
+      onOptionSelected: selected => setScheduleType(selected as TaskSchedule),
+    });
+
   const isSavingButtonDisabled = !title || !roomSelected || !scheduleType;
+  const selectedScheduleOption = scheduleTypeOptions.find(
+    option => option.value === scheduleType,
+  );
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollviewContainer}>
@@ -174,26 +203,23 @@ const TaskTemplateEditorScreen = () => {
             titleProps={{skeletonProps: {width: 100}}}
             multiline
           />
-          <Button
-            onPress={() =>
-              navigation.navigate(Routes.OPTION_PICKER, {
-                label: 'Rooms',
-                type: FilterType.SingleOption,
-                options: roomsOptions,
-                ctaLabel: 'Select room',
-              })
-            }
-            title="Select room"
-            fullWidth
+          <TextInput
+            containerStyle={styles.inputContainer}
+            value={roomSelected?.name}
+            title="Room"
+            placeholder="Pick room"
+            editable={false}
+            onPressIn={navigateToRoomFilter}
+            titleProps={{skeletonProps: {width: 100}}}
           />
-          <DropDownPicker
-            open={openScheduleTypeSelector}
-            value={scheduleType}
-            items={scheduleTypeOptions}
-            setOpen={setOpenScheduleTypeSelector}
-            setValue={setScheduleType}
-            itemKey="label"
-            placeholder="How often this should take place"
+          <TextInput
+            containerStyle={styles.inputContainer}
+            value={selectedScheduleOption?.label}
+            title="Frequency"
+            placeholder="How often should this repeat?"
+            editable={false}
+            onPressIn={navigateToFrequencyFilter}
+            titleProps={{skeletonProps: {width: 100}}}
           />
         </View>
         <Button
