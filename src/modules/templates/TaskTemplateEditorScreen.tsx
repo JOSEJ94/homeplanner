@@ -118,7 +118,7 @@ const TaskTemplateEditorScreen = () => {
             assignedTo: [userId!],
             room: roomSelected!.id,
             startingDate: '2024-05-03T04:11:38.671Z',
-            // endingDate: '2024-06-03T04:11:38.671Z',
+            endingDate: '2024-06-03T04:11:38.671Z',
             scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
