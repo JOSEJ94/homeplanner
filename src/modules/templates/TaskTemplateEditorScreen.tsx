@@ -18,12 +18,15 @@ import {
   GetRoomsDocument,
   GetTaskTemplateDetailsDocument,
   GetTaskTemplatesDocument,
+  GetTasksDocument,
   TaskSchedule,
   UpdateTaskTemplateDocument,
 } from '../../graphql/generated';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
 import {firebase} from '@react-native-firebase/auth';
 import {FilterOption, FilterType} from './components/RoomPicker';
+import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 const scheduleTypeOptions: FilterOption<TaskSchedule>[] = [
   {
@@ -81,10 +84,12 @@ const TaskTemplateEditorScreen = () => {
   const existingTaskTemplateDetails =
     existingTaskTemplateDetailsData?.getTaskTemplateDetails;
 
+  const [openDateTimePicker, setOpenDateTimePicker] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [randomlyAssigned, setRandomlyAssigned] = useState(false);
   const [assignedTo, setAssignedTo] = useState<any[]>([]);
+  const [dateSelected, setDateTime] = useState<Date>(new Date());
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
   const [roomSelected, setRoomSelected] = useState<RoomFilterDto | null>(null);
 
@@ -98,8 +103,11 @@ const TaskTemplateEditorScreen = () => {
         setAssignedTo(existingTaskTemplateDetails.assignedTo);
       setScheduleType(existingTaskTemplateDetails.scheduleType);
       setRoomSelected(existingTaskTemplateDetails.room);
+      setDateTime(moment(existingTaskTemplateDetails.startingDate).toDate());
     }
   }, [existingTaskTemplateDetails]);
+
+  const showTimePicker = () => setOpenDateTimePicker(true);
 
   useMemo(
     () =>
@@ -117,7 +125,7 @@ const TaskTemplateEditorScreen = () => {
             id,
             assignedTo: [userId!],
             room: roomSelected!.id,
-            startingDate: '2024-05-03T04:11:38.671Z',
+            startingDate: dateSelected.toISOString(),
             endingDate: '2024-06-03T04:11:38.671Z',
             scheduleInterval: 1,
             scheduleType: scheduleType!,
@@ -125,21 +133,21 @@ const TaskTemplateEditorScreen = () => {
             description,
             randomlyAssign: randomlyAssigned,
           },
-          refetchQueries: [GetTaskTemplatesDocument],
+          refetchQueries: [GetTaskTemplatesDocument, GetTasksDocument],
         });
       } else {
         await createTaskTemplate({
           variables: {
             assignedTo: [userId!],
             room: roomSelected!.id,
-            startingDate: '2024-06-03T04:11:38.671Z',
+            startingDate: dateSelected.toISOString(),
             scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
             description,
             randomlyAssign: randomlyAssigned,
           },
-          refetchQueries: [GetTaskTemplatesDocument],
+          refetchQueries: [GetTaskTemplatesDocument, GetTasksDocument],
         });
       }
       navigation.goBack();
@@ -220,6 +228,27 @@ const TaskTemplateEditorScreen = () => {
             editable={false}
             onPressIn={navigateToFrequencyFilter}
             titleProps={{skeletonProps: {width: 100}}}
+          />
+          <TextInput
+            containerStyle={styles.inputContainer}
+            value={dateSelected.toISOString()}
+            title="Date"
+            placeholder="Time this task should take place on"
+            editable={false}
+            onPressIn={showTimePicker}
+            titleProps={{skeletonProps: {width: 100}}}
+          />
+          <DatePicker
+            modal
+            mode="datetime"
+            minuteInterval={15}
+            date={dateSelected}
+            onConfirm={date => {
+              setOpenDateTimePicker(false);
+              setDateTime(date);
+            }}
+            open={openDateTimePicker}
+            onCancel={() => setOpenDateTimePicker(false)}
           />
         </View>
         <Button
