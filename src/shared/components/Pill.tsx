@@ -7,18 +7,27 @@ import {
   ViewStyle,
 } from 'react-native';
 import React, {useMemo} from 'react';
-import {AppTheme} from '../../../shared/themes/Theme';
+import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
-import Typography from '../../../shared/components/Typography';
+import Typography from './Typography';
+import FastImage, {Source} from 'react-native-fast-image';
 
 interface PillProps extends PressableProps {
-  title: string;
+  image?: Source;
   selected?: boolean;
-  textStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<ViewStyle>;
+  title: string;
 }
 
-const Pill = ({title, selected, textStyle, style, ...props}: PillProps) => {
+const Pill = ({
+  image,
+  selected,
+  style,
+  textStyle,
+  title,
+  ...props
+}: PillProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(
     () => createStyles(theme, selected),
@@ -30,6 +39,7 @@ const Pill = ({title, selected, textStyle, style, ...props}: PillProps) => {
       {...props}
       hitSlop={theme.hitSlop}
       style={[styles.container, style]}>
+      {Boolean(image) && <FastImage source={image} style={styles.image} />}
       <Typography style={[styles.text, textStyle]}>{title}</Typography>
     </Pressable>
   );
@@ -41,15 +51,22 @@ const createStyles = (theme: AppTheme, selected?: boolean) =>
   StyleSheet.create({
     container: {
       alignSelf: 'flex-start',
-      alignItems: 'flex-start',
-      borderRadius: theme.spacing * 2,
+      alignItems: 'center',
+      borderRadius: theme.spacing * 3,
       paddingVertical: theme.spacing * 0.5,
       paddingHorizontal: theme.spacing,
+      flexDirection: 'row',
       borderWidth: 1,
       backgroundColor: selected
         ? theme.colors.primary
         : (theme.white as ColorValue),
       borderColor: theme.colors.primary,
+    },
+    image: {
+      height: 25,
+      width: 25,
+      borderRadius: 5,
+      marginRight: theme.spacing,
     },
     text: {
       color: selected ? (theme.white as ColorValue) : theme.colors.primary,

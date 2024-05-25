@@ -18,7 +18,7 @@ import {
   TaskTemplate,
 } from '../../graphql/generated';
 import TaskTemplateItem from './components/TaskTemplateItem';
-import Pill from './components/Pill';
+import Pill from '../../shared/components/Pill';
 import {AppTheme} from '../../shared/themes/Theme';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';

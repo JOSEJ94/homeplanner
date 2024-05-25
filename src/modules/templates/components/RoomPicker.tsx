@@ -13,13 +13,16 @@ import ListFilter from '../../../shared/components/filter/ListFilter';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
 import Button from '../../../shared/components/Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Source} from 'react-native-fast-image';
 
 export enum FilterType {
   SingleOption,
+  MultipleOption,
 }
 
 export interface FilterOption<T> {
   label: string;
+  image?: Source;
   value: T;
 }
 

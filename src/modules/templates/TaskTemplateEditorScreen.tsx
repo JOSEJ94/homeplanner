@@ -15,10 +15,13 @@ import Button from '../../shared/components/Button';
 import {ApolloError, useMutation, useQuery} from '@apollo/client';
 import {
   CreateTaskTemplateDocument,
+  GetGroupMembersDocument,
   GetRoomsDocument,
   GetTaskTemplateDetailsDocument,
   GetTaskTemplatesDocument,
   GetTasksDocument,
+  GroupMemberFragment,
+  GroupStatus,
   TaskSchedule,
   UpdateTaskTemplateDocument,
 } from '../../graphql/generated';
@@ -27,6 +30,19 @@ import {firebase} from '@react-native-firebase/auth';
 import {FilterOption, FilterType} from './components/RoomPicker';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {formatDateTime} from '../../shared/utils/Date.utils';
+import Pill from '../../shared/components/Pill';
+
+interface GroupMember {
+  __typename?: 'GroupMember' | undefined;
+  status: GroupStatus;
+  user: {
+    __typename?: 'User' | undefined;
+    id: string;
+    name?: string | null | undefined;
+    profilePhoto?: string | null | undefined;
+  };
+}
 
 const scheduleTypeOptions: FilterOption<TaskSchedule>[] = [
   {
@@ -67,7 +83,17 @@ const TaskTemplateEditorScreen = () => {
     label: room.name,
     value: room,
   }));
-
+  const {
+    data: membersData,
+    loading: loadingMembers,
+    error: errorMembers,
+  } = useQuery(GetGroupMembersDocument);
+  const members: GroupMember[] = membersData?.getGroupMembers || [];
+  const membersOptions: FilterOption<RoomFilterDto>[] = members.map(member => ({
+    label: member.user.name,
+    image: {uri: member.user.profilePhoto},
+    value: member.user.id,
+  }));
   const {
     data: existingTaskTemplateDetailsData,
     loading: loadingExistingTask,
@@ -85,11 +111,14 @@ const TaskTemplateEditorScreen = () => {
     existingTaskTemplateDetailsData?.getTaskTemplateDetails;
 
   const [openDateTimePicker, setOpenDateTimePicker] = useState(false);
+  const [openEndingDateTimePicker, setOpenEndingDateTimePicker] =
+    useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [randomlyAssigned, setRandomlyAssigned] = useState(false);
   const [assignedTo, setAssignedTo] = useState<any[]>([]);
   const [dateSelected, setDateTime] = useState<Date>(new Date());
+  const [endingDateSelected, setEndingDateTime] = useState<Date>();
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
   const [roomSelected, setRoomSelected] = useState<RoomFilterDto | null>(null);
 
@@ -109,6 +138,8 @@ const TaskTemplateEditorScreen = () => {
 
   const showTimePicker = () => setOpenDateTimePicker(true);
 
+  const showEndingDateTimePicker = () => setOpenEndingDateTimePicker(true);
+
   useMemo(
     () =>
       navigation.setOptions({
@@ -126,7 +157,7 @@ const TaskTemplateEditorScreen = () => {
             assignedTo: [userId!],
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
-            endingDate: '2024-06-03T04:11:38.671Z',
+            endingDate: endingDateSelected?.toISOString(),
             scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
@@ -141,6 +172,7 @@ const TaskTemplateEditorScreen = () => {
             assignedTo: [userId!],
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
+            endingDate: endingDateSelected?.toISOString(),
             scheduleInterval: 1,
             scheduleType: scheduleType!,
             title,
@@ -187,10 +219,40 @@ const TaskTemplateEditorScreen = () => {
       onOptionSelected: selected => setScheduleType(selected as TaskSchedule),
     });
 
-  const isSavingButtonDisabled = !title || !roomSelected || !scheduleType;
+  const navigateToAssignedPeopleFilter = () =>
+    navigation.navigate(Routes.OPTION_PICKER, {
+      label: 'Select people assigned to this task',
+      type: FilterType.MultipleOption,
+      options: membersOptions,
+      ctaLabel: 'Use this selection',
+      selected: assignedTo,
+      onOptionSelected: selected => setAssignedTo(selected as GroupMember[]),
+    });
+
+  const onDateConfirmed = (date: Date) => {
+    setOpenDateTimePicker(false);
+    setDateTime(date);
+  };
+
+  const onDateCancel = () => setOpenDateTimePicker(false);
+
+  const onEndingDateConfirmed = (date: Date) => {
+    setOpenEndingDateTimePicker(false);
+    setEndingDateTime(date);
+  };
+
+  const onEndingDateCancel = () => setOpenEndingDateTimePicker(false);
+
   const selectedScheduleOption = scheduleTypeOptions.find(
     option => option.value === scheduleType,
   );
+  const isSavingButtonDisabled =
+    !title ||
+    !roomSelected ||
+    !scheduleType ||
+    !dateSelected ||
+    !selectedScheduleOption;
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollviewContainer}>
@@ -231,24 +293,55 @@ const TaskTemplateEditorScreen = () => {
           />
           <TextInput
             containerStyle={styles.inputContainer}
-            value={dateSelected.toISOString()}
+            value={formatDateTime(moment(dateSelected))}
             title="Date"
-            placeholder="Time this task should take place on"
+            placeholder="Date and time this task should start"
             editable={false}
             onPressIn={showTimePicker}
             titleProps={{skeletonProps: {width: 100}}}
           />
+          {Boolean(scheduleType) && scheduleType !== TaskSchedule.Once && (
+            <TextInput
+              containerStyle={styles.inputContainer}
+              value={
+                endingDateSelected
+                  ? formatDateTime(moment(endingDateSelected))
+                  : ''
+              }
+              title="Ending Date"
+              placeholder="Date and time this task should end"
+              editable={false}
+              onPressIn={showEndingDateTimePicker}
+              titleProps={{skeletonProps: {width: 100}}}
+            />
+          )}
+          <Button
+            onPress={navigateToAssignedPeopleFilter}
+            title="Pick assigned people"
+            fullWidth
+          />
+          <Pill
+            title="test"
+            image={{
+              uri: 'https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_640.png',
+              cache: 'web',
+            }}
+          />
           <DatePicker
             modal
-            mode="datetime"
             minuteInterval={15}
             date={dateSelected}
-            onConfirm={date => {
-              setOpenDateTimePicker(false);
-              setDateTime(date);
-            }}
+            onConfirm={onDateConfirmed}
             open={openDateTimePicker}
-            onCancel={() => setOpenDateTimePicker(false)}
+            onCancel={onDateCancel}
+          />
+          <DatePicker
+            modal
+            minuteInterval={15}
+            date={endingDateSelected || new Date()}
+            onConfirm={onEndingDateConfirmed}
+            open={openEndingDateTimePicker}
+            onCancel={onEndingDateCancel}
           />
         </View>
         <Button

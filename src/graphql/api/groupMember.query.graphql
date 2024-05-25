@@ -8,6 +8,17 @@ query getInvitations {
   }
 }
 
+query getGroupMembers($fromGroup: ID!) {
+  getGroupMembers(fromGroup: $fromGroup) {
+    status
+    user {
+      id
+      name
+      profilePhoto
+    }
+  }
+}
+
 mutation updateInviteStatus(
   $groupId: ID!
   $newStatus: GroupStatus!
