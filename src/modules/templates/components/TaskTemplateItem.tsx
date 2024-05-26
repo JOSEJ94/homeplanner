@@ -23,6 +23,8 @@ const TaskTemplateItem = ({taskTemplate}: TaskTemplateItemProps) => {
   const seeDetails = () =>
     navigation.navigate(Routes.TASK_EDITOR, {
       id: taskTemplate.id,
+      // FIXME: We don't have group in app state
+      groupId: 'cff4ddfd-c499-48d6-b87f-372f6ffa1253',
     });
 
   return (

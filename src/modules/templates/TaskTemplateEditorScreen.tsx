@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
   RouteProp,
@@ -10,6 +10,7 @@ import {AppTheme} from '../../shared/themes/Theme';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../routes/RoutesParams';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import TextInput from '../../shared/components/TextInput';
 import Button from '../../shared/components/Button';
 import {ApolloError, useMutation, useQuery} from '@apollo/client';
@@ -20,18 +21,21 @@ import {
   GetTaskTemplateDetailsDocument,
   GetTaskTemplatesDocument,
   GetTasksDocument,
-  GroupMemberFragment,
   GroupStatus,
   TaskSchedule,
   UpdateTaskTemplateDocument,
 } from '../../graphql/generated';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
 import {firebase} from '@react-native-firebase/auth';
-import {FilterOption, FilterType} from './components/RoomPicker';
+import {FilterType} from '../../shared/components/filter/Filter';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {formatDateTime} from '../../shared/utils/Date.utils';
 import Pill from '../../shared/components/Pill';
+import Typography from '../../shared/components/Typography';
+import FastImage from 'react-native-fast-image';
+
+const ICON_SIZE = 12;
 
 interface GroupMember {
   __typename?: 'GroupMember' | undefined;
@@ -44,7 +48,12 @@ interface GroupMember {
   };
 }
 
-const scheduleTypeOptions: FilterOption<TaskSchedule>[] = [
+interface TaskScheduleOption {
+  label: string;
+  value: TaskSchedule;
+}
+
+const scheduleTypeOptions: TaskScheduleOption[] = [
   {
     label: 'Once',
     value: TaskSchedule.Once,
@@ -71,6 +80,7 @@ const TaskTemplateEditorScreen = () => {
   const params =
     useRoute<RouteProp<AppScreensParamList, Routes.TASK_EDITOR>>().params;
   const id = params?.id;
+  const groupId = params.groupId;
   // FIXME: It's only using local user for the moment
   const userId = firebase.auth().currentUser?.uid;
   const {
@@ -79,28 +89,20 @@ const TaskTemplateEditorScreen = () => {
     error: errorRooms,
   } = useQuery(GetRoomsDocument);
   const rooms: RoomFilterDto[] = roomsData?.getRooms || [];
-  const roomsOptions: FilterOption<RoomFilterDto>[] = rooms.map(room => ({
-    label: room.name,
-    value: room,
-  }));
   const {
     data: membersData,
     loading: loadingMembers,
     error: errorMembers,
-  } = useQuery(GetGroupMembersDocument);
+  } = useQuery(GetGroupMembersDocument, {variables: {fromGroup: groupId}});
   const members: GroupMember[] = membersData?.getGroupMembers || [];
-  const membersOptions: FilterOption<RoomFilterDto>[] = members.map(member => ({
-    label: member.user.name,
-    image: {uri: member.user.profilePhoto},
-    value: member.user.id,
-  }));
+
   const {
     data: existingTaskTemplateDetailsData,
     loading: loadingExistingTask,
     error: errorExistingTask,
   } = useQuery(GetTaskTemplateDetailsDocument, {
     variables: {id: id as string},
-    skip: !id || !roomsOptions.length,
+    skip: !id || !rooms.length,
   });
   const [createTaskTemplate, {loading: submittingTaskTemplateCreation}] =
     useMutation(CreateTaskTemplateDocument);
@@ -147,6 +149,30 @@ const TaskTemplateEditorScreen = () => {
       }),
     [params?.id],
   );
+
+  useEffect(() => {
+    let error = errorExistingTask;
+    if (!error) {
+      error = errorMembers;
+    }
+    if (!error) {
+      error = errorRooms;
+    }
+    if (!error) return;
+
+    console.error('Error', JSON.stringify(error));
+    if (error instanceof ApolloError) {
+      const message = JSON.stringify(error);
+      navigation.navigate(Routes.ERROR_MODAL, {
+        title: __DEV__
+          ? 'Development error'
+          : `Oops! You just experienced an error`,
+        message: __DEV__
+          ? message
+          : `We couldn't save this information, please try again!`,
+      });
+    }
+  }, [errorExistingTask, errorMembers, errorRooms]);
 
   const saveTask = async () => {
     try {
@@ -199,14 +225,87 @@ const TaskTemplateEditorScreen = () => {
     }
   };
 
+  const renderRoomOption = (
+    selected: RoomFilterDto,
+    onPress: any,
+    item: RoomFilterDto,
+  ) => {
+    const isSelected = selected?.id === item.id;
+    return (
+      <Pressable
+        onPress={onPress}
+        style={[styles.roomContainer, !isSelected && styles.unselected]}>
+        <View style={styles.iconContainer}>
+          {isSelected && (
+            <FontistoIcon
+              name="record"
+              color={theme.colors.primary}
+              size={ICON_SIZE}
+            />
+          )}
+        </View>
+        <Typography>{item.name}</Typography>
+      </Pressable>
+    );
+  };
+
+  const renderFrequencyOption = (
+    selected: TaskScheduleOption,
+    onPress: any,
+    item: TaskScheduleOption,
+  ) => {
+    const isSelected = selected?.value === item.value;
+    return (
+      <Pressable
+        onPress={onPress}
+        style={[styles.roomContainer, !isSelected && styles.unselected]}>
+        <View style={styles.iconContainer}>
+          {isSelected && (
+            <FontistoIcon
+              name="record"
+              color={theme.colors.primary}
+              size={ICON_SIZE}
+            />
+          )}
+        </View>
+        <Typography>{item.label}</Typography>
+      </Pressable>
+    );
+  };
+
+  const renderMemberOption = (
+    selected: GroupMember[],
+    onPress: any,
+    item: GroupMember,
+  ) => {
+    const isSelected = Boolean(selected.find(e => e.user.id === item.user.id));
+    return (
+      <Pressable
+        onPress={onPress}
+        style={[styles.roomContainer, !isSelected && styles.unselected]}>
+        <FastImage
+          source={{uri: item.user.profilePhoto}}
+          style={styles.userImg}
+        />
+        <Typography>{item.user.name}</Typography>
+      </Pressable>
+    );
+  };
+
   const navigateToRoomFilter = () =>
     navigation.navigate(Routes.OPTION_PICKER, {
       label: 'Rooms',
       type: FilterType.SingleOption,
-      options: roomsOptions,
+      options: rooms,
       ctaLabel: 'Select room',
       selected: roomSelected,
       onOptionSelected: selected => setRoomSelected(selected as RoomFilterDto),
+      renderItem: (selected, onPress, item) =>
+        renderRoomOption(
+          selected as RoomFilterDto,
+          onPress,
+          item.item as RoomFilterDto,
+        ),
     });
 
   const navigateToFrequencyFilter = () =>
@@ -216,17 +315,26 @@ const TaskTemplateEditorScreen = () => {
       options: scheduleTypeOptions,
       ctaLabel: 'Use this selection',
       selected: scheduleType,
-      onOptionSelected: selected => setScheduleType(selected as TaskSchedule),
+      onOptionSelected: (selected: TaskScheduleOption) =>
+        setScheduleType(selected.value),
+      renderItem: (selected, onPress, item) =>
+        renderFrequencyOption(
+          selected,
+          onPress,
+          item.item as TaskScheduleOption,
+        ),
     });
 
   const navigateToAssignedPeopleFilter = () =>
     navigation.navigate(Routes.OPTION_PICKER, {
       label: 'Select people assigned to this task',
       type: FilterType.MultipleOption,
-      options: membersOptions,
+      options: members,
       ctaLabel: 'Use this selection',
       selected: assignedTo,
       onOptionSelected: selected => setAssignedTo(selected as GroupMember[]),
+      renderItem: (selected, onPress, item) =>
+        renderMemberOption(selected, onPress, item.item as GroupMember),
     });
 
   const onDateConfirmed = (date: Date) => {
@@ -370,5 +478,25 @@ const createStyles = (theme: AppTheme) =>
     },
     inputContainer: {
       marginVertical: theme.spacing,
+    },
+    roomContainer: {
+      marginVertical: theme.spacing,
+      marginHorizontal: theme.spacing * 2,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    userImg: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: theme.spacing,
+    },
+    unselected: {
+      opacity: 0.5,
+    },
+    iconContainer: {
+      minWidth: 25,
+      height: 20,
+      justifyContent: 'center',
     },
   });

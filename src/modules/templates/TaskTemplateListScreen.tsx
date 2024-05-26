@@ -14,7 +14,6 @@ import {
   DeleteTaskTemplateDocument,
   GetRoomsDocument,
   GetTaskTemplatesDocument,
-  Task,
   TaskTemplate,
 } from '../../graphql/generated';
 import TaskTemplateItem from './components/TaskTemplateItem';
@@ -48,7 +47,10 @@ const TaskTemplateListScreen = () => {
       navigation.setOptions({
         headerRight: props => {
           const navigateToTaskTemplateEditor = () =>
-            navigation.navigate(Routes.TASK_EDITOR);
+            // FIXME: We don't have the selected group in app state
+            navigation.navigate(Routes.TASK_EDITOR, {
+              groupId: 'cff4ddfd-c499-48d6-b87f-372f6ffa1253',
+            });
 
           return (
             <Pressable

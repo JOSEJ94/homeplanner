@@ -1,29 +1,28 @@
-import {Animated, Pressable, StyleSheet, View} from 'react-native';
+import {
+  Animated,
+  FlatList,
+  ListRenderItemInfo,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
-import BottomModal from '../../../shared/components/BottomModal';
-import Typography from '../../../shared/components/Typography';
-import {AppTheme} from '../../../shared/themes/Theme';
+import BottomModal from '../BottomModal';
+import Typography from '../Typography';
+import {AppTheme} from '../../themes/Theme';
 import {
   RouteProp,
   useNavigation,
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import ListFilter from '../../../shared/components/filter/ListFilter';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
-import Button from '../../../shared/components/Button';
+import Button from '../Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Source} from 'react-native-fast-image';
 
 export enum FilterType {
   SingleOption,
   MultipleOption,
-}
-
-export interface FilterOption<T> {
-  label: string;
-  image?: Source;
-  value: T;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -44,6 +43,7 @@ const RoomPicker = () => {
     onOptionSelected,
     selected,
     ctaLabel = 'Save',
+    renderItem,
   } = route.params;
 
   const fadeAnimation = new Animated.Value(0);
@@ -56,19 +56,30 @@ const RoomPicker = () => {
     }).start();
   }, []);
 
-  const [selectedOption, setSelectedOption] = useState<unknown | null>(
-    selected,
-  );
+  const [selectedOption, setSelectedOption] = useState<
+    unknown | unknown[] | null
+  >(selected);
 
-  const fadeOutEffect = () =>
+  const fadeOutEffect: () => void = () =>
     Animated.timing(fadeAnimation, {
       toValue: 0,
       duration: 200,
       useNativeDriver: false,
     }).start(navigation.goBack);
 
-  const onLocalPress = (selected: unknown) => {
-    setSelectedOption(selected);
+  const onLocalPress = (newSelected: unknown) => {
+    if (type === FilterType.SingleOption) {
+      setSelectedOption(newSelected);
+    }
+    if (type === FilterType.MultipleOption) {
+      const selectedArray = selected as unknown[];
+      const newArray = selectedArray.filter(e => e !== newSelected);
+      if (newArray.length < selectedArray.length) {
+        setSelectedOption(newArray);
+      } else {
+        setSelectedOption([...selectedArray, newSelected]);
+      }
+    }
   };
 
   const onLocalSave = () => {
@@ -78,6 +89,10 @@ const RoomPicker = () => {
     fadeOutEffect();
   };
 
+  const localRenderInfo = (info: ListRenderItemInfo<unknown>) => {
+    return renderItem(selectedOption, () => onLocalPress(info.item), info);
+  };
+
   const footer = (
     <Button
       title={ctaLabel}
@@ -85,6 +100,12 @@ const RoomPicker = () => {
       style={styles.saveBtn}
       onPress={onLocalSave}
     />
+  );
+
+  const header = (
+    <View style={styles.titleContainer}>
+      <Typography>{label}</Typography>
+    </View>
   );
 
   return (
@@ -99,16 +120,11 @@ const RoomPicker = () => {
         ]}
       />
       <BottomModal>
-        <ListFilter
-          ListHeaderComponent={
-            <View style={styles.titleContainer}>
-              <Typography>{label}</Typography>
-            </View>
-          }
-          selected={options.find(option => option.value === selectedOption)}
-          options={options}
+        <FlatList
+          ListHeaderComponent={header}
           ListFooterComponent={footer}
-          onPress={onLocalPress}
+          data={options}
+          renderItem={localRenderInfo}
         />
       </BottomModal>
     </>

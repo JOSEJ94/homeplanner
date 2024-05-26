@@ -1,7 +1,5 @@
-import {
-  FilterOption,
-  FilterType,
-} from '../modules/templates/components/RoomPicker';
+import {ListRenderItemInfo} from 'react-native';
+import {FilterType} from '../shared/components/filter/Filter';
 import {Icon} from '../shared/modules/IconPicker';
 
 export enum Routes {
@@ -52,9 +50,14 @@ export type AppScreensParamList = {
   [Routes.OPTION_PICKER]: {
     label: string;
     type: FilterType;
-    options: FilterOption<unknown>[];
+    options: unknown[];
     ctaLabel?: string;
-    selected?: unknown;
+    selected?: unknown | unknown[];
+    renderItem: (
+      selected: unknown,
+      onPress: (item: ListRenderItemInfo<unknown>) => void,
+      item: unknown,
+    ) => React.JSX.Element;
     onOptionSelected?: (selected: unknown) => void;
   };
   [Routes.PASSWORD_RESET_CONFIRMATION]: {email: string};
@@ -62,5 +65,5 @@ export type AppScreensParamList = {
   [Routes.ROOM_EDITOR]: {groupId: string; id?: string};
   [Routes.SIGN_UP]: undefined;
   [Routes.TAB_BAR]: undefined;
-  [Routes.TASK_EDITOR]: {id?: string} | undefined;
+  [Routes.TASK_EDITOR]: {id?: string; groupId: string};
 };

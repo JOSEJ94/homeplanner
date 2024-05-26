@@ -35,7 +35,7 @@ import InvitationModal from '../modules/modal/InvitationModal';
 import {useLazyQuery} from '@apollo/client';
 import {GetInvitationsDocument} from '../graphql/generated';
 import ErrorModal from '../modules/modal/ErrorModal';
-import RoomPicker from '../modules/templates/components/RoomPicker';
+import RoomPicker from '../shared/components/filter/Filter';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
