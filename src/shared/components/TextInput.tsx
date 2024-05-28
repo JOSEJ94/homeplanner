@@ -84,7 +84,7 @@ const createStyles = (theme: AppTheme) =>
       alignItems: 'center',
     },
     spacer: {
-      marginBottom: 8,
+      marginBottom: theme.spacing,
     },
     inputContainerError: {
       borderColor: theme.error as ColorValue,

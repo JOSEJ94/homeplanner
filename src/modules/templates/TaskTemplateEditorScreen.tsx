@@ -31,10 +31,10 @@ import {FilterType} from '../../shared/components/filter/Filter';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {formatDateTime} from '../../shared/utils/Date.utils';
-import Pill from '../../shared/components/Pill';
 import Typography from '../../shared/components/Typography';
 import RoundedImage from '../../shared/components/RoundedImage';
 import {getStaticImageName} from '../../shared/utils/Image.utils';
+import PillInput from '../../shared/components/PillInput';
 
 const ICON_SIZE = 12;
 
@@ -119,7 +119,7 @@ const TaskTemplateEditorScreen = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [randomlyAssigned, setRandomlyAssigned] = useState(false);
-  const [assignedTo, setAssignedTo] = useState<any[]>([]);
+  const [assignedTo, setAssignedTo] = useState<GroupMember[]>([]);
   const [dateSelected, setDateTime] = useState<Date>(new Date());
   const [endingDateSelected, setEndingDateTime] = useState<Date>();
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
@@ -427,17 +427,14 @@ const TaskTemplateEditorScreen = () => {
               titleProps={{skeletonProps: {width: 100}}}
             />
           )}
-          <Button
+          <PillInput
+            title="Assigned to"
+            data={assignedTo}
+            extractLabel={item => item.user.name!}
+            extractImage={item => item.user.profilePhoto}
+            placeholderText="Who is going to work on this task?"
+            placeholderImage={getStaticImageName('default-user.png')}
             onPress={navigateToAssignedPeopleFilter}
-            title="Pick assigned people"
-            fullWidth
-          />
-          <Pill
-            title="test"
-            image={{
-              uri: 'https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_640.png',
-              cache: 'web',
-            }}
           />
           <DatePicker
             modal

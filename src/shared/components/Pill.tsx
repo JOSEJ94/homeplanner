@@ -10,10 +10,11 @@ import React, {useMemo} from 'react';
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import Typography from './Typography';
-import FastImage, {Source} from 'react-native-fast-image';
+import RoundedImage from './RoundedImage';
 
 interface PillProps extends PressableProps {
-  image?: Source;
+  image?: string | null;
+  placeholderImage?: string;
   selected?: boolean;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<ViewStyle>;
@@ -22,6 +23,8 @@ interface PillProps extends PressableProps {
 
 const Pill = ({
   image,
+  onPress,
+  placeholderImage,
   selected,
   style,
   textStyle,
@@ -37,9 +40,18 @@ const Pill = ({
   return (
     <Pressable
       {...props}
+      onPress={onPress}
+      pointerEvents={onPress ? 'auto' : 'none'}
       hitSlop={theme.hitSlop}
       style={[styles.container, style]}>
-      {Boolean(image) && <FastImage source={image} style={styles.image} />}
+      {(Boolean(image) || Boolean(placeholderImage)) && (
+        <RoundedImage
+          sourceUri={image}
+          placeholderUri={placeholderImage}
+          imageStyle={styles.image}
+          style={styles.image}
+        />
+      )}
       <Typography style={[styles.text, textStyle]}>{title}</Typography>
     </Pressable>
   );
