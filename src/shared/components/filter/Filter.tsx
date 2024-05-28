@@ -72,7 +72,7 @@ const RoomPicker = () => {
       setSelectedOption(newSelected);
     }
     if (type === FilterType.MultipleOption) {
-      const selectedArray = selected as unknown[];
+      const selectedArray = selectedOption as unknown[];
       const newArray = selectedArray.filter(e => e !== newSelected);
       if (newArray.length < selectedArray.length) {
         setSelectedOption(newArray);
