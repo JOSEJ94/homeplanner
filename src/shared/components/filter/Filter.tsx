@@ -44,6 +44,7 @@ const RoomPicker = () => {
     selected,
     ctaLabel = 'Save',
     renderItem,
+    identityComparator = (a, b) => a === b,
   } = route.params;
 
   const fadeAnimation = new Animated.Value(0);
@@ -73,7 +74,9 @@ const RoomPicker = () => {
     }
     if (type === FilterType.MultipleOption) {
       const selectedArray = selectedOption as unknown[];
-      const newArray = selectedArray.filter(e => e !== newSelected);
+      const newArray = selectedArray.filter(
+        e => !identityComparator(e, newSelected),
+      );
       if (newArray.length < selectedArray.length) {
         setSelectedOption(newArray);
       } else {
@@ -90,7 +93,7 @@ const RoomPicker = () => {
   };
 
   const localRenderInfo = (info: ListRenderItemInfo<unknown>) => {
-    return renderItem(selectedOption, () => onLocalPress(info.item), info);
+    return renderItem(selectedOption, () => onLocalPress(info.item), info.item);
   };
 
   const footer = (

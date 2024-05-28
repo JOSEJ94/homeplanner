@@ -53,6 +53,7 @@ export type AppScreensParamList = {
     options: unknown[];
     ctaLabel?: string;
     selected?: unknown | unknown[];
+    identityComparator?: (a: unknown, b: unknown) => boolean;
     renderItem: (
       selected: unknown,
       onPress: (item: ListRenderItemInfo<unknown>) => void,

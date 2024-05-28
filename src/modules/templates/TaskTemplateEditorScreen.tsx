@@ -41,12 +41,14 @@ const ICON_SIZE = 12;
 interface GroupMember {
   __typename?: 'GroupMember' | undefined;
   status: GroupStatus;
-  user: {
-    __typename?: 'User' | undefined;
-    id: string;
-    name?: string | null | undefined;
-    profilePhoto?: string | null | undefined;
-  };
+  user: LocalUser;
+}
+
+interface LocalUser {
+  __typename?: 'User' | undefined;
+  id: string;
+  name?: string | null | undefined;
+  profilePhoto?: string | null | undefined;
 }
 
 interface TaskScheduleOption {
@@ -119,7 +121,7 @@ const TaskTemplateEditorScreen = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [randomlyAssigned, setRandomlyAssigned] = useState(false);
-  const [assignedTo, setAssignedTo] = useState<GroupMember[]>([]);
+  const [assignedTo, setAssignedTo] = useState<LocalUser[]>([]);
   const [dateSelected, setDateTime] = useState<Date>(new Date());
   const [endingDateSelected, setEndingDateTime] = useState<Date>();
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
@@ -308,7 +310,7 @@ const TaskTemplateEditorScreen = () => {
         renderRoomOption(
           selected as RoomFilterDto,
           onPress,
-          item.item as RoomFilterDto,
+          item as RoomFilterDto,
         ),
     });
 
@@ -319,13 +321,13 @@ const TaskTemplateEditorScreen = () => {
       options: scheduleTypeOptions,
       ctaLabel: 'Use this selection',
       selected: scheduleType,
-      onOptionSelected: (selected: TaskScheduleOption) =>
-        setScheduleType(selected.value),
+      onOptionSelected: selected =>
+        setScheduleType((selected as TaskScheduleOption).value),
       renderItem: (selected, onPress, item) =>
         renderFrequencyOption(
-          selected,
+          selected as TaskScheduleOption,
           onPress,
-          item.item as TaskScheduleOption,
+          item as TaskScheduleOption,
         ),
     });
 
@@ -335,10 +337,19 @@ const TaskTemplateEditorScreen = () => {
       type: FilterType.MultipleOption,
       options: members,
       ctaLabel: 'Use this selection',
-      selected: assignedTo,
-      onOptionSelected: selected => setAssignedTo(selected as GroupMember[]),
+      selected: members.filter(m => assignedTo.find(u => m.user.id === u.id)),
+      identityComparator: (a, b) =>
+        (a as GroupMember).user.id === (b as GroupMember).user.id,
+      onOptionSelected: selected => {
+        const usersAssigned = (selected as GroupMember[]).map(u => u.user);
+        setAssignedTo(usersAssigned);
+      },
       renderItem: (selected, onPress, item) =>
-        renderMemberOption(selected, onPress, item.item as GroupMember),
+        renderMemberOption(
+          selected as GroupMember[],
+          onPress,
+          item as GroupMember,
+        ),
     });
 
   const onDateConfirmed = (date: Date) => {
@@ -430,8 +441,8 @@ const TaskTemplateEditorScreen = () => {
           <PillInput
             title="Assigned to"
             data={assignedTo}
-            extractLabel={item => item.user.name!}
-            extractImage={item => item.user.profilePhoto}
+            extractLabel={user => user.name!}
+            extractImage={user => user.profilePhoto}
             placeholderText="Who is going to work on this task?"
             placeholderImage={getStaticImageName('default-user.png')}
             onPress={navigateToAssignedPeopleFilter}
