@@ -2,7 +2,6 @@ import React, {useState, useEffect, useMemo} from 'react';
 import {
   Image,
   Animated,
-  ImageSourcePropType,
   StyleProp,
   ViewStyle,
   ImageStyle,
@@ -13,36 +12,44 @@ import {
 import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import {Skeleton} from 'moti/skeleton';
+import FastImage, {Source} from 'react-native-fast-image';
 
 interface RoundedImageProps {
   imageStyle?: StyleProp<ImageStyle>;
   onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
-  placeholderSource?: ImageSourcePropType | undefined;
-  source?: ImageSourcePropType | undefined;
+  placeholderUri?: string | null;
+  sourceUri?: string | null;
   style?: StyleProp<ViewStyle>;
 }
+
+const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
 const RoundedImage = ({
   imageStyle,
   onPress,
-  placeholderSource,
-  source,
+  placeholderUri,
+  sourceUri,
   style,
 }: RoundedImageProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
   const opacity = new Animated.Value(0);
 
-  const triggerAnimationWhenLoadFinished = () => setLoaded(true);
+  const triggerAnimationWhenLoadFinished = () => {
+    if (!error) {
+      setLoaded(true);
+    }
+  };
 
   useEffect(() => {
-    if (source) {
+    if (sourceUri) {
       fadeIn();
     } else {
       fadeOut();
     }
-  }, [source]);
+  }, [sourceUri]);
 
   const fadeIn = () => {
     Animated.timing(opacity, {
@@ -62,18 +69,30 @@ const RoundedImage = ({
 
   return (
     <Skeleton colorMode="light" radius={styles.image.borderRadius}>
-      <Pressable onPress={onPress} style={[styles.container, style]}>
-        {placeholderSource && !loaded && (
+      <Pressable
+        pointerEvents={onPress ? 'auto' : 'none'}
+        onPress={onPress}
+        style={[styles.container, style]}>
+        {placeholderUri && !loaded && (
           <Image
-            source={placeholderSource}
+            source={{uri: placeholderUri}}
             style={[styles.image, imageStyle]}
           />
         )}
-        <Animated.Image
-          source={source}
+        <AnimatedFastImage
+          source={{
+            uri: sourceUri || '',
+          }}
+          onError={() => {
+            setError(true);
+          }}
+          onLoadStart={() => {
+            setError(false);
+          }}
           style={[
             styles.image,
-            imageStyle,
+            // FIXME: Incorrect style type here
+            imageStyle as any,
             {
               opacity: opacity,
             },

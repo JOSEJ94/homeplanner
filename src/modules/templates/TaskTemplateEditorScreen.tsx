@@ -33,7 +33,8 @@ import moment from 'moment';
 import {formatDateTime} from '../../shared/utils/Date.utils';
 import Pill from '../../shared/components/Pill';
 import Typography from '../../shared/components/Typography';
-import FastImage from 'react-native-fast-image';
+import RoundedImage from '../../shared/components/RoundedImage';
+import {getStaticImageName} from '../../shared/utils/Image.utils';
 
 const ICON_SIZE = 12;
 
@@ -278,14 +279,17 @@ const TaskTemplateEditorScreen = () => {
     onPress: any,
     item: GroupMember,
   ) => {
-    const isSelected = Boolean(selected.find(e => e.user.id === item.user.id));
+    const isSelected = Boolean(selected?.find(e => e.user.id === item.user.id));
+    const sourceUri = item.user.profilePhoto;
     return (
       <Pressable
         onPress={onPress}
         style={[styles.roomContainer, !isSelected && styles.unselected]}>
-        <FastImage
-          source={{uri: item.user.profilePhoto}}
-          style={styles.userImg}
+        <RoundedImage
+          sourceUri={sourceUri}
+          placeholderUri={getStaticImageName('default-user.png')}
+          imageStyle={styles.userImg}
+          style={styles.userImgContainer}
         />
         <Typography>{item.user.name}</Typography>
       </Pressable>
@@ -485,11 +489,14 @@ const createStyles = (theme: AppTheme) =>
       flexDirection: 'row',
       alignItems: 'center',
     },
+    userImgContainer: {
+      width: 50,
+      height: 50,
+      marginRight: theme.spacing,
+    },
     userImg: {
       width: 50,
       height: 50,
-      borderRadius: 25,
-      marginRight: theme.spacing,
     },
     unselected: {
       opacity: 0.5,

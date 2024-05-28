@@ -26,15 +26,12 @@ const FamilyMemberCard = ({member, style, ...rest}: FamilyMemberCardProps) => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
   const currentUser = firebase.auth().currentUser?.uid === member.user.id;
-  const imageSource =
-    member.user.profilePhoto || getStaticImageName('default-user.png');
 
   return (
     <Pressable {...rest} style={[styles.container, style]}>
       <RoundedImage
-        source={{
-          uri: imageSource,
-        }}
+        sourceUri={member.user.profilePhoto}
+        placeholderUri={getStaticImageName('default-user.png')}
       />
       <Spacer style={styles.horizontalSpacer} />
       <View>

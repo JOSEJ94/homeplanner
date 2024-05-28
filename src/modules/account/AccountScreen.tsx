@@ -114,7 +114,7 @@ const AccountScreen = () => {
         <Typography variant={TypographyVariant.HEADING}>
           {user?.displayName}
         </Typography>
-        <RoundedImage source={{uri: userPhoto}} />
+        <RoundedImage sourceUri={userPhoto} />
       </View>
       <ScrollView
         contentContainerStyle={styles.scrollviewContainer}
