@@ -147,6 +147,9 @@ const TaskTemplateEditorScreen = () => {
       setScheduleType(existingTaskTemplateDetails.scheduleType);
       setRoomSelected(existingTaskTemplateDetails.room);
       setDateTime(moment(existingTaskTemplateDetails.startingDate).toDate());
+      if (existingTaskTemplateDetails.scheduleInterval) {
+        setScheduleInterval(`${existingTaskTemplateDetails.scheduleInterval}`);
+      }
     }
   }, [existingTaskTemplateDetails]);
 
