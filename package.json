@@ -54,7 +54,7 @@
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-operations": "^4.2.0",
     "@react-native/babel-preset": "0.74.75",
-    "@react-native/eslint-config": "0.74.75",
+    "@react-native/eslint-config": "0.74.83",
     "@react-native/metro-config": "0.74.83",
     "@react-native/typescript-config": "0.74.80",
     "@types/react": "^18.2.73",
