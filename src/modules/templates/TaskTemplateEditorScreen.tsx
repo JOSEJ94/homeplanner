@@ -26,12 +26,11 @@ import {
   UpdateTaskTemplateDocument,
 } from '../../graphql/generated';
 import {RoomFilterDto} from '../../shared/models/RoomFilterDto';
-import {firebase} from '@react-native-firebase/auth';
 import {FilterType} from '../../shared/components/filter/Filter';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {formatDateTime} from '../../shared/utils/Date.utils';
-import Typography from '../../shared/components/Typography';
+import Typography, {TypographyProps} from '../../shared/components/Typography';
 import RoundedImage from '../../shared/components/RoundedImage';
 import {getStaticImageName} from '../../shared/utils/Image.utils';
 import PillInput from '../../shared/components/PillInput';
@@ -75,6 +74,12 @@ const scheduleTypeOptions: TaskScheduleOption[] = [
   },
 ];
 
+const skeletonProps: TypographyProps = {
+  skeletonProps: {
+    width: 100,
+  },
+};
+
 const TaskTemplateEditorScreen = () => {
   const theme = useTheme() as AppTheme;
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -84,8 +89,6 @@ const TaskTemplateEditorScreen = () => {
     useRoute<RouteProp<AppScreensParamList, Routes.TASK_EDITOR>>().params;
   const id = params?.id;
   const groupId = params.groupId;
-  // FIXME: It's only using local user for the moment
-  const userId = firebase.auth().currentUser?.uid;
   const {
     data: roomsData,
     loading: loadingRooms,
@@ -179,11 +182,12 @@ const TaskTemplateEditorScreen = () => {
 
   const saveTask = async () => {
     try {
+      const userIds = assignedTo.map(u => u.id);
       if (id) {
         await updateTaskTemplate({
           variables: {
             id,
-            assignedTo: [userId!],
+            assignedTo: userIds,
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
             endingDate: endingDateSelected?.toISOString(),
@@ -198,7 +202,7 @@ const TaskTemplateEditorScreen = () => {
       } else {
         await createTaskTemplate({
           variables: {
-            assignedTo: [userId!],
+            assignedTo: userIds,
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
             endingDate: endingDateSelected?.toISOString(),
@@ -385,7 +389,7 @@ const TaskTemplateEditorScreen = () => {
             title="Title"
             placeholder="Title"
             onChangeText={setTitle}
-            titleProps={{skeletonProps: {width: 100}}}
+            titleProps={skeletonProps}
           />
           <TextInput
             containerStyle={styles.inputContainer}
@@ -393,7 +397,7 @@ const TaskTemplateEditorScreen = () => {
             title="Description"
             placeholder="Description"
             onChangeText={setDescription}
-            titleProps={{skeletonProps: {width: 100}}}
+            titleProps={skeletonProps}
             multiline
           />
           <TextInput
@@ -403,7 +407,7 @@ const TaskTemplateEditorScreen = () => {
             placeholder="Pick room"
             editable={false}
             onPressIn={navigateToRoomFilter}
-            titleProps={{skeletonProps: {width: 100}}}
+            titleProps={skeletonProps}
           />
           <TextInput
             containerStyle={styles.inputContainer}
@@ -412,7 +416,7 @@ const TaskTemplateEditorScreen = () => {
             placeholder="How often should this repeat?"
             editable={false}
             onPressIn={navigateToFrequencyFilter}
-            titleProps={{skeletonProps: {width: 100}}}
+            titleProps={skeletonProps}
           />
           <TextInput
             containerStyle={styles.inputContainer}
@@ -421,7 +425,7 @@ const TaskTemplateEditorScreen = () => {
             placeholder="Date and time this task should start"
             editable={false}
             onPressIn={showTimePicker}
-            titleProps={{skeletonProps: {width: 100}}}
+            titleProps={skeletonProps}
           />
           {Boolean(scheduleType) && scheduleType !== TaskSchedule.Once && (
             <TextInput
@@ -435,7 +439,7 @@ const TaskTemplateEditorScreen = () => {
               placeholder="Date and time this task should end"
               editable={false}
               onPressIn={showEndingDateTimePicker}
-              titleProps={{skeletonProps: {width: 100}}}
+              titleProps={skeletonProps}
             />
           )}
           <PillInput
