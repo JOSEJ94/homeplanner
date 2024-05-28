@@ -77,7 +77,7 @@ const createStyles = (theme: AppTheme, selected?: boolean) =>
     image: {
       height: 25,
       width: 25,
-      borderRadius: 5,
+      borderRadius: 12.5,
       marginRight: theme.spacing,
     },
     text: {
