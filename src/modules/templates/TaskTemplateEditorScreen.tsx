@@ -52,24 +52,29 @@ interface LocalUser {
 
 interface TaskScheduleOption {
   label: string;
+  pluralForm: string;
   value: TaskSchedule;
 }
 
 const scheduleTypeOptions: TaskScheduleOption[] = [
   {
     label: 'Once',
+    pluralForm: 'Just once',
     value: TaskSchedule.Once,
   },
   {
     label: 'Daily',
+    pluralForm: 'Days',
     value: TaskSchedule.Daily,
   },
   {
     label: 'Weekly',
+    pluralForm: 'Weeks',
     value: TaskSchedule.Weekly,
   },
   {
     label: 'Monthly',
+    pluralForm: 'Months',
     value: TaskSchedule.Monthly,
   },
 ];
@@ -128,6 +133,7 @@ const TaskTemplateEditorScreen = () => {
   const [dateSelected, setDateTime] = useState<Date>(new Date());
   const [endingDateSelected, setEndingDateTime] = useState<Date>();
   const [scheduleType, setScheduleType] = useState<TaskSchedule | null>(null);
+  const [scheduleInterval, setScheduleInterval] = useState<string>();
   const [roomSelected, setRoomSelected] = useState<RoomFilterDto | null>(null);
 
   useEffect(() => {
@@ -191,7 +197,8 @@ const TaskTemplateEditorScreen = () => {
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
             endingDate: endingDateSelected?.toISOString(),
-            scheduleInterval: 1,
+            // FIXME: This has lots of room for improvement, but good for now.
+            scheduleInterval: Number(scheduleInterval),
             scheduleType: scheduleType!,
             title,
             description,
@@ -206,7 +213,8 @@ const TaskTemplateEditorScreen = () => {
             room: roomSelected!.id,
             startingDate: dateSelected.toISOString(),
             endingDate: endingDateSelected?.toISOString(),
-            scheduleInterval: 1,
+            // FIXME: This has lots of room for improvement, but good for now.
+            scheduleInterval: Number(scheduleInterval),
             scheduleType: scheduleType!,
             title,
             description,
@@ -418,6 +426,18 @@ const TaskTemplateEditorScreen = () => {
             onPressIn={navigateToFrequencyFilter}
             titleProps={skeletonProps}
           />
+          {Boolean(selectedScheduleOption) &&
+            Boolean(selectedScheduleOption?.value !== TaskSchedule.Once) && (
+              <TextInput
+                containerStyle={styles.inputContainer}
+                value={scheduleInterval}
+                title={`Repeat every N ${selectedScheduleOption!.pluralForm}`}
+                placeholder="Enter number"
+                onChangeText={setScheduleInterval}
+                titleProps={skeletonProps}
+                multiline
+              />
+            )}
           <TextInput
             containerStyle={styles.inputContainer}
             value={formatDateTime(moment(dateSelected))}
