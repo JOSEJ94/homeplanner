@@ -107,9 +107,9 @@ mutation updateTaskTemplate(
   $description: String
   $assignedTo: [ID!]!
   $startingDate: DateTime!
-  $endingDate: DateTime!
+  $endingDate: DateTime
   $scheduleType: TaskSchedule!
-  $scheduleInterval: Int!
+  $scheduleInterval: Int
 ) {
   updateTaskTemplate(
     assignedTo: $assignedTo
