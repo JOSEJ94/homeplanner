@@ -24,6 +24,7 @@
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "@shakebugs/react-native-shake": "^16.2.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "colorsys": "^1.0.22",
     "graphql": "^16.8.1",

@@ -8,7 +8,10 @@ import AuthenticationSwitch from './src/routes/AuthenticationSwitch';
 import Config from 'react-native-config';
 import {cache} from './src/shared/apollo/cache/cache';
 import {loadErrorMessages, loadDevMessages} from '@apollo/client/dev';
+import Shake from '@shakebugs/react-native-shake';
 
+Shake.setInvokeShakeOnShakeDeviceEvent(true);
+Shake.start(Config.RN_BUG_TICKET_ID, Config.RN_BUG_TICKET_SECRET);
 GoogleSignin.configure({
   webClientId: Config.RN_GOOGLE_CLIENT_ID,
 });

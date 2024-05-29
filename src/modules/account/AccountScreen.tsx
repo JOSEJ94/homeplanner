@@ -16,6 +16,7 @@ import {getReadableVersion} from 'react-native-device-info';
 import RoundedImage from '../../shared/components/RoundedImage';
 import MenuButton from './components/MenuButton';
 import {useApolloClient} from '@apollo/client';
+import Shake from '@shakebugs/react-native-shake';
 
 interface Menu_Button {
   display: string;
@@ -92,8 +93,14 @@ const AccountScreen = () => {
     await Promise.all([auth().signOut(), client.cache.reset()]);
 
   const renderMenuButton = (menuButton: Menu_Button) => {
-    // @ts-expect-error Cannot validate dynamic route type yet.
-    const onMenuItemPressed = () => navigation.navigate(menuButton.route);
+    const onMenuItemPressed = () => {
+      if (menuButton.key === 'bug report') {
+        Shake.show();
+      } else {
+        // @ts-expect-error Cannot validate dynamic route type yet.
+        navigation.navigate(menuButton.route);
+      }
+    };
 
     return (
       <MenuButton

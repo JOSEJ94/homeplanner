@@ -2866,6 +2866,11 @@
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.5.tgz#b77571685410217a548a9c753aa3cdfc215bfc78"
   integrity sha512-l3YHBLAol6d/IKnB9LhpD0cEZWAoe3eFKUyTYWmFmCO2Q/WOckxLQAUyMZWwZV2M/m3+4vgRoaolFqaII82/TA==
 
+"@shakebugs/react-native-shake@^16.2.1":
+  version "16.2.1"
+  resolved "https://registry.yarnpkg.com/@shakebugs/react-native-shake/-/react-native-shake-16.2.1.tgz#6e25a77abbcee357326640f5c72ac0990e67c605"
+  integrity sha512-dz7TORQpNAkpOyQFJgBw9tthlG5NEP8TXd7IYvSp5npWIGxmSbmufcLEaMkDLPjMvlljMZPCzZSkbAzITwY/KQ==
+
 "@sideway/address@^4.1.5":
   version "4.1.5"
   resolved "https://registry.npmjs.org/@sideway/address/-/address-4.1.5.tgz"

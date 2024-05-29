@@ -36,6 +36,7 @@ import {useLazyQuery} from '@apollo/client';
 import {GetInvitationsDocument} from '../graphql/generated';
 import ErrorModal from '../modules/modal/ErrorModal';
 import RoomPicker from '../shared/components/filter/Filter';
+import Shake from '@shakebugs/react-native-shake';
 
 const Stack = createNativeStackNavigator<AppScreensParamList>();
 const Tab = createBottomTabNavigator();
@@ -56,6 +57,18 @@ const AuthenticationSwitch = () => {
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsSignedIn(Boolean(user));
+    if (user) {
+      Shake.registerUser(user.uid);
+      const metadata = {
+        first_name: user.displayName || 'Unnamed user',
+        email: user.email,
+      };
+      Shake.updateUserMetadata(metadata);
+      console.info('Shake user registered');
+    } else {
+      console.info('Shake user unregistered');
+      Shake.unregisterUser();
+    }
     try {
       console.log('Access token', await user?.getIdToken());
       if (Boolean(user)) {
