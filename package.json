@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.10",
+    "@apollo/client": "^3.10.4",
     "@react-native-firebase/analytics": "^19.2.2",
     "@react-native-firebase/app": "^19.0.1",
     "@react-native-firebase/app-distribution": "^19.1.1",
