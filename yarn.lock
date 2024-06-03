@@ -2459,10 +2459,10 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-firebase/analytics@^19.2.2":
-  version "19.2.2"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-19.2.2.tgz#baebf33fce5a0694919cf317b9a7f767c0d1adf0"
-  integrity sha512-0lxqiyDxa2mLg8E1Utbh5w92y8tc26710kbaElM8dZdTItexorB33nj6fzyCVuyzWEUUeHtmyAoepAPwGq+/sA==
+"@react-native-firebase/analytics@^20.0.0":
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-20.0.0.tgz#162ec36b758f664ff56725f6943bdb08150381e7"
+  integrity sha512-FSTr/FwzJOVYpUyd4xFWjeC0hPT9vwtwK4tObzAk4FDwgT6xZ/SrfkMTNh4PJHQX8RltqN5YZ85n8NenG3OGgw==
 
 "@react-native-firebase/app-distribution@^19.1.1":
   version "19.1.1"
