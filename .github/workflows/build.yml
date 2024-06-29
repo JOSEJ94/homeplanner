@@ -53,6 +53,11 @@ jobs:
         run: |
           echo ${{ secrets.ANDROID_KEYSTORE }} | base64 --decode > android/app/Production.keystore
 
+      - name: Temporarily remove google-services.json from .gitignore
+        run: |
+          sed -i '/**\/google-services.json/d' .gitignore
+          sed -i '/**\/GoogleService-Info.plist/d' .gitignore
+
       - name: Load Google Service file
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
