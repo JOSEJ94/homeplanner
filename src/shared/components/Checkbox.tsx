@@ -1,4 +1,5 @@
 import {
+  ColorValue,
   Pressable,
   PressableProps,
   StyleProp,
@@ -12,22 +13,30 @@ import {AppTheme} from '../themes/Theme';
 import {useTheme} from '@react-navigation/native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-interface CheckboxProps extends PressableProps {
+export interface CheckboxProps extends PressableProps {
+  color?: ColorValue;
+  containerStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
-  title?: string;
+  emptyIcon?: string;
+  fullIcon?: string;
   hint?: string;
   selected?: boolean;
   size?: number;
-  containerStyle?: StyleProp<ViewStyle>;
+  title?: string;
+  unselectedColor?: ColorValue;
 }
 
 const Checkbox = ({
-  disabled,
-  selected,
-  hint,
-  title,
-  size = 20,
+  color,
   containerStyle,
+  disabled,
+  emptyIcon = 'checkbox-blank-outline',
+  fullIcon = 'checkbox-marked',
+  hint,
+  selected,
+  size = 20,
+  title,
+  unselectedColor,
   ...rest
 }: CheckboxProps) => {
   const theme = useTheme() as AppTheme;
@@ -42,10 +51,13 @@ const Checkbox = ({
         <Typography variant={TypographyVariant.CAPTION}>{title}</Typography>
         <Typography>{hint}</Typography>
       </View>
-      <Pressable hitSlop={theme.hitSlop} style={styles.iconContainer} {...rest}>
+      <Pressable
+        hitSlop={theme.hitSlop}
+        style={(Boolean(title) || Boolean(hint)) && styles.iconContainer}
+        {...rest}>
         <MaterialIcon
-          color={theme.colors.primary}
-          name={selected ? 'checkbox-marked' : 'checkbox-blank-outline'}
+          color={(selected ? color : unselectedColor) ?? theme.colors.primary}
+          name={selected ? fullIcon : emptyIcon}
           size={size}
         />
       </Pressable>

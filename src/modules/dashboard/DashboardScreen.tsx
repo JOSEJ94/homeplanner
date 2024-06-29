@@ -1,81 +1,92 @@
-import React, {useMemo} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, {useMemo, useState} from 'react';
+import {EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Typography, {
   TypographyVariant,
 } from '../../shared/components/Typography';
 import {
   ColorValue,
+  FlatList,
   ListRenderItemInfo,
-  Pressable,
   StyleSheet,
   View,
 } from 'react-native';
 import TaskItem from './components/TaskItem';
 import {AppTheme} from '../../shared/themes/Theme';
 import {useTheme} from '@react-navigation/native';
-import {RowMap, SwipeListView} from 'react-native-swipe-list-view';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {useQuery} from '@apollo/client';
 import {GetTasksDocument, TaskFragment} from '../../graphql/generated';
+import moment from 'moment';
+import {formatDate} from '../../shared/utils/Date.utils';
 
 const DashboardScreen = () => {
   const theme = useTheme() as AppTheme;
-  const styles = useMemo(() => createStyles(theme), [theme]);
-  const {data, loading, error} = useQuery(GetTasksDocument, {
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(() => createStyles(theme, insets), [theme, insets]);
+  const [dateSelected, setDateSelected] = useState(moment());
+  const [refreshing, setRefreshing] = useState(false);
+  const {
+    data: taskData,
+    loading,
+    error,
+    refetch: reloadTaskList,
+  } = useQuery(GetTasksDocument, {
     variables: {fromRooms: []},
   });
-  const tasks: TaskFragment[] = data?.getTasks || [];
+  const tasks: TaskFragment[] = taskData?.getTasks || [];
+  const dateSelectedLocalizedString = formatDate(dateSelected);
+
+  const refreshTasks = async () => {
+    setRefreshing(true);
+    try {
+      await reloadTaskList();
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const header = (
     <View style={styles.headerContainer}>
+      <Typography
+        style={styles.headerDateTxt}
+        variant={TypographyVariant.CAPTION}>
+        {dateSelectedLocalizedString}
+      </Typography>
       <Typography variant={TypographyVariant.HEADING}>Today</Typography>
     </View>
   );
 
-  const renderTaskItem = (
-    rowData: ListRenderItemInfo<TaskFragment>,
-    rowMap: RowMap<TaskFragment>,
-  ) => <TaskItem task={rowData.item} />;
+  const renderTaskItem = (rowData: ListRenderItemInfo<TaskFragment>) => (
+    <TaskItem task={rowData.item} />
+  );
 
   return (
-    <SafeAreaView edges={['top']} style={{flex: 1}}>
-      <SwipeListView
-        ListHeaderComponent={header}
-        data={tasks}
-        renderItem={renderTaskItem}
-        renderHiddenItem={() => (
-          <View style={styles.buttonContainer}>
-            <Pressable style={styles.completeBtn}>
-              <AntDesignIcon
-                name="check"
-                size={25}
-                color={theme.white as ColorValue}
-              />
-            </Pressable>
-            <Pressable style={styles.deleteBtn}>
-              <AntDesignIcon
-                name="delete"
-                size={25}
-                color={theme.white as ColorValue}
-              />
-            </Pressable>
-          </View>
-        )}
-        leftOpenValue={styles.completeBtn.width}
-        rightOpenValue={-styles.deleteBtn.width}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
+    <FlatList
+      refreshing={refreshing}
+      onRefresh={refreshTasks}
+      style={styles.container}
+      ListHeaderComponent={header}
+      data={tasks}
+      renderItem={renderTaskItem}
+    />
   );
 };
 
 export default DashboardScreen;
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = (theme: AppTheme, insets: EdgeInsets) =>
   StyleSheet.create({
-    container: {},
+    container: {
+      paddingTop: insets.top,
+    },
     headerContainer: {
       paddingHorizontal: theme.spacing * 2,
+    },
+    headerDateTxt: {
+      fontSize: 14,
+      textTransform: 'uppercase',
+      color: theme.text.subtle,
     },
     buttonContainer: {
       flex: 1,

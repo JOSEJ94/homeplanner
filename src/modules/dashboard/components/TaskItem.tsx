@@ -1,40 +1,55 @@
-import {View, StyleSheet, ColorValue} from 'react-native';
-import React, {useMemo} from 'react';
-import Typography, {
-  TypographyVariant,
-} from '../../../shared/components/Typography';
-import {AppTheme} from '../../../shared/themes/Theme';
+import React, {useState} from 'react';
+import {View, StyleSheet, Text, ColorValue, Pressable} from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import {TaskFragment} from '../../../graphql/generated';
 import moment from 'moment';
 import {formatTime} from '../../../shared/utils/Date.utils';
+import {AppTheme} from '../../../shared/themes/Theme';
+import {TaskFragment} from '../../../graphql/generated';
+import CompletionCheckbox from '../../../shared/components/CompletionCheckbox';
+
+const CHECKBOX_SIZE = 28;
 
 interface TaskItemProps {
   task: TaskFragment;
+  onPress?: () => void;
 }
 
-const TaskItem = ({task}: TaskItemProps) => {
+const TaskItem = ({task, onPress}: TaskItemProps) => {
   const theme = useTheme() as AppTheme;
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const [isCompleted, setIsCompleted] = useState(Boolean(task.completionDate));
+  const styles = createStyles(theme);
   const time = formatTime(moment(task.scheduleDay));
 
+  const onCompleteCheckboxPress = () => setIsCompleted(!isCompleted);
+
   return (
-    <View style={styles.container}>
-      <Typography variant={TypographyVariant.CAPTION} style={styles.timeTxt}>
-        {time}
-      </Typography>
-      <View style={{flex: 1, marginLeft: 8}}>
-        <Typography variant={TypographyVariant.CAPTION} style={styles.titleTxt}>
-          {task.title}
-        </Typography>
-        <View style={styles.subInformationContainer}>
-          <Typography style={styles.categoryTxt}>{task.room.name}</Typography>
-          <Typography style={styles.scheduleTypeTxt}>
-            {task.scheduleType}
-          </Typography>
-        </View>
+    <Pressable onPress={onPress} style={styles.container}>
+      <View style={styles.leftContainer}>
+        <CompletionCheckbox
+          size={CHECKBOX_SIZE}
+          hitSlop={theme.hitSlop}
+          color={theme.success as ColorValue}
+          unselectedColor={theme.faded as ColorValue}
+          containerStyle={styles.checkBox}
+          selected={isCompleted}
+          onPress={onCompleteCheckboxPress}
+        />
       </View>
-    </View>
+      <View style={styles.rightContainer}>
+        <View style={styles.taskInfo}>
+          <Text style={styles.titleTxt}>{task.title}</Text>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeTxt}>{time}</Text>
+            <View
+              style={[styles.typeBullet, {backgroundColor: task.room.color}]}
+            />
+          </View>
+        </View>
+        <Text style={styles.descriptionTxt} numberOfLines={2}>
+          {task.description}
+        </Text>
+      </View>
+    </Pressable>
   );
 };
 
@@ -44,35 +59,68 @@ const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       backgroundColor: theme.white as ColorValue,
-      paddingHorizontal: theme.spacing * 2,
-      paddingVertical: theme.spacing,
-      borderBottomColor: theme.colors.border,
-      borderBottomWidth: 1,
+      marginHorizontal: theme.spacing * 2,
+      marginVertical: theme.spacing,
+      paddingHorizontal: theme.spacing * 1.5,
+      paddingVertical: theme.spacing * 1.5,
+      borderStartWidth: 1,
+      borderTopWidth: 1,
+      borderEndWidth: 1,
+      borderStartColor: theme.disabled as ColorValue,
+      borderEndColor: theme.disabled as ColorValue,
+      borderTopColor: theme.disabled as ColorValue,
+      borderRadius: 8,
+      elevation: 3,
+      shadowRadius: 4,
+      shadowColor: '#000',
+      shadowOpacity: 0.3,
+      shadowOffset: {width: 0, height: 8},
       flexDirection: 'row',
-      alignItems: 'center',
     },
-    subInformationContainer: {
-      marginTop: theme.spacing / 2,
+    leftContainer: {
+      alignSelf: 'flex-start',
+    },
+    leftText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    rightContainer: {
+      flex: 1,
+      marginLeft: 16,
+    },
+    taskInfo: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      width: '100%',
     },
     titleTxt: {
       fontSize: 16,
-      fontWeight: '400',
-      color: theme.colors.text,
+      fontWeight: 'bold',
+      color: '#000',
+      flex: 1,
     },
-    categoryTxt: {
+    descriptionTxt: {
       color: theme.faded as ColorValue,
-      alignSelf: 'flex-end',
       fontSize: 14,
+      marginTop: 4,
+      flexShrink: 1,
+    },
+    checkBox: {
+      alignItems: 'flex-start',
+    },
+    timeContainer: {
+      flexDirection: 'row',
     },
     timeTxt: {
+      marginLeft: theme.spacing / 2,
       fontSize: 18,
+      color: '#000',
     },
-    scheduleTypeTxt: {
-      color: theme.colors.primary,
-      fontSize: 14,
-      alignSelf: 'flex-end',
-      textTransform: 'capitalize',
+    typeBullet: {
+      marginLeft: 4,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      alignSelf: 'center',
     },
   });
