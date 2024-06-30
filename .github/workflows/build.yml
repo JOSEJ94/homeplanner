@@ -63,8 +63,19 @@ jobs:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $DATA | base64 -d > android/app/google-services.json
 
-      - name: Display google-services.json content
-        run: cat android/app/google-services.json
+      - name: Check if google-services.json exists and has content
+        run: |
+          if [ -f android/app/google-services.json ]; then
+            echo "File exists."
+            if [ -s android/app/google-services.json ]; then
+              echo "File has content."
+              cat android/app/google-services.json
+            else
+              echo "File is empty."
+            fi
+          else
+            echo "File does not exist."
+          fi
 
       - name: Build APK
         run: |
