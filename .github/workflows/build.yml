@@ -63,6 +63,9 @@ jobs:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $DATA | base64 -d > android/app/google-services.json
 
+      - name: Display google-services.json content
+        run: cat android/app/google-services.json
+
       - name: Build APK
         run: |
           cd android
