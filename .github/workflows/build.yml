@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Staging
 
     env:
       # Add environment variables for Android build tools
