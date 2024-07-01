@@ -67,10 +67,7 @@ jobs:
       - name: Install Firebase CLI
         run: curl -sL https://firebase.tools | bash
 
-      - name: Authenticate with Firebase
-        run: firebase login:ci --token ${{ secrets.FIREBASE_TOKEN }}
-
       - name: Send to Firebase App Distribution
-        run: firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app $FIREBASE_ANDROID_APP_ID --release-notes "First test"
+        run: firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app $FIREBASE_ANDROID_APP_ID --token ${{ secrets.FIREBASE_TOKEN }} --groups dev-group --release-notes "First test"
         env:
           FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
