@@ -64,8 +64,13 @@ jobs:
           cd android
           ./gradlew assembleRelease -PHOMEPLANNER_UPLOAD_STORE_FILE=Production.keystore -PHOMEPLANNER_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} -PHOMEPLANNER_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }} -PHOMEPLANNER_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+      - name: Install Firebase CLI
+        run: curl -sL https://firebase.tools | bash
+
+      - name: Authenticate with Firebase
+        run: firebase login:ci --token ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Send to Firebase App Distribution
+        run: firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app $FIREBASE_ANDROID_APP_ID --release-notes "First test"
+        env:
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}

@@ -1301,7 +1301,7 @@ PODS:
   - RNFBApp (19.0.1):
     - Firebase/CoreOnly (= 10.22.0)
     - React-Core
-  - RNFBAppDistribution (19.1.1):
+  - RNFBAppDistribution (20.1.0):
     - Firebase/AppDistribution (= 10.22.0)
     - React-Core
     - RNFBApp
@@ -1687,7 +1687,7 @@ SPEC CHECKSUMS:
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBAnalytics: 8971d70fa3578beb7c0a44ff064dde1109cf6e12
   RNFBApp: d0be9224f318cfd6501f1f83809453800cd04868
-  RNFBAppDistribution: 4ff5fc7c6dd0d80bf7ad982d8b20d666958a88df
+  RNFBAppDistribution: 24951a133c64c0b766d5807a92971484531cb015
   RNFBAuth: f0722d3ea63e6b5c2ed67c8d19acb17d5738438b
   RNGoogleSignin: 24d3b3261f78b0fae0aa013f8ab6f8d25e369b0c
   RNReanimated: 82d44098f1640ac390d073bca26264d52a67dc7d

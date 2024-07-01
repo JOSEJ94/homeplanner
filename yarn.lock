@@ -3408,12 +3408,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app-distribution@npm:^19.1.1":
-  version: 19.1.1
-  resolution: "@react-native-firebase/app-distribution@npm:19.1.1"
+"@react-native-firebase/app-distribution@npm:^20.1.0":
+  version: 20.1.0
+  resolution: "@react-native-firebase/app-distribution@npm:20.1.0"
   peerDependencies:
-    "@react-native-firebase/app": 19.1.1
-  checksum: fa3c70a929e0e6373a9c2a7f553081f75bdcb99eb778a9bdc24c19b038e0834bdd8b853f0d3599cdc9bad9b6121eb8f30cdb2ca5f52c3c56b9647b9cc8542650
+    "@react-native-firebase/app": 20.1.0
+  checksum: f89ad17366eb569675fc3dca0f84a8bc10f5973fea20aee59e4ee2a8689be4c9888550bbc6a1ee727126fee79c939e9a82b010a780c20c904b34ca7b06c25417
   languageName: node
   linkType: hard
 
@@ -5496,7 +5496,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": ^4.2.0
     "@react-native-firebase/analytics": ^19.2.2
     "@react-native-firebase/app": ^19.0.1
-    "@react-native-firebase/app-distribution": ^19.1.1
+    "@react-native-firebase/app-distribution": ^20.1.0
     "@react-native-firebase/auth": ^19.0.1
     "@react-native-google-signin/google-signin": ^11.0.1
     "@react-native/babel-preset": 0.74.83

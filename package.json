@@ -18,7 +18,7 @@
     "@apollo/client": "^3.10.4",
     "@react-native-firebase/analytics": "^19.2.2",
     "@react-native-firebase/app": "^19.0.1",
-    "@react-native-firebase/app-distribution": "^19.1.1",
+    "@react-native-firebase/app-distribution": "^20.1.0",
     "@react-native-firebase/auth": "^19.0.1",
     "@react-native-google-signin/google-signin": "^11.0.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
