@@ -54,6 +54,10 @@ jobs:
         run: |
           echo ${{ secrets.ANDROID_KEYSTORE }} | base64 -d > android/app/Production.keystore
 
+      - name: Generate build number
+        id: build-number
+        run: echo "::set-output name=timestamp::$(date +%s)"
+
       - name: Load Google Service file
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -62,7 +66,7 @@ jobs:
       - name: Build APK
         run: |
           cd android
-          ./gradlew assembleRelease -PHOMEPLANNER_UPLOAD_STORE_FILE=Production.keystore -PHOMEPLANNER_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} -PHOMEPLANNER_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }} -PHOMEPLANNER_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ./gradlew assembleRelease -PHOMEPLANNER_UPLOAD_STORE_FILE=Production.keystore -PHOMEPLANNER_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} -PHOMEPLANNER_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }} -PHOMEPLANNER_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} -PBUILD_NUMBER=${{ steps.build-number.outputs.timestamp }}
 
       - name: Install Firebase CLI
         run: curl -sL https://firebase.tools | bash
