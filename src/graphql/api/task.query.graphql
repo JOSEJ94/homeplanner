@@ -39,31 +39,32 @@ mutation deleteTask($id: ID!) {
     id
   }
 }
-# mutation updateTask(
-#   $id: ID!
-#   $room: ID!
-#   $title: String!
-#   $randomlyAssign: Boolean
-#   $description: String
-#   $assignedTo: [ID!]!
-#   $scheduleDay: DateTime!
-#   $scheduleType: TaskSchedule!
-#   $scheduleInterval: Int!
-# ) {
-#   updateTask(
-#     assignedTo: $assignedTo
-#     id: $id
-#     room: $room
-#     scheduleDay: $scheduleDay
-#     scheduleType: $scheduleType
-#     title: $title
-#     description: $description
-#     randomlyAssign: $randomlyAssign
-#     scheduleInterval: $scheduleInterval
-#   ) {
-#     ...task
-#   }
-# }
+
+mutation updateTask(
+  $id: ID!
+  $room: ID
+  $title: String
+  $randomlyAssign: Boolean
+  $description: String
+  $assignedTo: [ID!]
+  $scheduleDay: DateTime
+  $scheduleType: TaskSchedule
+  $scheduleInterval: Int
+) {
+  updateTask(
+    assignedTo: $assignedTo
+    id: $id
+    room: $room
+    scheduleDay: $scheduleDay
+    scheduleType: $scheduleType
+    title: $title
+    description: $description
+    randomlyAssign: $randomlyAssign
+    scheduleInterval: $scheduleInterval
+  ) {
+    ...task
+  }
+}
 
 fragment task on Task {
   assignedTo {
