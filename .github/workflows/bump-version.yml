@@ -29,12 +29,6 @@ jobs:
         with:
           node-version: '21'
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Install dependencies
-        run: yarn install
-
       - name: Determine new version
         id: determine_version
         run: |
@@ -47,21 +41,19 @@ jobs:
 
       - name: Bump version in package.json
         run: |
-          yarn version --new-version ${{ env.NEW_VERSION }} --no-git-tag-version
+          npm version --new-version ${{ env.NEW_VERSION }} --no-git-tag-version
           git add package.json
       - name: Bump version in build.gradle
         run: |
           sed -i '' 's/versionCode [0-9]\+/versionCode $(( $(grep versionCode build.gradle | awk '{print $2}') + 1 ))/' android/app/build.gradle
           sed -i '' 's/versionName "[0-9]\+\.[0-9]\+\.[0-9]\+"/versionName "${{ env.NEW_VERSION }}"/' android/app/build.gradle
           git add android/app/build.gradle
-          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }} in build.gradle"
 
       - name: Bump version in Info.plist
         run: |
           plutil -replace CFBundleShortVersionString -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
           plutil -replace CFBundleVersion -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
           git add ios/homeplanner/Info.plist
-          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }} in Info.plist"
 
       - name: Push changes
         env:
