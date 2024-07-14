@@ -40,8 +40,10 @@ jobs:
         with:
           ruby-version: '3.0'
 
-      - name: Install Bundler
-        run: gem install bundler
+      x- name: Install specific Bundler version
+        run: |
+          BUNDLER_VERSION=$(grep -A 1 "BUNDLED WITH" android/Gemfile.lock | tail -n 1 | xargs)
+          gem install bundler -v $BUNDLER_VERSION
 
       - name: Install Fastlane dependencies
         run: |
