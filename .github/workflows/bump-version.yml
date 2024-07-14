@@ -1,0 +1,70 @@
+name: Bump Version and Commit
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version number (optional)'
+        required: false
+      version_type:
+        description: 'Type of version bump'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Determine new version
+        id: determine_version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            NEW_VERSION=${{ github.event.inputs.version }}
+          else
+            NEW_VERSION=$(npm version ${{ github.event.inputs.version_type }} --no-git-tag-version | sed 's/^v//')
+          fi
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Bump version in package.json
+        run: |
+          npm version ${{ env.NEW_VERSION }} --no-git-tag-version
+          git add package.json
+          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
+
+      - name: Bump version in build.gradle
+        run: |
+          sed -i '' 's/versionCode [0-9]\+/versionCode $(( $(grep versionCode build.gradle | awk '{print $2}') + 1 ))/' android/app/build.gradle
+          sed -i '' 's/versionName "[0-9]\+\.[0-9]\+\.[0-9]\+"/versionName "${{ env.NEW_VERSION }}"/' android/app/build.gradle
+          git add android/app/build.gradle
+          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }} in build.gradle"
+
+      - name: Bump version in Info.plist
+        run: |
+          plutil -replace CFBundleShortVersionString -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
+          plutil -replace CFBundleVersion -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
+          git add ios/homeplanner/Info.plist
+          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }} in Info.plist"
+
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
+          git push
