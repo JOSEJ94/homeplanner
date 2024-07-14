@@ -27,10 +27,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '21'
+
+      - name: Install Yarn
+        run: npm install -g yarn
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Determine new version
         id: determine_version
@@ -44,10 +47,8 @@ jobs:
 
       - name: Bump version in package.json
         run: |
-          npm version ${{ env.NEW_VERSION }} --no-git-tag-version
+          yarn version --new-version ${{ env.NEW_VERSION }} --no-git-tag-version
           git add package.json
-          # git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
-
       - name: Bump version in build.gradle
         run: |
           sed -i '' 's/versionCode [0-9]\+/versionCode $(( $(grep versionCode build.gradle | awk '{print $2}') + 1 ))/' android/app/build.gradle
