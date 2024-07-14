@@ -32,10 +32,11 @@ jobs:
       - name: Determine new version
         id: determine_version
         run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
           if [ -n "${{ github.event.inputs.version }}" ]; then
             NEW_VERSION=${{ github.event.inputs.version }}
           else
-            NEW_VERSION=$(npm version ${{ github.event.inputs.version_type }} --no-git-tag-version | sed 's/^v//')
+            NEW_VERSION=$(yarn semver --increment ${{ github.event.inputs.version_type }} $CURRENT_VERSION)
           fi
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
