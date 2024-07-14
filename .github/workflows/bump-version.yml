@@ -40,7 +40,7 @@ jobs:
         with:
           ruby-version: '3.0'
 
-      x- name: Install specific Bundler version
+      - name: Install specific Bundler version
         run: |
           BUNDLER_VERSION=$(grep -A 1 "BUNDLED WITH" android/Gemfile.lock | tail -n 1 | xargs)
           gem install bundler -v $BUNDLER_VERSION
