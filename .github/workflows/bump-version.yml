@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: '21'
 
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
       - name: Determine new version
         id: determine_version
         run: |
