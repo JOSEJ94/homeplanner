@@ -32,33 +32,35 @@ jobs:
       - name: Determine new version
         id: determine_version
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
           if [ -n "${{ github.event.inputs.version }}" ]; then
             NEW_VERSION=${{ github.event.inputs.version }}
+            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           else
-            NEW_VERSION=$(yarn semver --increment ${{ github.event.inputs.version_type }} $CURRENT_VERSION)
+            echo "No version provided, determining new version using version type"
           fi
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-      - name: Bump version in package.json
+      - name: Bump version using Fastlane
         run: |
-          npm version --new-version ${{ env.NEW_VERSION }} --no-git-tag-version
-          git add package.json
-      - name: Bump version in build.gradle
-        run: |
-          sed -i '' 's/versionCode [0-9]\+/versionCode $(( $(grep versionCode build.gradle | awk '{print $2}') + 1 ))/' android/app/build.gradle
-          sed -i '' 's/versionName "[0-9]\+\.[0-9]\+\.[0-9]\+"/versionName "${{ env.NEW_VERSION }}"/' android/app/build.gradle
-          git add android/app/build.gradle
-
-      - name: Bump version in Info.plist
-        run: |
-          plutil -replace CFBundleShortVersionString -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
-          plutil -replace CFBundleVersion -string ${{ env.NEW_VERSION }} ios/homeplanner/Info.plist
-          git add ios/homeplanner/Info.plist
+          if [ -n "${{ env.NEW_VERSION }}" ]; then
+            npm version env.NEW_VERSION --no-git-tag-version && (cd android && bundle exec fastlane bump) && (cd ios && bundle exec fastlane bump)
+          else
+            if [ "${{ github.event.inputs.version_type }}" == "patch" ]; then
+              yarn bump-patch
+            elif [ "${{ github.event.inputs.version_type }}" == "minor" ]; then
+              yarn bump-minor
+            elif [ "${{ github.event.inputs.version_type }}" == "major" ]; then
+              yarn bump-major
+            fi
+          fi
 
       - name: Push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git add package.json
+          git add android/app/build.gradle
+          git add ios/homeplanner/Info.plist
+          git add ios/homeplanner.xcodeproj/project.pbxproj
+          git add ios/homeplannerTests/Info.plist
           git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
           git push
