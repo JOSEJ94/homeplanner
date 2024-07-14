@@ -35,6 +35,22 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install Fastlane dependencies
+        run: |
+          cd android
+          bundle install
+          cd ../ios
+          bundle install
+          cd ..
+
       - name: Determine new version
         id: determine_version
         run: |
