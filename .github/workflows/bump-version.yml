@@ -20,7 +20,8 @@ jobs:
   bump-version:
     runs-on: macos-latest
     environment: Staging
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
