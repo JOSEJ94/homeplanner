@@ -19,6 +19,7 @@ on:
 jobs:
   bump-version:
     runs-on: macos-latest
+    environment: Staging
 
     steps:
       - name: Checkout repository
