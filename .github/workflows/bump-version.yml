@@ -58,11 +58,8 @@ jobs:
           git config --global user.email ${{ secrets.SIGNER_EMAIL }}
           git config --global user.name ${{ secrets.SIGNER_NAME }}
           echo "use-agent" >> ~/.gnupg/gpg.conf
-          echo "default-cache-ttl 600" >> ~/.gnupg/gpg-agent.conf
-          echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          echo "export GPG_TTY=$(tty)" >> ~/.bashrc
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           gpg-connect-agent reloadagent /bye
         env:
           KEY_ID: ${{ env.KEY_ID }}
