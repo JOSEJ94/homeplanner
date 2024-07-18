@@ -106,11 +106,11 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "chore: bump version to $(node -p "require('./package.json').version")"
+          commit_message: 'chore: bump version to $(node -p "require(\"./package.json\").version")'
           branch: main
           commit_user_name: ${{ secrets.SIGNER_NAME }}
           commit_user_email: ${{ secrets.SIGNER_EMAIL }}
           signoff: true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
