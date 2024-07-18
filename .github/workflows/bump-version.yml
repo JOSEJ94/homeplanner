@@ -43,18 +43,26 @@ jobs:
           ruby-version: '3.0'
 
       - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "${{ secrets.GPG_ACTION_BOT }}" | gpg --batch --import
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           KEY_ID=$(gpg --list-keys --with-colons | grep pub | awk -F: '{print $5}')
           echo "KEY_ID=$KEY_ID" >> $GITHUB_ENV
-        shell: bash
 
       - name: Configure git to use GPG key
         run: |
           git config --global user.signingkey $KEY_ID
           git config --global commit.gpgSign true
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config --global user.email ${{ secrets.SIGNER_EMAIL }}
+          git config --global user.name ${{ secrets.SIGNER_NAME }}
+          if [ -n "${{ secrets.GPG_PASSPHRASE }}" ]; then
+            echo "use-agent" >> ~/.gnupg/gpg.conf
+            echo "default-cache-ttl 600" >> ~/.gnupg/gpg-agent.conf
+            echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+            gpg-connect-agent reloadagent /bye
+          fi
         env:
           KEY_ID: ${{ env.KEY_ID }}
 
@@ -94,28 +102,15 @@ jobs:
               yarn bump-major
             fi
           fi
-          export GPG_TTY=$(tty)
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'chore: bump version to ${{ env.NEW_VERSION }}'
+          commit_message: "chore: bump version to $(node -p "require('./package.json').version")"
           branch: main
           commit_user_name: github-actions[bot]
           commit_user_email: github-actions@users.noreply.github.com
           signoff: true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-      # - name: Push changes
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.PAT }}
-      #   run: |
-      #     git add package.json
-      #     git add android/app/build.gradle
-      #     git add ios/homeplanner/Info.plist
-      #     git add ios/homeplanner.xcodeproj/project.pbxproj
-      #     git add ios/homeplannerTests/Info.plist
-      #     git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
-      #     git push
+          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
