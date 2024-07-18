@@ -51,6 +51,13 @@ jobs:
           KEY_ID=$(gpg --list-keys --with-colons | grep pub | awk -F: '{print $5}')
           echo "KEY_ID=$KEY_ID" >> $GITHUB_ENV
 
+      - name: Set GPG passphrase for use
+        run: |
+          echo $GPG_PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign-key $KEY_ID
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          KEY_ID: ${{ env.KEY_ID }}
+
       - name: Configure git to use GPG key
         run: |
           git config --global user.signingkey $KEY_ID
