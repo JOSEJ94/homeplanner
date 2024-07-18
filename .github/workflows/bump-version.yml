@@ -43,34 +43,45 @@ jobs:
           ruby-version: '3.0'
 
       - name: Import GPG key
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          KEY_ID=$(gpg --list-keys --with-colons | grep pub | awk -F: '{print $5}')
-          echo "KEY_ID=$KEY_ID" >> $GITHUB_ENV
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
-      - name: Set GPG passphrase for use
-        run: |
-          echo $GPG_PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign-key $KEY_ID
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          KEY_ID: ${{ env.KEY_ID }}
+      - name: List keys
+        run: gpg -K
 
-      - name: Configure git to use GPG key
-        run: |
-          git config --global user.signingkey $KEY_ID
-          git config --global commit.gpgSign true
-          git config --global user.email ${{ secrets.SIGNER_EMAIL }}
-          git config --global user.name ${{ secrets.SIGNER_NAME }}
-          echo "use-agent" >> ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          gpg-connect-agent reloadagent /bye
-        env:
-          KEY_ID: ${{ env.KEY_ID }}
-          GPG_TTY: /dev/tty
+      # - name: Import GPG key
+      #   env:
+      #     GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      #   run: |
+      #     echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+      #     KEY_ID=$(gpg --list-keys --with-colons | grep pub | awk -F: '{print $5}')
+      #     echo "KEY_ID=$KEY_ID" >> $GITHUB_ENV
+
+      # - name: Set GPG passphrase for use
+      #   run: |
+      #     echo $GPG_PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign-key $KEY_ID
+      #   env:
+      #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      #     KEY_ID: ${{ env.KEY_ID }}
+
+      # - name: Configure git to use GPG key
+      #   run: |
+      #     git config --global user.signingkey $KEY_ID
+      #     git config --global commit.gpgSign true
+      #     git config --global user.email ${{ secrets.SIGNER_EMAIL }}
+      #     git config --global user.name ${{ secrets.SIGNER_NAME }}
+      #     echo "use-agent" >> ~/.gnupg/gpg.conf
+      #     echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+      #     echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+      #     gpg-connect-agent reloadagent /bye
+      #   env:
+      #     KEY_ID: ${{ env.KEY_ID }}
+      #     GPG_TTY: /dev/tty
 
       - name: Install specific Bundler version
         run: |
@@ -110,13 +121,19 @@ jobs:
           fi
 
       - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: 'chore: bump version to $(node -p "require(\"./package.json\").version")'
-          branch: main
-          commit_user_name: ${{ secrets.SIGNER_NAME }}
-          commit_user_email: ${{ secrets.SIGNER_EMAIL }}
-          signoff: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          git add .
+          git commit -S -m "chore: bump version"
+          git push
+
+      # - name: Commit and push changes
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: 'chore: bump version to $(node -p "require(\"./package.json\").version")'
+      #     branch: main
+      #     commit_user_name: ${{ secrets.SIGNER_NAME }}
+      #     commit_user_email: ${{ secrets.SIGNER_EMAIL }}
+      #     signoff: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PAT }}
+      #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
