@@ -95,14 +95,26 @@ jobs:
             fi
           fi
 
-      - name: Push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
-          git add package.json
-          git add android/app/build.gradle
-          git add ios/homeplanner/Info.plist
-          git add ios/homeplanner.xcodeproj/project.pbxproj
-          git add ios/homeplannerTests/Info.plist
-          git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
-          git push
+    - name: Commit and push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "chore: bump version to ${{ env.NEW_VERSION }}"
+        branch: main
+        commit_user_name: github-actions[bot]
+        commit_user_email: github-actions@users.noreply.github.com
+        signoff: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      # - name: Push changes
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PAT }}
+      #   run: |
+      #     git add package.json
+      #     git add android/app/build.gradle
+      #     git add ios/homeplanner/Info.plist
+      #     git add ios/homeplanner.xcodeproj/project.pbxproj
+      #     git add ios/homeplannerTests/Info.plist
+      #     git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
+      #     git push
