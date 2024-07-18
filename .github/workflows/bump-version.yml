@@ -108,8 +108,8 @@ jobs:
         with:
           commit_message: "chore: bump version to $(node -p "require('./package.json').version")"
           branch: main
-          commit_user_name: github-actions[bot]
-          commit_user_email: github-actions@users.noreply.github.com
+          commit_user_name: ${{ secrets.SIGNER_NAME }}
+          commit_user_email: ${{ secrets.SIGNER_EMAIL }}
           signoff: true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
