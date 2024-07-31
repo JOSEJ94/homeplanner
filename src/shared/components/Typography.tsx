@@ -42,6 +42,7 @@ const createStyles = (theme: AppTheme, variant: TypographyVariant) =>
   StyleSheet.create({
     text: {
       alignSelf: 'flex-start',
+      fontFamily: 'Roboto-Regular',
       ...(variant === TypographyVariant.HEADING && {
         fontSize: 34,
         fontWeight: 'bold',
