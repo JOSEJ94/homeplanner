@@ -5558,7 +5558,7 @@ __metadata:
     react-native: 0.74.1
     react-native-calendars: ^1.1304.1
     react-native-config: ^1.5.2
-    react-native-date-picker: ^5.0.3
+    react-native-date-picker: ^5.0.4
     react-native-device-info: ^10.13.1
     react-native-fast-image: ^8.6.3
     react-native-light-color-picker: ^1.0.0-rc.8
@@ -10737,13 +10737,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-date-picker@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "react-native-date-picker@npm:5.0.3"
+"react-native-date-picker@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "react-native-date-picker@npm:5.0.4"
   peerDependencies:
     react: ">= 17.0.1"
     react-native: ">= 0.64.3"
-  checksum: d8d66dc59730cfa2e0a1533c5fd7bab308637f1edb24faab55695d993edad4d26237e29ca4cc6597a87d3b57d7b90358a015dc0ceb7318fc99dbca45e10302cc
+  checksum: 67db7fba5de613c61a70b5b9274daef8c7d3b6f6cdc5a6063eb61126d4df43252c501c2cb78ebda37fb0997ccb0994e949976d0fb395453580019923100e03ad
   languageName: node
   linkType: hard
 
