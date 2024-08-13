@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, StyleSheet, Text, ColorValue, Pressable} from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import moment from 'moment';
 import {formatTime} from '../../../shared/utils/Date.utils';
 import {AppTheme} from '../../../shared/themes/Theme';
-import {TaskFragment} from '../../../graphql/generated';
+import {
+  TaskFragment,
+  UpdateTaskCompleteDocument,
+} from '../../../graphql/generated';
 import CompletionCheckbox from '../../../shared/components/CompletionCheckbox';
+import {useMutation} from '@apollo/client';
 
 const CHECKBOX_SIZE = 28;
 
@@ -16,16 +20,32 @@ interface TaskItemProps {
 
 const TaskItem = ({task, onPress}: TaskItemProps) => {
   const theme = useTheme() as AppTheme;
-  const [isCompleted, setIsCompleted] = useState(Boolean(task.completionDate));
+  const isCompleted = Boolean(task.completionDate);
   const styles = createStyles(theme);
   const time = formatTime(moment(task.scheduleDay));
+  const [updateTaskCompleted, {loading}] = useMutation(
+    UpdateTaskCompleteDocument,
+    {
+      optimisticResponse: {
+        updateTaskComplete: {
+          ...task,
+          completionDate: !isCompleted ? moment() : '',
+        },
+      },
+    },
+  );
 
-  const onCompleteCheckboxPress = () => setIsCompleted(!isCompleted);
+  const onCompleteCheckboxPress = async () => {
+    await updateTaskCompleted({
+      variables: {id: task.id, completed: !isCompleted},
+    });
+  };
 
   return (
     <Pressable onPress={onPress} style={styles.container}>
       <View style={styles.leftContainer}>
         <CompletionCheckbox
+          loading={loading}
           size={CHECKBOX_SIZE}
           hitSlop={theme.hitSlop}
           color={theme.success as ColorValue}

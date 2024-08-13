@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ColorValue,
   Pressable,
   PressableProps,
@@ -20,6 +21,7 @@ export interface CheckboxProps extends PressableProps {
   emptyIcon?: string;
   fullIcon?: string;
   hint?: string;
+  loading?: boolean;
   selected?: boolean;
   size?: number;
   title?: string;
@@ -33,6 +35,7 @@ const Checkbox = ({
   emptyIcon = 'checkbox-blank-outline',
   fullIcon = 'checkbox-marked',
   hint,
+  loading,
   selected,
   size = 20,
   title,
@@ -51,16 +54,20 @@ const Checkbox = ({
         <Typography variant={TypographyVariant.CAPTION}>{title}</Typography>
         <Typography>{hint}</Typography>
       </View>
-      <Pressable
-        hitSlop={theme.hitSlop}
-        style={(Boolean(title) || Boolean(hint)) && styles.iconContainer}
-        {...rest}>
-        <MaterialIcon
-          color={(selected ? color : unselectedColor) ?? theme.colors.primary}
-          name={selected ? fullIcon : emptyIcon}
-          size={size}
-        />
-      </Pressable>
+      {loading ? (
+        <ActivityIndicator size={size} color={theme.colors.primary} />
+      ) : (
+        <Pressable
+          hitSlop={theme.hitSlop}
+          style={(Boolean(title) || Boolean(hint)) && styles.iconContainer}
+          {...rest}>
+          <MaterialIcon
+            color={(selected ? color : unselectedColor) ?? theme.colors.primary}
+            name={selected ? fullIcon : emptyIcon}
+            size={size}
+          />
+        </Pressable>
+      )}
     </View>
   );
 };

@@ -66,6 +66,12 @@ mutation updateTask(
   }
 }
 
+mutation updateTaskComplete($id: ID!, $completed: Boolean!) {
+  updateTaskComplete(id: $id, completed: $completed) {
+    ...task
+  }
+}
+
 fragment task on Task {
   assignedTo {
     email
