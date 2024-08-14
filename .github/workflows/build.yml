@@ -72,6 +72,6 @@ jobs:
         run: curl -sL https://firebase.tools | bash
 
       - name: Send to Firebase App Distribution
-        run: firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app $FIREBASE_ANDROID_APP_ID --token ${{ secrets.FIREBASE_TOKEN }} --groups dev-group --release-notes "First test"
+        run: firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app $FIREBASE_ANDROID_APP_ID --token ${{ secrets.FIREBASE_TOKEN }} --groups dev-group
         env:
           FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
