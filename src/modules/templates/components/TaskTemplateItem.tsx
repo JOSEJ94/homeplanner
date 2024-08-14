@@ -9,6 +9,9 @@ import {TaskTemplate} from '../../../graphql/generated';
 import RoomIcon from '../../../shared/components/RoomIcon';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppScreensParamList, Routes} from '../../../routes/RoutesParams';
+import {useQuery} from '@apollo/client';
+import {HomeFilterDto} from '../../../shared/models/HomeFilterDto';
+import {GET_HOME_FILTER} from '../../../graphql/local/homeFilter';
 
 interface TaskTemplateItemProps {
   taskTemplate: TaskTemplate;
@@ -19,12 +22,14 @@ const TaskTemplateItem = ({taskTemplate}: TaskTemplateItemProps) => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation =
     useNavigation<NativeStackNavigationProp<AppScreensParamList>>();
+  const {data: homeFilterData} = useQuery<{homeFilter: HomeFilterDto}>(
+    GET_HOME_FILTER,
+  );
 
   const seeDetails = () =>
     navigation.navigate(Routes.TASK_EDITOR, {
       id: taskTemplate.id,
-      // FIXME: We don't have group in app state
-      groupId: 'cff4ddfd-c499-48d6-b87f-372f6ffa1253',
+      groupId: homeFilterData?.homeFilter.selected?.id!,
     });
 
   return (

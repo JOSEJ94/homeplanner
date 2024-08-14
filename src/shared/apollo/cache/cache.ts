@@ -14,13 +14,18 @@ import {
   RoomFragment,
   RoomFragmentDoc,
 } from '../../../graphql/generated';
+import {HomeFilterDto} from '../../models/HomeFilterDto';
 
 export const DEFAULT_TASK_FILTER: TaskFilter<RoomFilterDto> = {
   selectedOptions: [{id: '-', name: 'All'}],
 };
+export const DEFAULT_SELECTED_HOME: HomeFilterDto = {selected: undefined};
 
 export const taskFilterVar =
   makeVar<TaskFilter<RoomFilterDto>>(DEFAULT_TASK_FILTER);
+export const selectedHomeGroupVar = makeVar<HomeFilterDto>(
+  DEFAULT_SELECTED_HOME,
+);
 
 export const cache = new InMemoryCache({
   typePolicies: {
@@ -32,6 +37,11 @@ export const cache = new InMemoryCache({
         taskFilter: {
           read() {
             return taskFilterVar();
+          },
+        },
+        homeFilter: {
+          read() {
+            return selectedHomeGroupVar();
           },
         },
       },

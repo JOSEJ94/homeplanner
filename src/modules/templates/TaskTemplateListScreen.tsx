@@ -31,6 +31,8 @@ import {
   DEFAULT_TASK_FILTER,
   taskFilterVar,
 } from '../../shared/apollo/cache/cache';
+import {HomeFilterDto} from '../../shared/models/HomeFilterDto';
+import {GET_HOME_FILTER} from '../../graphql/local/homeFilter';
 
 const TaskTemplateListScreen = () => {
   const navigation =
@@ -41,15 +43,17 @@ const TaskTemplateListScreen = () => {
     () => ({id: '-', name: 'All'}),
     [],
   );
+  const {data: homeFilter} = useQuery<{homeFilter: HomeFilterDto}>(
+    GET_HOME_FILTER,
+  );
 
   useEffect(
     () =>
       navigation.setOptions({
         headerRight: props => {
           const navigateToTaskTemplateEditor = () =>
-            // FIXME: We don't have the selected group in app state
             navigation.navigate(Routes.TASK_EDITOR, {
-              groupId: 'cff4ddfd-c499-48d6-b87f-372f6ffa1253',
+              groupId: homeFilter?.homeFilter.selected?.id!,
             });
 
           return (
