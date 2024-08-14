@@ -200,7 +200,7 @@ const HomeScreen = () => {
                 variant={TypographyVariant.HEADING}>
                 {homeSelected?.name}
               </Typography>
-              {groups.length > 0 && (
+              {groups.length > 1 && (
                 <Pressable
                   hitSlop={theme.hitSlop}
                   onPress={navigateToHomeSelector}>
