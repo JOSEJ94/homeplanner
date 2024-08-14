@@ -23,17 +23,14 @@ const TaskItem = ({task, onPress}: TaskItemProps) => {
   const isCompleted = Boolean(task.completionDate);
   const styles = createStyles(theme);
   const time = formatTime(moment(task.scheduleDay));
-  const [updateTaskCompleted, {loading}] = useMutation(
-    UpdateTaskCompleteDocument,
-    {
-      optimisticResponse: {
-        updateTaskComplete: {
-          ...task,
-          completionDate: !isCompleted ? moment() : '',
-        },
+  const [updateTaskCompleted] = useMutation(UpdateTaskCompleteDocument, {
+    optimisticResponse: {
+      updateTaskComplete: {
+        ...task,
+        completionDate: !isCompleted ? moment() : '',
       },
     },
-  );
+  });
 
   const onCompleteCheckboxPress = async () => {
     await updateTaskCompleted({
@@ -45,7 +42,6 @@ const TaskItem = ({task, onPress}: TaskItemProps) => {
     <Pressable onPress={onPress} style={styles.container}>
       <View style={styles.leftContainer}>
         <CompletionCheckbox
-          loading={loading}
           size={CHECKBOX_SIZE}
           hitSlop={theme.hitSlop}
           color={theme.success as ColorValue}
