@@ -3434,12 +3434,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/analytics@npm:^19.2.2":
-  version: 19.2.2
-  resolution: "@react-native-firebase/analytics@npm:19.2.2"
+"@react-native-firebase/analytics@npm:^20.4.0":
+  version: 20.4.0
+  resolution: "@react-native-firebase/analytics@npm:20.4.0"
   peerDependencies:
-    "@react-native-firebase/app": 19.2.2
-  checksum: 05cd6690eb64e19a823d6454f27db35ad691f7323921eb3ba95ed5e6640b9c9b4e690357886853150aa2280367e18fe45061b8500e246a011159ff4461cd6e68
+    "@react-native-firebase/app": 20.4.0
+  checksum: 016d6531fa94fc62b323e045a3398d7becdf43f42c01c059787037719fddb0ed03089dcfecc590e26828619d003f0a898607090a95627abb4441449218caa510
   languageName: node
   linkType: hard
 
@@ -5529,7 +5529,7 @@ __metadata:
     "@graphql-codegen/typed-document-node": ^5.0.9
     "@graphql-codegen/typescript": ^4.0.7
     "@graphql-codegen/typescript-operations": ^4.2.0
-    "@react-native-firebase/analytics": ^19.2.2
+    "@react-native-firebase/analytics": ^20.4.0
     "@react-native-firebase/app": ^19.0.1
     "@react-native-firebase/app-distribution": ^20.1.0
     "@react-native-firebase/auth": ^19.0.1
