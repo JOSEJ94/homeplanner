@@ -29,6 +29,7 @@ import {
   GroupMemberFragment,
   RoomFragment,
   GroupFragment,
+  GroupRole,
 } from '../../graphql/generated';
 import {Skeleton} from 'moti/skeleton';
 import AddButton from './components/AddButton';
@@ -60,6 +61,7 @@ const HomeScreen = () => {
   const groups: GroupFragment[] = homeData?.getGroups || [];
   const rooms: RoomFragment[] = homeSelected?.rooms || [];
   const members: GroupMemberFragment[] = homeSelected?.members || [];
+  console.log('groups', groups);
 
   // Initial state for local selected home.
   useEffect(() => {
@@ -94,6 +96,9 @@ const HomeScreen = () => {
     item: GroupFragment,
   ) => {
     const isSelected = selected.id === item.id;
+    const nameDuplicated =
+      groups.filter(group => group.name.match(item.name)).length > 1;
+    const owner = item.members.find(member => member.role === GroupRole.Admin);
 
     return (
       <Pressable
@@ -108,7 +113,9 @@ const HomeScreen = () => {
             />
           )}
         </View>
-        <Typography>{item.name}</Typography>
+        <Typography>
+          {item.name} {nameDuplicated ? `(${owner?.user.name})` : ''}
+        </Typography>
       </Pressable>
     );
   };
